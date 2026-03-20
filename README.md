@@ -1,6 +1,6 @@
 # 🎬 Ketaflix
 
-Watch movies with your friends. Log the vibes.
+Watch movies with your friends. Log the vibes. Do some Ketamine
 
 ## Setup
 
