@@ -1,6 +1,6 @@
 {
-  "name": "Ketamovies",
-  "short_name": "Ketamovies",
+  "name": "Ketaflix",
+  "short_name": "Ketaflix",
   "description": "Watch movies with your friends. Log the vibes.",
   "start_url": "/",
   "display": "standalone",
