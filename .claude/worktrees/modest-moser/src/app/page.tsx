@@ -86,16 +86,16 @@ export default function LandingPage() {
   useEffect(() => {
     let cleanup: (() => void) | undefined;
     import("animejs").then((animeModule) => {
-      const { animate, stagger } = animeModule;
+      const anime = animeModule.default ?? animeModule;
       if (titleRef.current) {
         const text = titleRef.current.innerText;
         titleRef.current.innerHTML = text.split("").map((c) =>
           `<span class="char" style="display:inline-block;opacity:0">${c === " " ? "&nbsp;" : c}</span>`
         ).join("");
-        animate(titleRef.current.querySelectorAll(".char"), { opacity: [0, 1], translateY: [30, 0], delay: stagger(60), duration: 800, easing: "easeOutExpo" });
+        anime({ targets: titleRef.current.querySelectorAll(".char"), opacity: [0, 1], translateY: [30, 0], delay: anime.stagger(60), duration: 800, easing: "easeOutExpo" });
       }
       if (cardRef.current) {
-        animate(cardRef.current, { opacity: [0, 1], translateY: [40, 0], duration: 900, delay: 400, easing: "easeOutExpo" });
+        anime({ targets: cardRef.current, opacity: [0, 1], translateY: [40, 0], duration: 900, delay: 400, easing: "easeOutExpo" });
       }
       cleanup = () => {};
     });

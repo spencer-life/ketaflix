@@ -45,13 +45,14 @@ export default function WatchlistTab({ roomCode, username }: WatchlistTabProps) 
 
   function animateCards() {
     import("animejs").then((m) => {
-      const { animate, stagger } = m;
+      const anime = m.default ?? m;
       if (listRef.current) {
         const cards = listRef.current.querySelectorAll(".watchlist-card");
-        animate(cards, {
+        anime({
+          targets: cards,
           opacity: [0, 1],
           translateY: [20, 0],
-          delay: stagger(80),
+          delay: anime.stagger(80),
           duration: 500,
           easing: "easeOutExpo",
         });

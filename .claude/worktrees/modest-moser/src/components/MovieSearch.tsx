@@ -43,10 +43,10 @@ export default function MovieSearch({ onSelect, onClose }: MovieSearchProps) {
   // Anime.js entrance
   useEffect(() => {
     import("animejs").then((m) => {
-      const { animate } = m;
-      const panel = overlayRef.current?.querySelector(".search-panel");
-      if (panel) {
-        animate(panel, {
+      const anime = m.default ?? m;
+      if (overlayRef.current) {
+        anime({
+          targets: overlayRef.current.querySelector(".search-panel"),
           translateY: ["100%", "0%"],
           duration: 400,
           easing: "easeOutExpo",

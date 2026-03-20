@@ -40,12 +40,13 @@ export default function WatchedTab({ roomCode, username: _ }: WatchedTabProps) {
 
   function animateCards() {
     import("animejs").then((m) => {
-      const { animate, stagger } = m;
+      const anime = m.default ?? m;
       if (listRef.current) {
-        animate(listRef.current.querySelectorAll(".watched-card"), {
+        anime({
+          targets: listRef.current.querySelectorAll(".watched-card"),
           opacity: [0, 1],
           translateX: [-20, 0],
-          delay: stagger(60),
+          delay: anime.stagger(60),
           duration: 450,
           easing: "easeOutExpo",
         });

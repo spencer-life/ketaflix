@@ -30,11 +30,12 @@ export default function StatsTab({ roomCode }: StatsTabProps) {
   useEffect(() => {
     if (!loading && containerRef.current) {
       import("animejs").then((m) => {
-        const { animate, stagger } = m;
-        animate(containerRef.current!.querySelectorAll(".stat-card"), {
+        const anime = m.default ?? m;
+        anime({
+          targets: containerRef.current!.querySelectorAll(".stat-card"),
           opacity: [0, 1],
           translateY: [20, 0],
-          delay: stagger(80),
+          delay: anime.stagger(80),
           duration: 500,
           easing: "easeOutExpo",
         });

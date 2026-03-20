@@ -40,9 +40,10 @@ export default function LogWatchedModal({
     });
 
     import("animejs").then((mod) => {
-      const { animate } = mod;
+      const anime = mod.default ?? mod;
       if (panelRef.current) {
-        animate(panelRef.current, {
+        anime({
+          targets: panelRef.current,
           translateY: ["100%", "0%"],
           duration: 380,
           easing: "easeOutExpo",
