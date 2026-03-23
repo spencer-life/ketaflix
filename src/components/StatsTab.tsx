@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import { getWatched, getWatchlist } from "@/lib/db";
-import { getAverageRating } from "@/lib/utils";
 import type { WatchedItem } from "@/types";
 
 interface StatsTabProps {
@@ -13,34 +12,25 @@ export default function StatsTab({ roomCode }: StatsTabProps) {
   const [watched, setWatched] = useState<WatchedItem[]>([]);
   const [watchlistCount, setWatchlistCount] = useState(0);
   const [loading, setLoading] = useState(true);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    let active = true;
+    setLoading(true);
+
     Promise.all([
       getWatched(roomCode),
       getWatchlist(roomCode),
     ]).then(([w, wl]) => {
+      if (!active) return;
       setWatched(w);
       setWatchlistCount(wl.length);
       setLoading(false);
     });
-  }, [roomCode]);
 
-  // Animate stats cards on load
-  useEffect(() => {
-    if (!loading && containerRef.current) {
-      import("animejs").then((m) => {
-        const { animate, stagger } = m;
-        animate(containerRef.current!.querySelectorAll(".stat-card"), {
-          opacity: [0, 1],
-          translateY: [20, 0],
-          delay: stagger(80),
-          duration: 500,
-          easing: "easeOutExpo",
-        });
-      });
-    }
-  }, [loading]);
+    return () => {
+      active = false;
+    };
+  }, [roomCode]);
 
   if (loading) {
     return (
@@ -96,51 +86,49 @@ export default function StatsTab({ roomCode }: StatsTabProps) {
   const overallAvg = allRatings.length ? allRatings.reduce((a, b) => a + b, 0) / allRatings.length : null;
 
   return (
-    <div ref={containerRef} className="mt-4 flex flex-col gap-4">
-      {/* Top row */}
-      <div className="grid grid-cols-2 gap-3">
+    <div className="mt-2 flex flex-col gap-5">
+      <div>
+        <p className="eyebrow">Room Stats</p>
+        <h2 className="mt-2 text-2xl font-bold tracking-tight">The room profile</h2>
+        <p className="mt-1 text-sm text-white/55">A quick read on taste, activity, and who is steering the picks.</p>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          emoji="🎬"
           label="Movies Watched"
           value={totalWatched.toString()}
         />
         <StatCard
-          emoji="📋"
           label="On Watchlist"
           value={watchlistCount.toString()}
         />
         <StatCard
-          emoji="⭐"
           label="Avg Rating"
           value={overallAvg ? `${overallAvg.toFixed(1)} / 5` : "—"}
         />
         <StatCard
-          emoji="👑"
           label="Top Picker"
           value={topPicker ? `${topPicker[0]}` : "—"}
           sub={topPicker ? `${topPicker[1]} picks` : ""}
         />
       </div>
 
-      {/* Genres */}
       {topGenres.length > 0 && (
-        <div className="glass rounded-2xl p-4 stat-card" style={{ opacity: 0 }}>
-          <p className="text-xs font-medium mb-3" style={{ color: "rgba(255,255,255,0.4)" }}>
-            🎭 Top Genres
-          </p>
+        <div className="surface-card rounded-[26px] p-5">
+          <p className="meta mb-4">Top Genres</p>
           <div className="flex flex-col gap-2">
             {topGenres.map(([genre, count]) => (
               <div key={genre}>
                 <div className="flex justify-between mb-1">
                   <span className="text-sm">{genre}</span>
-                  <span className="text-xs font-mono" style={{ color: "#a78bfa" }}>{count}</span>
+                  <span className="text-xs font-mono text-[#d8ffe3]">{count}</span>
                 </div>
-                <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
+                <div className="h-1.5 overflow-hidden rounded-full bg-white/6">
                   <div
                     className="h-full rounded-full"
                     style={{
                       width: `${(count / topGenres[0][1]) * 100}%`,
-                      background: "linear-gradient(90deg, #7c3aed, #a78bfa)",
+                      background: "linear-gradient(90deg, #00c030, #7fff8b)",
                     }}
                   />
                 </div>
@@ -150,17 +138,14 @@ export default function StatsTab({ roomCode }: StatsTabProps) {
         </div>
       )}
 
-      {/* Ratings per person */}
       {raterAvgs.length > 0 && (
-        <div className="glass rounded-2xl p-4 stat-card" style={{ opacity: 0 }}>
-          <p className="text-xs font-medium mb-3" style={{ color: "rgba(255,255,255,0.4)" }}>
-            ⭐ Average Ratings
-          </p>
+        <div className="surface-card rounded-[26px] p-5">
+          <p className="meta mb-4">Average Ratings</p>
           <div className="flex flex-col gap-2">
             {raterAvgs.map((r) => (
-              <div key={r.username} className="flex items-center justify-between">
+              <div key={r.username} className="surface-soft flex items-center justify-between px-4 py-3">
                 <span className="text-sm">{r.username}</span>
-                <span className="font-mono text-sm" style={{ color: "#f59e0b" }}>
+                <span className="font-mono text-sm text-[var(--accent-warm)]">
                   {r.avg.toFixed(1)} ★
                 </span>
               </div>
@@ -169,22 +154,14 @@ export default function StatsTab({ roomCode }: StatsTabProps) {
         </div>
       )}
 
-      {/* Vibe tags */}
       {topVibes.length > 0 && (
-        <div className="glass rounded-2xl p-4 stat-card" style={{ opacity: 0 }}>
-          <p className="text-xs font-medium mb-3" style={{ color: "rgba(255,255,255,0.4)" }}>
-            🌀 Top Vibes
-          </p>
+        <div className="surface-card rounded-[26px] p-5">
+          <p className="meta mb-4">Top Vibes</p>
           <div className="flex flex-wrap gap-2">
             {topVibes.map(([tag, count]) => (
               <div key={tag} className="vibe-tag active flex items-center gap-1">
                 {tag}
-                <span
-                  className="font-mono text-xs"
-                  style={{ color: "rgba(255,255,255,0.5)" }}
-                >
-                  {count}
-                </span>
+                <span className="font-mono text-xs text-white/55">{count}</span>
               </div>
             ))}
           </div>
@@ -192,14 +169,9 @@ export default function StatsTab({ roomCode }: StatsTabProps) {
       )}
 
       {totalWatched === 0 && (
-        <div
-          className="glass rounded-2xl p-8 text-center stat-card"
-          style={{ opacity: 0, border: "1px dashed rgba(255,255,255,0.1)" }}
-        >
-          <p className="text-4xl mb-3">📊</p>
-          <p className="font-medium" style={{ color: "rgba(255,255,255,0.6)" }}>
-            Stats will appear after you log some movies
-          </p>
+        <div className="surface-card empty-state rounded-[26px] p-8 text-center">
+          <p className="text-4xl">📊</p>
+          <p className="mt-4 text-lg font-semibold">Stats show up after the first logs</p>
         </div>
       )}
     </div>
@@ -207,26 +179,21 @@ export default function StatsTab({ roomCode }: StatsTabProps) {
 }
 
 function StatCard({
-  emoji,
   label,
   value,
   sub,
 }: {
-  emoji: string;
   label: string;
   value: string;
   sub?: string;
 }) {
   return (
-    <div className="glass rounded-2xl p-4 stat-card" style={{ opacity: 0 }}>
-      <p className="text-2xl mb-1">{emoji}</p>
-      <p className="text-xl font-bold gradient-text">{value}</p>
+    <div className="surface-card rounded-[24px] p-5">
+      <p className="meta">{label}</p>
+      <p className="mt-3 text-3xl font-bold tracking-tight">{value}</p>
       {sub && (
-        <p className="text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>{sub}</p>
+        <p className="mt-1 text-xs text-white/45">{sub}</p>
       )}
-      <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>
-        {label}
-      </p>
     </div>
   );
 }

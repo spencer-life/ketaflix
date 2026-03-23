@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { logWatched, getRoomMembers } from "@/lib/db";
 import { tmdbImage } from "@/lib/tmdb";
@@ -29,25 +29,14 @@ export default function LogWatchedModal({
   const [notes, setNotes] = useState("");
   const [vibeTags, setVibeTags] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
-  const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     getRoomMembers(roomCode).then((m) => {
-      setMembers(m.length ? m : [username]);
+      const resolvedMembers = m.length ? m : [username];
+      setMembers(resolvedMembers);
       const initial: Record<string, number> = {};
-      m.forEach((u) => (initial[u] = 0));
+      resolvedMembers.forEach((u) => (initial[u] = 0));
       setRatings(initial);
-    });
-
-    import("animejs").then((mod) => {
-      const { animate } = mod;
-      if (panelRef.current) {
-        animate(panelRef.current, {
-          translateY: ["100%", "0%"],
-          duration: 380,
-          easing: "easeOutExpo",
-        });
-      }
     });
   }, [roomCode, username]);
 
@@ -74,17 +63,6 @@ export default function LogWatchedModal({
         watchlistId: item.id,
       });
 
-      // Confetti!
-      import("canvas-confetti").then((m) => {
-        const confetti = m.default;
-        confetti({
-          particleCount: 120,
-          spread: 80,
-          origin: { y: 0.6 },
-          colors: ["#7c3aed", "#8b5cf6", "#a78bfa", "#c084fc", "#ffffff"],
-        });
-      });
-
       onLogged();
     } catch {
       setSubmitting(false);
@@ -93,56 +71,42 @@ export default function LogWatchedModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex flex-col"
-      style={{ background: "rgba(10,10,15,0.75)", backdropFilter: "blur(8px)" }}
+      className="fixed inset-0 z-50 flex flex-col bg-black/70 backdrop-blur-sm"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
-        ref={panelRef}
-        className="flex flex-col max-h-[92dvh] mt-auto rounded-t-2xl overflow-hidden"
-        style={{
-          background: "#111118",
-          border: "1px solid rgba(255,255,255,0.08)",
-          transform: "translateY(100%)",
-        }}
+        className="surface-card fade-in-up mt-auto flex max-h-[92dvh] flex-col overflow-hidden rounded-t-[28px] rounded-b-none"
       >
-        {/* Header */}
-        <div
-          className="p-4 flex items-center justify-between border-b"
-          style={{ borderColor: "rgba(255,255,255,0.06)" }}
-        >
-          <h2 className="font-semibold">Log as Watched</h2>
-          <button
-            onClick={onClose}
-            className="text-sm"
-            style={{ color: "rgba(255,255,255,0.4)" }}
-          >
+        <div className="flex items-center justify-between border-b border-white/8 p-4 sm:p-5">
+          <div>
+            <p className="meta">Diary Entry</p>
+            <h2 className="mt-2 text-xl font-semibold">Log as watched</h2>
+          </div>
+          <button onClick={onClose} className="btn-ghost px-4 py-3 text-sm">
             Cancel
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-5">
-          {/* Movie header */}
-          <div className="flex gap-3 items-center">
+        <div className="flex flex-1 flex-col gap-5 overflow-y-auto p-4 sm:p-5">
+          <div className="surface-soft flex gap-4 p-4">
             {movie?.poster_path && (
               <Image
                 src={tmdbImage(movie.poster_path, "w92")!}
                 alt={movie.title}
-                width={48}
-                height={72}
-                className="rounded-lg object-cover"
+                width={56}
+                height={84}
+                className="rounded-xl object-cover"
               />
             )}
             <div>
-              <p className="font-semibold">{movie?.title}</p>
-              <p className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>
-                {movie?.release_year}
-              </p>
+              <p className="meta">{movie?.release_year}</p>
+              <p className="mt-2 text-lg font-semibold">{movie?.title}</p>
+              <p className="mt-2 text-sm text-white/50">Turn the watchlist item into a room diary entry.</p>
             </div>
           </div>
 
-          {/* Who picked it */}
           <div>
-            <label className="text-xs font-medium mb-2 block" style={{ color: "rgba(255,255,255,0.5)" }}>
+            <label className="meta mb-2 block">
               Who picked it?
             </label>
             <div className="flex flex-wrap gap-2">
@@ -150,12 +114,7 @@ export default function LogWatchedModal({
                 <button
                   key={m}
                   onClick={() => setPickedBy(m)}
-                  className="px-3 py-1.5 rounded-lg text-sm transition-all"
-                  style={{
-                    background: pickedBy === m ? "rgba(139,92,246,0.3)" : "rgba(255,255,255,0.06)",
-                    color: pickedBy === m ? "#a78bfa" : "rgba(255,255,255,0.6)",
-                    border: `1px solid ${pickedBy === m ? "rgba(139,92,246,0.5)" : "rgba(255,255,255,0.08)"}`,
-                  }}
+                  className={`vibe-tag ${pickedBy === m ? "active" : ""}`}
                 >
                   {m}
                 </button>
@@ -163,14 +122,13 @@ export default function LogWatchedModal({
             </div>
           </div>
 
-          {/* Ratings */}
           <div>
-            <label className="text-xs font-medium mb-2 block" style={{ color: "rgba(255,255,255,0.5)" }}>
+            <label className="meta mb-3 block">
               Ratings
             </label>
             <div className="flex flex-col gap-3">
               {members.map((member) => (
-                <div key={member} className="flex items-center justify-between">
+                <div key={member} className="surface-soft flex items-center justify-between px-4 py-3">
                   <span className="text-sm">{member}</span>
                   <div className="flex gap-1">
                     {[1, 2, 3, 4, 5].map((star) => (
@@ -184,7 +142,7 @@ export default function LogWatchedModal({
                         }
                         className="text-xl transition-transform hover:scale-110"
                         style={{
-                          color: star <= (ratings[member] ?? 0) ? "#f59e0b" : "rgba(255,255,255,0.2)",
+                          color: star <= (ratings[member] ?? 0) ? "#ff9f1c" : "rgba(255,255,255,0.2)",
                         }}
                       >
                         ★
@@ -196,9 +154,8 @@ export default function LogWatchedModal({
             </div>
           </div>
 
-          {/* Vibe tags */}
           <div>
-            <label className="text-xs font-medium mb-2 block" style={{ color: "rgba(255,255,255,0.5)" }}>
+            <label className="meta mb-2 block">
               Vibe Tags
             </label>
             <div className="flex flex-wrap gap-2">
@@ -214,9 +171,8 @@ export default function LogWatchedModal({
             </div>
           </div>
 
-          {/* Notes */}
           <div>
-            <label className="text-xs font-medium mb-2 block" style={{ color: "rgba(255,255,255,0.5)" }}>
+            <label className="meta mb-2 block">
               Notes (optional)
             </label>
             <textarea
@@ -228,12 +184,8 @@ export default function LogWatchedModal({
             />
           </div>
 
-          <button
-            onClick={handleSubmit}
-            disabled={submitting}
-            className="btn-primary"
-          >
-            {submitting ? "Logging..." : "🎉 Log it!"}
+          <button onClick={handleSubmit} disabled={submitting} className="btn-primary w-full">
+            {submitting ? "Logging..." : "Save Entry"}
           </button>
         </div>
       </div>

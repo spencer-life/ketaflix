@@ -7,14 +7,12 @@ import { getRoom } from "@/lib/db";
 import WatchlistTab from "@/components/WatchlistTab";
 import WatchedTab from "@/components/WatchedTab";
 import StatsTab from "@/components/StatsTab";
-import type { Room } from "@/types";
 
 type Tab = "watchlist" | "watched" | "stats";
 
 export default function RoomPage({ params }: { params: Promise<{ code: string }> }) {
   const { code } = use(params);
   const router = useRouter();
-  const [room, setRoom] = useState<Room | null>(null);
   const [session, setSessionState] = useState<{ username: string; roomCode: string } | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>("watchlist");
   const [loading, setLoading] = useState(true);
@@ -26,7 +24,6 @@ export default function RoomPage({ params }: { params: Promise<{ code: string }>
     setSessionState(s);
     getRoom(code).then((r) => {
       if (!r) { router.push("/"); return; }
-      setRoom(r);
       setLoading(false);
     });
   }, [code, router]);
@@ -47,45 +44,58 @@ export default function RoomPage({ params }: { params: Promise<{ code: string }>
   }
 
   const tabs: { id: Tab; label: string; emoji: string }[] = [
-    { id: "watchlist", label: "Watchlist", emoji: "🎬" },
-    { id: "watched", label: "Watched", emoji: "✅" },
-    { id: "stats", label: "Stats", emoji: "📊" },
+    { id: "watchlist", label: "Watchlist", emoji: "" },
+    { id: "watched", label: "Diary", emoji: "" },
+    { id: "stats", label: "Stats", emoji: "" },
   ];
 
   return (
-    <div className="min-h-dvh flex flex-col max-w-2xl mx-auto">
-      <header className="sticky top-0 z-50 px-4 pt-4 pb-3"
-        style={{ background: "linear-gradient(to bottom, rgba(10,10,15,0.95) 80%, transparent)", backdropFilter: "blur(12px)" }}>
-        <div className="flex items-center justify-between mb-3">
-          <div>
-            <h1 className="text-xl font-bold gradient-text">Ketaflix</h1>
-            <button onClick={copyCode} className="text-xs font-mono flex items-center gap-1 transition-colors"
-              style={{ color: copied ? "#a78bfa" : "rgba(255,255,255,0.35)" }}>
-              <span className="tracking-widest">{code}</span>
-              <span>{copied ? "✓ copied" : "· tap to copy"}</span>
-            </button>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="text-sm px-3 py-1.5 rounded-lg"
-              style={{ background: "rgba(139,92,246,0.15)", color: "#a78bfa", border: "1px solid rgba(139,92,246,0.3)" }}>
-              👤 {session?.username}
+    <div className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col px-4 pb-10 sm:px-6 lg:px-8">
+      <header
+        className="sticky top-0 z-50 -mx-4 mb-6 border-b border-white/5 px-4 py-4 backdrop-blur sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
+        style={{ background: "rgba(20,24,28,0.84)" }}
+      >
+        <div className="mx-auto flex max-w-6xl flex-col gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="eyebrow">Screening Room</p>
+              <h1 className="mt-2 text-3xl font-bold tracking-tight">Ketaflix</h1>
+              <button
+                onClick={copyCode}
+                className="mt-2 flex items-center gap-2 text-left text-sm font-mono text-white/50 transition-colors hover:text-white/75"
+              >
+                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 tracking-[0.3em]">
+                  {code}
+                </span>
+                <span>{copied ? "Copied" : "Tap to copy room code"}</span>
+              </button>
             </div>
-            <button onClick={handleLeave} className="btn-ghost text-xs px-2 py-1.5">Leave</button>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="info-chip">{session?.username}</span>
+              <button onClick={handleLeave} className="btn-ghost px-4 py-3 text-sm">
+                Leave Room
+              </button>
+            </div>
           </div>
-        </div>
-        <div className="flex gap-1">
-          {tabs.map((tab) => (
-            <button key={tab.id} onClick={() => setActiveTab(tab.id)} className="tab-btn flex-1"
-              style={{ background: activeTab === tab.id ? "rgba(139,92,246,0.2)" : "transparent", color: activeTab === tab.id ? "#a78bfa" : "rgba(255,255,255,0.45)" }}>
-              {tab.emoji} {tab.label}
-            </button>
-          ))}
+
+          <div className="surface-soft inline-flex w-full gap-2 overflow-x-auto p-1.5 sm:w-fit">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`tab-btn min-w-fit flex-1 sm:flex-none ${activeTab === tab.id ? "active" : ""}`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
       </header>
 
-      <main className="flex-1 px-4 pb-8">
+      <main className="flex-1">
         {activeTab === "watchlist" && session && <WatchlistTab roomCode={code} username={session.username} />}
-        {activeTab === "watched" && session && <WatchedTab roomCode={code} username={session.username} />}
+        {activeTab === "watched" && session && <WatchedTab roomCode={code} />}
         {activeTab === "stats" && <StatsTab roomCode={code} />}
       </main>
     </div>

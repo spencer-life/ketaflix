@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Ketaflix",
-  description: "Watch movies with your friends. Log the vibes.",
+  description: "A shared movie room with a darker, diary-style Letterboxd feel.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0a0a0f",
+  themeColor: "#14181c",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,

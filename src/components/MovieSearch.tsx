@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { searchMovies, getTrending, getMovieDetails, tmdbImage } from "@/lib/tmdb";
 import { upsertMovie } from "@/lib/db";
@@ -17,43 +17,43 @@ export default function MovieSearch({ onSelect, onClose }: MovieSearchProps) {
   const [loading, setLoading] = useState(false);
   const [selecting, setSelecting] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
 
-  // Load trending on open
   useEffect(() => {
     inputRef.current?.focus();
-    getTrending().then(setResults).catch(() => {});
   }, []);
 
-  // Debounced search
   useEffect(() => {
+    let active = true;
+
     if (!query.trim()) {
-      getTrending().then(setResults).catch(() => {});
-      return;
+      setLoading(false);
+      getTrending()
+        .then((data) => {
+          if (active) setResults(data);
+        })
+        .catch(() => {});
+
+      return () => {
+        active = false;
+      };
     }
+
     setLoading(true);
     const t = setTimeout(() => {
       searchMovies(query)
-        .then(setResults)
-        .finally(() => setLoading(false));
-    }, 350);
-    return () => clearTimeout(t);
-  }, [query]);
-
-  // Anime.js entrance
-  useEffect(() => {
-    import("animejs").then((m) => {
-      const { animate } = m;
-      const panel = overlayRef.current?.querySelector(".search-panel");
-      if (panel) {
-        animate(panel, {
-          translateY: ["100%", "0%"],
-          duration: 400,
-          easing: "easeOutExpo",
+        .then((data) => {
+          if (active) setResults(data);
+        })
+        .finally(() => {
+          if (active) setLoading(false);
         });
-      }
-    });
-  }, []);
+    }, 350);
+
+    return () => {
+      active = false;
+      clearTimeout(t);
+    };
+  }, [query]);
 
   async function handleSelect(result: TMDBSearchResult) {
     setSelecting(result.id);
@@ -68,40 +68,35 @@ export default function MovieSearch({ onSelect, onClose }: MovieSearchProps) {
 
   return (
     <div
-      ref={overlayRef}
-      className="fixed inset-0 z-50 flex flex-col"
-      style={{ background: "rgba(10,10,15,0.7)", backdropFilter: "blur(8px)" }}
-      onClick={(e) => e.target === overlayRef.current && onClose()}
+      className="fixed inset-0 z-50 flex flex-col bg-black/70 backdrop-blur-sm"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
-        className="search-panel flex flex-col h-full max-h-[90dvh] mt-auto rounded-t-2xl overflow-hidden"
-        style={{ background: "#111118", border: "1px solid rgba(255,255,255,0.08)" }}
+        className="surface-card fade-in-up mt-auto flex h-full max-h-[90dvh] flex-col overflow-hidden rounded-t-[28px] rounded-b-none"
       >
-        {/* Search header */}
-        <div className="p-4 border-b" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+        <div className="border-b border-white/8 p-4 sm:p-5">
+          <p className="meta mb-3">Add To Watchlist</p>
           <div className="flex items-center gap-3">
             <input
               ref={inputRef}
               className="keta-input flex-1"
-              placeholder="Search movies..."
+              placeholder="Search for a film"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
-            <button onClick={onClose} className="btn-ghost px-3 py-2 shrink-0">
+            <button onClick={onClose} className="btn-ghost shrink-0 px-4 py-3">
               Cancel
             </button>
           </div>
         </div>
 
-        {/* Label */}
-        <div className="px-4 py-2">
-          <span className="text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>
+        <div className="px-4 py-3 sm:px-5">
+          <span className="meta">
             {query ? `Results for "${query}"` : "Trending this week"}
           </span>
         </div>
 
-        {/* Results */}
-        <div className="flex-1 overflow-y-auto px-4 pb-6">
+        <div className="flex-1 overflow-y-auto px-4 pb-6 sm:px-5">
           {loading ? (
             <div className="flex flex-col gap-3 mt-2">
               {[...Array(4)].map((_, i) => (
@@ -115,14 +110,9 @@ export default function MovieSearch({ onSelect, onClose }: MovieSearchProps) {
                   key={r.id}
                   onClick={() => handleSelect(r)}
                   disabled={selecting === r.id}
-                  className="movie-card flex gap-3 p-3 text-left w-full"
-                  style={{ background: "rgba(255,255,255,0.03)" }}
+                  className="movie-card flex w-full gap-3 p-3 text-left"
                 >
-                  {/* Poster */}
-                  <div
-                    className="shrink-0 rounded-lg overflow-hidden"
-                    style={{ width: 48, height: 72 }}
-                  >
+                  <div className="poster-frame h-[72px] w-12 shrink-0">
                     {r.poster_path ? (
                       <Image
                         src={tmdbImage(r.poster_path, "w92")!}
@@ -132,47 +122,37 @@ export default function MovieSearch({ onSelect, onClose }: MovieSearchProps) {
                         className="object-cover w-full h-full"
                       />
                     ) : (
-                      <div
-                        className="w-full h-full flex items-center justify-center text-xl"
-                        style={{ background: "rgba(139,92,246,0.1)" }}
-                      >
+                      <div className="flex h-full w-full items-center justify-center text-xl text-white/45">
                         🎬
                       </div>
                     )}
                   </div>
 
-                  {/* Info */}
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm leading-tight truncate">
-                      {r.title}
-                    </p>
-                    <p
-                      className="text-xs mt-0.5"
-                      style={{ color: "rgba(255,255,255,0.4)" }}
-                    >
+                    <p className="truncate text-sm font-semibold leading-tight">{r.title}</p>
+                    <p className="mt-1 text-xs text-white/45">
                       {r.release_date ? new Date(r.release_date).getFullYear() : "Unknown"}
                       {r.vote_average > 0 && (
-                        <span className="ml-2">⭐ {r.vote_average.toFixed(1)}</span>
+                        <span className="ml-2">TMDB {r.vote_average.toFixed(1)}</span>
                       )}
                     </p>
-                    <p
-                      className="text-xs mt-1 line-clamp-2 leading-relaxed"
-                      style={{ color: "rgba(255,255,255,0.3)" }}
-                    >
-                      {r.overview}
+                    <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-white/35">
+                      {r.overview || "No synopsis available."}
                     </p>
                   </div>
 
                   {selecting === r.id && (
-                    <div
-                      className="shrink-0 text-xs self-center"
-                      style={{ color: "#a78bfa" }}
-                    >
+                    <div className="shrink-0 self-center text-xs text-[#d8ffe3]">
                       Adding...
                     </div>
                   )}
                 </button>
               ))}
+              {!results.length && (
+                <div className="surface-soft p-6 text-center text-sm text-white/50">
+                  No movies matched that search.
+                </div>
+              )}
             </div>
           )}
         </div>

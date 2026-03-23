@@ -4,16 +4,21 @@ Watch movies with your friends. Log the vibes. Do some Ketamine
 
 ## Setup
 
-1. **Install dependencies**
+1. **Use Node 20**
+   ```bash
+   nvm use
+   ```
+
+2. **Install dependencies**
    ```bash
    npm install
    ```
 
-2. **Set up environment** — copy `.env.local.example` to `.env.local` and fill in:
+3. **Set up environment** — copy `.env.local.example` to `.env.local` and fill in:
    - Supabase keys from [supabase.com/dashboard/project/amcxmbgkgkweuytdibqs/settings/api](https://supabase.com/dashboard/project/amcxmbgkgkweuytdibqs/settings/api)
    - TMDB API key (free) from [themoviedb.org/settings/api](https://www.themoviedb.org/settings/api)
 
-3. **Run locally**
+4. **Run locally**
    ```bash
    npm run dev
    ```
