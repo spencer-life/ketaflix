@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getWatched, getWatchlist } from "@/lib/db";
 import type { WatchedItem } from "@/types";
 
@@ -12,6 +12,7 @@ export default function StatsTab({ roomCode }: StatsTabProps) {
   const [watched, setWatched] = useState<WatchedItem[]>([]);
   const [watchlistCount, setWatchlistCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let active = true;
@@ -31,6 +32,21 @@ export default function StatsTab({ roomCode }: StatsTabProps) {
       active = false;
     };
   }, [roomCode]);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (loading || !container) return;
+
+    import("animejs").then(({ animate, stagger }) => {
+      animate(container.querySelectorAll(".stat-card"), {
+        opacity: [0, 1],
+        translateY: [20, 0],
+        delay: stagger(85),
+        duration: 540,
+        easing: "easeOutExpo",
+      });
+    });
+  }, [loading, watched.length, watchlistCount]);
 
   if (loading) {
     return (
@@ -86,7 +102,7 @@ export default function StatsTab({ roomCode }: StatsTabProps) {
   const overallAvg = allRatings.length ? allRatings.reduce((a, b) => a + b, 0) / allRatings.length : null;
 
   return (
-    <div className="mt-2 flex flex-col gap-5">
+    <div ref={containerRef} className="mt-2 flex flex-col gap-5">
       <div>
         <p className="eyebrow">Room Stats</p>
         <h2 className="mt-2 text-2xl font-bold tracking-tight">The room profile</h2>
@@ -114,7 +130,7 @@ export default function StatsTab({ roomCode }: StatsTabProps) {
       </div>
 
       {topGenres.length > 0 && (
-        <div className="surface-card rounded-[26px] p-5">
+        <div className="stat-card surface-card rounded-[26px] p-5 opacity-0">
           <p className="meta mb-4">Top Genres</p>
           <div className="flex flex-col gap-2">
             {topGenres.map(([genre, count]) => (
@@ -139,7 +155,7 @@ export default function StatsTab({ roomCode }: StatsTabProps) {
       )}
 
       {raterAvgs.length > 0 && (
-        <div className="surface-card rounded-[26px] p-5">
+        <div className="stat-card surface-card rounded-[26px] p-5 opacity-0">
           <p className="meta mb-4">Average Ratings</p>
           <div className="flex flex-col gap-2">
             {raterAvgs.map((r) => (
@@ -155,7 +171,7 @@ export default function StatsTab({ roomCode }: StatsTabProps) {
       )}
 
       {topVibes.length > 0 && (
-        <div className="surface-card rounded-[26px] p-5">
+        <div className="stat-card surface-card rounded-[26px] p-5 opacity-0">
           <p className="meta mb-4">Top Vibes</p>
           <div className="flex flex-wrap gap-2">
             {topVibes.map(([tag, count]) => (
@@ -169,7 +185,7 @@ export default function StatsTab({ roomCode }: StatsTabProps) {
       )}
 
       {totalWatched === 0 && (
-        <div className="surface-card empty-state rounded-[26px] p-8 text-center">
+        <div className="stat-card surface-card empty-state rounded-[26px] p-8 text-center opacity-0">
           <p className="text-4xl">📊</p>
           <p className="mt-4 text-lg font-semibold">Stats show up after the first logs</p>
         </div>
@@ -188,7 +204,7 @@ function StatCard({
   sub?: string;
 }) {
   return (
-    <div className="surface-card rounded-[24px] p-5">
+    <div className="stat-card surface-card rounded-[24px] p-5 opacity-0">
       <p className="meta">{label}</p>
       <p className="mt-3 text-3xl font-bold tracking-tight">{value}</p>
       {sub && (

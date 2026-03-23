@@ -1,22 +1,26 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useEffect, useRef, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { getSession, clearSession } from "@/lib/supabase";
 import { getRoom } from "@/lib/db";
+import DashboardTab from "@/components/DashboardTab";
 import WatchlistTab from "@/components/WatchlistTab";
 import WatchedTab from "@/components/WatchedTab";
 import StatsTab from "@/components/StatsTab";
+import type { Room } from "@/types";
 
-type Tab = "watchlist" | "watched" | "stats";
+type Tab = "dashboard" | "watchlist" | "watched" | "stats";
 
 export default function RoomPage({ params }: { params: Promise<{ code: string }> }) {
   const { code } = use(params);
   const router = useRouter();
+  const [room, setRoom] = useState<Room | null>(null);
   const [session, setSessionState] = useState<{ username: string; roomCode: string } | null>(null);
-  const [activeTab, setActiveTab] = useState<Tab>("watchlist");
+  const [activeTab, setActiveTab] = useState<Tab>("dashboard");
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const contentRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const s = getSession();
@@ -24,9 +28,24 @@ export default function RoomPage({ params }: { params: Promise<{ code: string }>
     setSessionState(s);
     getRoom(code).then((r) => {
       if (!r) { router.push("/"); return; }
+      setRoom(r);
       setLoading(false);
     });
   }, [code, router]);
+
+  useEffect(() => {
+    const content = contentRef.current;
+    if (loading || !content) return;
+
+    import("animejs").then(({ animate }) => {
+      animate(content, {
+        opacity: [0, 1],
+        translateY: [18, 0],
+        duration: 520,
+        easing: "easeOutExpo",
+      });
+    });
+  }, [activeTab, loading]);
 
   function handleLeave() { clearSession(); router.push("/"); }
   function copyCode() {
@@ -43,10 +62,11 @@ export default function RoomPage({ params }: { params: Promise<{ code: string }>
     );
   }
 
-  const tabs: { id: Tab; label: string; emoji: string }[] = [
-    { id: "watchlist", label: "Watchlist", emoji: "" },
-    { id: "watched", label: "Diary", emoji: "" },
-    { id: "stats", label: "Stats", emoji: "" },
+  const tabs: { id: Tab; label: string }[] = [
+    { id: "dashboard", label: "Dashboard" },
+    { id: "watchlist", label: "Watchlist" },
+    { id: "watched", label: "Diary" },
+    { id: "stats", label: "Stats" },
   ];
 
   return (
@@ -73,6 +93,7 @@ export default function RoomPage({ params }: { params: Promise<{ code: string }>
 
             <div className="flex flex-wrap items-center gap-2">
               <span className="info-chip">{session?.username}</span>
+              {room?.name ? <span className="info-chip">{room.name}</span> : null}
               <button onClick={handleLeave} className="btn-ghost px-4 py-3 text-sm">
                 Leave Room
               </button>
@@ -93,7 +114,10 @@ export default function RoomPage({ params }: { params: Promise<{ code: string }>
         </div>
       </header>
 
-      <main className="flex-1">
+      <main ref={contentRef} className="flex-1 opacity-0">
+        {activeTab === "dashboard" && session && room && (
+          <DashboardTab room={room} roomCode={code} username={session.username} />
+        )}
         {activeTab === "watchlist" && session && <WatchlistTab roomCode={code} username={session.username} />}
         {activeTab === "watched" && session && <WatchedTab roomCode={code} />}
         {activeTab === "stats" && <StatsTab roomCode={code} />}

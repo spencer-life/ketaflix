@@ -17,9 +17,23 @@ export default function MovieSearch({ onSelect, onClose }: MovieSearchProps) {
   const [loading, setLoading] = useState(false);
   const [selecting, setSelecting] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     inputRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
+    import("animejs").then(({ animate }) => {
+      const panel = overlayRef.current?.querySelector(".search-panel");
+      if (!panel) return;
+
+      animate(panel, {
+        translateY: ["100%", "0%"],
+        duration: 420,
+        easing: "easeOutExpo",
+      });
+    });
   }, []);
 
   useEffect(() => {
@@ -68,11 +82,12 @@ export default function MovieSearch({ onSelect, onClose }: MovieSearchProps) {
 
   return (
     <div
+      ref={overlayRef}
       className="fixed inset-0 z-50 flex flex-col bg-black/70 backdrop-blur-sm"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
-        className="surface-card fade-in-up mt-auto flex h-full max-h-[90dvh] flex-col overflow-hidden rounded-t-[28px] rounded-b-none"
+        className="search-panel surface-card mt-auto flex h-full max-h-[90dvh] flex-col overflow-hidden rounded-t-[28px] rounded-b-none"
       >
         <div className="border-b border-white/8 p-4 sm:p-5">
           <p className="meta mb-3">Add To Watchlist</p>

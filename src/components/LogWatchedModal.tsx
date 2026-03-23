@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { logWatched, getRoomMembers } from "@/lib/db";
 import { tmdbImage } from "@/lib/tmdb";
@@ -29,6 +29,7 @@ export default function LogWatchedModal({
   const [notes, setNotes] = useState("");
   const [vibeTags, setVibeTags] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     getRoomMembers(roomCode).then((m) => {
@@ -39,6 +40,19 @@ export default function LogWatchedModal({
       setRatings(initial);
     });
   }, [roomCode, username]);
+
+  useEffect(() => {
+    const panel = panelRef.current;
+    if (!panel) return;
+
+    import("animejs").then(({ animate }) => {
+      animate(panel, {
+        translateY: ["100%", "0%"],
+        duration: 400,
+        easing: "easeOutExpo",
+      });
+    });
+  }, []);
 
   function toggleVibe(tag: string) {
     setVibeTags((prev) =>
@@ -75,7 +89,8 @@ export default function LogWatchedModal({
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
-        className="surface-card fade-in-up mt-auto flex max-h-[92dvh] flex-col overflow-hidden rounded-t-[28px] rounded-b-none"
+        ref={panelRef}
+        className="surface-card mt-auto flex max-h-[92dvh] flex-col overflow-hidden rounded-t-[28px] rounded-b-none"
       >
         <div className="flex items-center justify-between border-b border-white/8 p-4 sm:p-5">
           <div>

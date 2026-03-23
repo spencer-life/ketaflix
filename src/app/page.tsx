@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getOrCreateRoom, joinRoom } from "@/lib/db";
 import { setSession, getSession } from "@/lib/supabase";
@@ -13,6 +13,9 @@ export default function LandingPage() {
   const [roomCode, setRoomCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const cardRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const session = getSession();
@@ -20,6 +23,135 @@ export default function LandingPage() {
       router.push(`/room/${session.roomCode}`);
     }
   }, [router]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles: {
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      size: number;
+      alpha: number;
+      color: string;
+    }[] = [];
+
+    const colors = ["#00c030", "#72f48b", "#ff9f1c", "#ffffff"];
+
+    for (let index = 0; index < 72; index += 1) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.35,
+        vy: (Math.random() - 0.5) * 0.35,
+        size: Math.random() * 2 + 0.5,
+        alpha: Math.random() * 0.45 + 0.08,
+        color: colors[Math.floor(Math.random() * colors.length)],
+      });
+    }
+
+    let animId = 0;
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      particles.forEach((particle, index) => {
+        particles.slice(index + 1).forEach((otherParticle) => {
+          const dx = particle.x - otherParticle.x;
+          const dy = particle.y - otherParticle.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < 140) {
+            ctx.beginPath();
+            ctx.moveTo(particle.x, particle.y);
+            ctx.lineTo(otherParticle.x, otherParticle.y);
+            ctx.strokeStyle = `rgba(255,255,255,${0.05 * (1 - distance / 140)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        });
+      });
+
+      particles.forEach((particle) => {
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        ctx.fillStyle = `${particle.color}${Math.floor(particle.alpha * 255)
+          .toString(16)
+          .padStart(2, "0")}`;
+        ctx.fill();
+
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+
+        if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -1;
+        if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -1;
+      });
+
+      animId = requestAnimationFrame(draw);
+    };
+
+    draw();
+
+    const handleResize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+
+    import("animejs").then(({ animate, stagger }) => {
+      if (!mounted) return;
+      const title = titleRef.current;
+      const card = cardRef.current;
+
+      if (title) {
+        const text = title.innerText;
+        title.innerHTML = text
+          .split("")
+          .map((char) =>
+            `<span class="char" style="display:inline-block;opacity:0">${char === " " ? "&nbsp;" : char}</span>`
+          )
+          .join("");
+
+        animate(title.querySelectorAll(".char"), {
+          opacity: [0, 1],
+          translateY: [30, 0],
+          delay: stagger(42),
+          duration: 760,
+          easing: "easeOutExpo",
+        });
+      }
+
+      if (card) {
+        animate(card, {
+          opacity: [0, 1],
+          translateY: [36, 0],
+          delay: 200,
+          duration: 820,
+          easing: "easeOutExpo",
+        });
+      }
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -41,11 +173,12 @@ export default function LandingPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col justify-center px-4 py-10 sm:px-6 lg:px-8">
+    <main className="relative mx-auto flex min-h-dvh w-full max-w-6xl flex-col justify-center overflow-hidden px-4 py-10 sm:px-6 lg:px-8">
+      <canvas ref={canvasRef} id="particles" />
       <div className="grid items-center gap-8 lg:grid-cols-[1.15fr_0.85fr]">
         <section className="fade-in-up max-w-2xl">
           <p className="eyebrow mb-4">Shared Movie Diary</p>
-          <h1 className="section-title gradient-text">
+          <h1 ref={titleRef} className="section-title gradient-text">
             Ketaflix feels better when it looks like a film club, not a crypto landing page.
           </h1>
           <p className="mt-5 max-w-xl text-base leading-7 text-white/70 sm:text-lg">
@@ -78,7 +211,10 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="fade-in-up surface-card p-5 sm:p-7" style={{ animationDelay: "0.08s" }}>
+        <section
+          ref={cardRef}
+          className="surface-card relative z-10 p-5 opacity-0 sm:p-7"
+        >
           <div className="mb-8">
             <p className="meta">Enter The Room</p>
             <h2 className="mt-2 text-4xl font-bold tracking-tight">Ketaflix</h2>

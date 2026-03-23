@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { getWatchlist, addToWatchlist, removeFromWatchlist } from "@/lib/db";
 import { supabase } from "@/lib/supabase";
@@ -19,6 +19,7 @@ export default function WatchlistTab({ roomCode, username }: WatchlistTabProps) 
   const [loading, setLoading] = useState(true);
   const [showSearch, setShowSearch] = useState(false);
   const [logItem, setLogItem] = useState<WatchlistItem | null>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let active = true;
@@ -46,6 +47,21 @@ export default function WatchlistTab({ roomCode, username }: WatchlistTabProps) 
       supabase.removeChannel(sub);
     };
   }, [roomCode]);
+
+  useEffect(() => {
+    const grid = gridRef.current;
+    if (loading || !grid) return;
+
+    import("animejs").then(({ animate, stagger }) => {
+      animate(grid.querySelectorAll(".watchlist-card"), {
+        opacity: [0, 1],
+        translateY: [20, 0],
+        delay: stagger(80),
+        duration: 560,
+        easing: "easeOutExpo",
+      });
+    });
+  }, [items, loading]);
 
   async function handleMovieSelected(movie: Movie) {
     setShowSearch(false);
@@ -93,7 +109,7 @@ export default function WatchlistTab({ roomCode, username }: WatchlistTabProps) 
           <p className="mt-2 text-sm text-white/50">Pick the first film and the poster wall starts filling in.</p>
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div ref={gridRef} className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {items.map((item) => (
             <WatchlistCard
               key={item.id}
@@ -144,7 +160,7 @@ function WatchlistCard({
   const poster = tmdbImage(movie?.poster_path ?? null);
 
   return (
-    <article className="surface-card overflow-hidden rounded-[26px]">
+    <article className="watchlist-card surface-card overflow-hidden rounded-[26px] opacity-0">
       <div className="poster-frame aspect-[2/3] w-full rounded-none border-x-0 border-t-0">
         {poster ? (
           <Image

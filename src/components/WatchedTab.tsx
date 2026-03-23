@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { getWatched } from "@/lib/db";
 import { supabase } from "@/lib/supabase";
@@ -16,6 +16,7 @@ export default function WatchedTab({ roomCode }: WatchedTabProps) {
   const [items, setItems] = useState<WatchedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let active = true;
@@ -44,6 +45,21 @@ export default function WatchedTab({ roomCode }: WatchedTabProps) {
     };
   }, [roomCode]);
 
+  useEffect(() => {
+    const list = listRef.current;
+    if (loading || !list) return;
+
+    import("animejs").then(({ animate, stagger }) => {
+      animate(list.querySelectorAll(".watched-card"), {
+        opacity: [0, 1],
+        translateX: [-24, 0],
+        delay: stagger(70),
+        duration: 540,
+        easing: "easeOutExpo",
+      });
+    });
+  }, [items, loading]);
+
   if (loading) {
     return (
       <div className="mt-2 flex flex-col gap-3">
@@ -65,7 +81,7 @@ export default function WatchedTab({ roomCode }: WatchedTabProps) {
   }
 
   return (
-    <div className="mt-2 flex flex-col gap-4">
+    <div ref={listRef} className="mt-2 flex flex-col gap-4">
       {items.map((item) => {
         const movie = item.movie;
         const avg = getAverageRating(item.ratings);
@@ -74,7 +90,7 @@ export default function WatchedTab({ roomCode }: WatchedTabProps) {
         return (
           <article
             key={item.id}
-            className="surface-card overflow-hidden rounded-[26px]"
+            className="watched-card surface-card overflow-hidden rounded-[26px] opacity-0"
             onClick={() => setExpanded(isExpanded ? null : item.id)}
           >
             <div className="flex gap-4 p-4 sm:p-5">
