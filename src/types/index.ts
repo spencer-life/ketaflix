@@ -1,3 +1,50 @@
+// ─── Auth & Social ──────────────────────────────────────────────────────────
+
+export interface Profile {
+  id: string;
+  username: string;
+  display_name: string | null;
+  avatar_emoji: string | null;
+  avatar_url: string | null;
+  bio: string | null;
+  is_discoverable: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Follow {
+  follower_id: string;
+  following_id: string;
+  created_at: string;
+}
+
+export type ActivityType =
+  | "rated"
+  | "watchlisted"
+  | "watched"
+  | "joined_room"
+  | "created_room"
+  | "followed";
+
+export interface ActivityFeedItem {
+  id: string;
+  profile_id: string;
+  activity_type: ActivityType;
+  movie_id: string | null;
+  tmdb_id: number | null;
+  movie_title: string | null;
+  movie_poster_path: string | null;
+  related_profile_id: string | null;
+  data: Record<string, unknown>;
+  created_at: string;
+  // Joined fields
+  profile?: Profile;
+  related_profile?: Profile;
+  movie?: Movie;
+}
+
+// ─── Room & Movies ──────────────────────────────────────────────────────────
+
 export interface Room {
   id: string;
   code: string;

@@ -1,28 +1,214 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
-import { getOrCreateRoom, joinRoom } from "@/lib/db";
-import { setSession, getSession } from "@/lib/supabase";
-import { generateRoomCode } from "@/lib/utils";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useAuth } from "@/lib/auth-context";
+import { getFeed, searchProfiles } from "@/lib/db";
+import FeedActivityItem from "@/components/FeedActivityItem";
+import FeedMovieCard from "@/components/FeedMovieCard";
+import ProfileCard from "@/components/ProfileCard";
+import Link from "next/link";
+import type { ActivityFeedItem, Profile } from "@/types";
 
-export default function LandingPage() {
-  const router = useRouter();
-  const [mode, setMode] = useState<"join" | "create">("join");
-  const [username, setUsername] = useState("");
-  const [roomCode, setRoomCode] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+export default function HomePage() {
+  const { user, profile, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="flex min-h-dvh items-center justify-center">
+        <div className="text-sm text-white/40">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!user || !profile) {
+    return <LandingPage />;
+  }
+
+  return <FeedPage />;
+}
+
+// ─── Feed (Authenticated) ──────────────────────────────────────────────────
+
+function FeedPage() {
+  const { user, profile } = useAuth();
+  const [feed, setFeed] = useState<ActivityFeedItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [suggestedUsers, setSuggestedUsers] = useState<Profile[]>([]);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    async function load() {
+      const [feedData, users] = await Promise.all([
+        getFeed(user!.id),
+        searchProfiles("", 6),
+      ]);
+      setFeed(feedData);
+      setSuggestedUsers(users.filter((u) => u.id !== user!.id));
+      setLoading(false);
+    }
+    load();
+  }, [user]);
+
+  useEffect(() => {
+    if (loading || !contentRef.current) return;
+    import("animejs").then(({ animate }) => {
+      if (!contentRef.current) return;
+      animate(contentRef.current, {
+        opacity: [0, 1],
+        translateY: [15, 0],
+        duration: 500,
+        easing: "easeOutExpo",
+      });
+    });
+  }, [loading]);
+
+  const trendingMovies = useMemo(() => {
+    const movieActivities = new Map<
+      string,
+      { title: string; poster: string | null; items: ActivityFeedItem[] }
+    >();
+    feed.forEach((item) => {
+      if (
+        item.movie_title &&
+        (item.activity_type === "watched" || item.activity_type === "rated")
+      ) {
+        const key = item.movie_title;
+        if (!movieActivities.has(key)) {
+          movieActivities.set(key, {
+            title: item.movie_title,
+            poster: item.movie_poster_path,
+            items: [],
+          });
+        }
+        movieActivities.get(key)!.items.push(item);
+      }
+    });
+    return Array.from(movieActivities.values())
+      .sort((a, b) => b.items.length - a.items.length)
+      .slice(0, 6);
+  }, [feed]);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-dvh items-center justify-center">
+        <div className="text-sm text-white/40">Loading feed...</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mx-auto min-h-dvh w-full max-w-4xl px-4 pb-10 sm:px-6">
+      {/* Header */}
+      <header className="flex items-center justify-between py-6">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Ketaflix</h1>
+          <p className="text-sm text-white/45">Your feed</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <Link
+            href={`/profile/${profile?.username}`}
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-lg transition-colors hover:bg-white/10"
+          >
+            {profile?.avatar_emoji || "🎬"}
+          </Link>
+          <Link href="/settings" className="btn-ghost px-3 py-2 text-sm">
+            Settings
+          </Link>
+        </div>
+      </header>
+
+      <div ref={contentRef} className="opacity-0">
+        {feed.length === 0 && suggestedUsers.length === 0 ? (
+          <div className="empty-state rounded-2xl p-10 text-center">
+            <p className="text-4xl">🎬</p>
+            <h2 className="mt-4 text-lg font-bold">Your feed is empty</h2>
+            <p className="mt-2 text-sm text-white/45">
+              Follow some friends to see what they&apos;re watching, or join a
+              room to get started.
+            </p>
+          </div>
+        ) : (
+          <div className="grid gap-8 lg:grid-cols-[1fr_300px]">
+            {/* Main Feed Column */}
+            <div>
+              {trendingMovies.length > 0 && (
+                <section className="mb-8">
+                  <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/40">
+                    Popular with Friends
+                  </h2>
+                  <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
+                    {trendingMovies.map((movie) => (
+                      <FeedMovieCard
+                        key={movie.title}
+                        movieTitle={movie.title}
+                        posterPath={movie.poster}
+                        activities={movie.items}
+                      />
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              <section>
+                <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/40">
+                  Recent Activity
+                </h2>
+                {feed.length > 0 ? (
+                  <div className="flex flex-col gap-3">
+                    {feed.map((item) => (
+                      <FeedActivityItem key={item.id} item={item} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="empty-state rounded-2xl p-8 text-center">
+                    <p className="text-2xl">📡</p>
+                    <p className="mt-2 text-sm text-white/45">
+                      No activity yet. Follow some friends to see their updates
+                      here.
+                    </p>
+                  </div>
+                )}
+              </section>
+            </div>
+
+            {/* Sidebar */}
+            <aside className="hidden lg:block">
+              {suggestedUsers.length > 0 && (
+                <div>
+                  <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-white/40">
+                    People to Follow
+                  </h3>
+                  <div className="flex flex-col gap-2">
+                    {suggestedUsers.slice(0, 5).map((u) => (
+                      <ProfileCard key={u.id} profile={u} showFollowButton />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-6 surface-card p-4">
+                <h3 className="text-sm font-semibold">Quick Actions</h3>
+                <p className="mt-2 text-xs text-white/40">
+                  Join a room by entering a room code on the room page.
+                </p>
+              </div>
+            </aside>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Landing Page (Unauthenticated) ────────────────────────────────────────
+// NOTE: The anime.js character stagger animation uses innerText splitting,
+// which only processes the element's own safe text content (no user input).
+
+function LandingPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const cardRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const session = getSession();
-    if (session) {
-      router.push(`/room/${session.roomCode}`);
-    }
-  }, [router]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -61,22 +247,22 @@ export default function LandingPage() {
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      particles.forEach((particle, index) => {
-        particles.slice(index + 1).forEach((otherParticle) => {
-          const dx = particle.x - otherParticle.x;
-          const dy = particle.y - otherParticle.y;
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
           const distance = Math.sqrt(dx * dx + dy * dy);
 
           if (distance < 140) {
             ctx.beginPath();
-            ctx.moveTo(particle.x, particle.y);
-            ctx.lineTo(otherParticle.x, otherParticle.y);
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
             ctx.strokeStyle = `rgba(255,255,255,${0.05 * (1 - distance / 140)})`;
             ctx.lineWidth = 0.5;
             ctx.stroke();
           }
-        });
-      });
+        }
+      }
 
       particles.forEach((particle) => {
         ctx.beginPath();
@@ -120,13 +306,19 @@ export default function LandingPage() {
       const card = cardRef.current;
 
       if (title) {
+        // Safe: innerText is from our own hardcoded heading, not user input
         const text = title.innerText;
-        title.innerHTML = text
-          .split("")
-          .map((char) =>
-            `<span class="char" style="display:inline-block;opacity:0">${char === " " ? "&nbsp;" : char}</span>`
-          )
-          .join("");
+        const fragment = document.createDocumentFragment();
+        text.split("").forEach((char) => {
+          const span = document.createElement("span");
+          span.className = "char";
+          span.style.display = "inline-block";
+          span.style.opacity = "0";
+          span.textContent = char === " " ? "\u00A0" : char;
+          fragment.appendChild(span);
+        });
+        title.textContent = "";
+        title.appendChild(fragment);
 
         animate(title.querySelectorAll(".char"), {
           opacity: [0, 1],
@@ -153,25 +345,6 @@ export default function LandingPage() {
     };
   }, []);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-    const u = username.trim();
-    if (!u || u.length < 2) { setError("Username must be at least 2 characters"); return; }
-    const code = mode === "create" ? generateRoomCode() : roomCode.trim().toUpperCase();
-    if (!code || code.length < 4) { setError("Enter a valid room code"); return; }
-    setLoading(true);
-    try {
-      await getOrCreateRoom(code, u);
-      await joinRoom(u, code);
-      setSession({ username: u, roomCode: code });
-      router.push(`/room/${code}`);
-    } catch {
-      setError("Something went wrong. Check your connection and try again.");
-      setLoading(false);
-    }
-  }
-
   return (
     <main className="relative mx-auto flex min-h-dvh w-full max-w-6xl flex-col justify-center overflow-hidden px-4 py-10 sm:px-6 lg:px-8">
       <canvas ref={canvasRef} id="particles" />
@@ -179,34 +352,41 @@ export default function LandingPage() {
         <section className="fade-in-up max-w-2xl">
           <p className="eyebrow mb-4">Shared Movie Diary</p>
           <h1 ref={titleRef} className="section-title gradient-text">
-            Ketaflix feels better when it looks like a film club, not a crypto landing page.
+            Ketaflix feels better when it looks like a film club, not a crypto
+            landing page.
           </h1>
           <p className="mt-5 max-w-xl text-base leading-7 text-white/70 sm:text-lg">
-            Spin up a room, stack a watchlist, and log each movie like a proper diary entry.
-            Darker surfaces, cleaner metadata, poster-first browsing.
+            Spin up a room, stack a watchlist, and log each movie like a proper
+            diary entry. Follow friends, see what they&apos;re watching.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
             <span className="info-chip">Poster grid watchlists</span>
-            <span className="info-chip">Shared ratings and notes</span>
-            <span className="info-chip">Quick join with room codes</span>
+            <span className="info-chip">Follow your friends</span>
+            <span className="info-chip">Activity feed</span>
           </div>
 
           <div className="mt-10 grid gap-3 sm:grid-cols-3">
             <div className="surface-soft p-4">
               <p className="meta">Track</p>
               <p className="mt-2 text-2xl font-bold">Watchlist</p>
-              <p className="mt-1 text-sm text-white/55">Keep the next picks visible.</p>
+              <p className="mt-1 text-sm text-white/55">
+                Keep the next picks visible.
+              </p>
             </div>
             <div className="surface-soft p-4">
               <p className="meta">Log</p>
               <p className="mt-2 text-2xl font-bold">Diary</p>
-              <p className="mt-1 text-sm text-white/55">Store ratings, notes, and vibes.</p>
+              <p className="mt-1 text-sm text-white/55">
+                Store ratings, notes, and vibes.
+              </p>
             </div>
             <div className="surface-soft p-4">
-              <p className="meta">Share</p>
-              <p className="mt-2 text-2xl font-bold">Room Code</p>
-              <p className="mt-1 text-sm text-white/55">No accounts, no extra friction.</p>
+              <p className="meta">Connect</p>
+              <p className="mt-2 text-2xl font-bold">Friends</p>
+              <p className="mt-1 text-sm text-white/55">
+                See what your crew is watching.
+              </p>
             </div>
           </div>
         </section>
@@ -216,63 +396,25 @@ export default function LandingPage() {
           className="surface-card relative z-10 p-5 opacity-0 sm:p-7"
         >
           <div className="mb-8">
-            <p className="meta">Enter The Room</p>
+            <p className="meta">Join the Film Club</p>
             <h2 className="mt-2 text-4xl font-bold tracking-tight">Ketaflix</h2>
-            <p className="mt-2 text-sm text-white/55">Join your crew or start a new screening room.</p>
+            <p className="mt-2 text-sm text-white/55">
+              Create your account or sign in to get started.
+            </p>
           </div>
 
-          <div className="mb-6 grid grid-cols-2 gap-2 rounded-full border border-white/10 bg-white/5 p-1.5">
-            {(["join", "create"] as const).map((m) => (
-              <button
-                key={m}
-                onClick={() => setMode(m)}
-                className={`tab-btn ${mode === m ? "active" : ""}`}
-                type="button"
-              >
-                {m === "join" ? "Join Room" : "Create Room"}
-              </button>
-            ))}
+          <div className="flex flex-col gap-3">
+            <Link href="/register" className="btn-primary w-full text-center">
+              Create Account
+            </Link>
+            <Link href="/login" className="btn-ghost w-full text-center">
+              Sign In
+            </Link>
           </div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div>
-              <label className="meta mb-2 block">Display Name</label>
-              <input
-                className="keta-input"
-                placeholder="e.g. Spencer"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                maxLength={20}
-                autoComplete="off"
-              />
-            </div>
-
-            {mode === "join" ? (
-              <div>
-                <label className="meta mb-2 block">Room Code</label>
-                <input
-                  className="keta-input font-mono uppercase tracking-[0.35em]"
-                  placeholder="ABCD1"
-                  value={roomCode}
-                  onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
-                  maxLength={6}
-                  autoComplete="off"
-                />
-              </div>
-            ) : (
-              <div className="surface-soft p-4 text-sm leading-6 text-white/60">
-                A fresh room code is generated automatically, ready to copy and share.
-              </div>
-            )}
-
-            {error && <p className="text-sm text-red-300">{error}</p>}
-
-            <button type="submit" className="btn-primary mt-2 w-full" disabled={loading}>
-              {loading ? "Loading..." : mode === "join" ? "Join Room" : "Create Room"}
-            </button>
-          </form>
-
-          <p className="mt-5 text-center text-sm text-white/35">No account needed. Just pick a name.</p>
+          <p className="mt-5 text-center text-sm text-white/35">
+            Pick a username, set a password, and you&apos;re in.
+          </p>
         </section>
       </div>
     </main>
