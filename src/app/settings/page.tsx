@@ -101,13 +101,13 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="mx-auto min-h-dvh w-full max-w-lg px-4 pb-24 pt-6 sm:px-6">
+    <div className="mx-auto min-h-dvh w-full max-w-lg px-4 pb-32 pt-6 sm:px-6">
       <section
         ref={cardRef}
-        className="relative overflow-hidden rounded-[28px] border border-white/8 p-6 opacity-0 sm:p-8"
+        className="relative overflow-hidden rounded-[28px] border border-white/6 p-6 opacity-0 sm:p-8"
         style={{
           background:
-            "radial-gradient(ellipse at top right, rgba(0,192,48,0.08), transparent 50%), linear-gradient(135deg, rgba(14,17,22,0.96), rgba(20,24,28,0.92))",
+            "radial-gradient(ellipse at top right, rgba(52,211,153,0.06), transparent 50%), linear-gradient(135deg, rgba(14,17,22,0.96), rgba(20,24,28,0.92))",
         }}
       >
         <div className="mb-8">
@@ -130,7 +130,7 @@ export default function SettingsPage() {
                   onClick={() => setEmoji(e)}
                   className={`flex h-12 w-12 items-center justify-center rounded-2xl text-xl transition-all ${
                     emoji === e
-                      ? "scale-110 border-2 border-[var(--accent)] bg-[var(--accent-soft)] shadow-[0_0_12px_rgba(0,192,48,0.2)]"
+                      ? "scale-110 border-2 border-white/30 bg-white/10 shadow-lg"
                       : "border border-white/6 bg-white/[0.04] hover:border-white/12 hover:bg-white/8"
                   }`}
                 >
@@ -162,7 +162,7 @@ export default function SettingsPage() {
               onChange={(e) => setBio(e.target.value)}
               maxLength={160}
             />
-            <p className="mt-1.5 text-right text-xs text-white/30">
+            <p className="mt-1.5 text-right text-xs text-white/40">
               {bio.length}/160
             </p>
           </div>
@@ -171,7 +171,7 @@ export default function SettingsPage() {
           <div className="flex items-center justify-between rounded-2xl border border-white/6 bg-white/[0.03] p-4">
             <div>
               <p className="text-sm font-medium">Discoverable</p>
-              <p className="mt-0.5 text-xs text-white/45">
+              <p className="mt-0.5 text-xs text-white/50">
                 Show up in search results
               </p>
             </div>

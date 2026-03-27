@@ -116,7 +116,7 @@ export default function DiscoverPage() {
   return (
     <div
       ref={containerRef}
-      className="mx-auto min-h-dvh w-full max-w-6xl px-4 pb-10 sm:px-6 lg:px-8"
+      className="mx-auto min-h-dvh w-full max-w-6xl px-4 pb-28 sm:px-6 lg:px-8"
     >
       {/* Hero Featured Movie */}
       {sections[0]?.movies[0] && (
@@ -142,14 +142,14 @@ export default function DiscoverPage() {
                 priority
               />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#08090c] via-[#08090c]/50 to-[#08090c]/10" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg)] via-[var(--bg)]/60 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 px-5 pb-7 sm:px-8 sm:pb-10">
               <p className="eyebrow">Featured</p>
               <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-4xl">
                 {sections[0].movies[0].title}
               </h1>
               {sections[0].movies[0].overview && (
-                <p className="mt-2.5 line-clamp-2 max-w-lg text-sm leading-relaxed text-white/65">
+                <p className="mt-2.5 line-clamp-2 max-w-lg text-sm leading-relaxed text-white/70">
                   {sections[0].movies[0].overview}
                 </p>
               )}
@@ -160,7 +160,7 @@ export default function DiscoverPage() {
 
       {/* Genre Scroller */}
       <section data-discover-item className="mt-8 opacity-0">
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-white/40">
+        <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/55">
           Browse by Genre
         </h2>
         <div className="scrollbar-hide -mx-4 flex gap-2 overflow-x-auto px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
@@ -172,11 +172,11 @@ export default function DiscoverPage() {
                 <Link
                   key={genre.id}
                   href={`/discover/genre/${genre.id}`}
-                  className="flex shrink-0 items-center gap-2 rounded-full border border-white/8 bg-white/5 px-4 py-2 text-sm font-medium transition-colors hover:bg-white/10"
+                  className="flex shrink-0 items-center gap-2 rounded-full border border-white/8 bg-white/5 px-4 py-2.5 text-sm font-medium transition-colors hover:bg-white/10"
                 >
                   <Icon
-                    className="h-3.5 w-3.5 text-white/50"
-                    strokeWidth={1.8}
+                    className="h-3.5 w-3.5 text-white/45"
+                    strokeWidth={1.6}
                   />
                   <span className="whitespace-nowrap">{genre.name}</span>
                 </Link>
@@ -188,7 +188,7 @@ export default function DiscoverPage() {
       {/* Recommendations */}
       {recommendations.length > 0 && (
         <section data-discover-item className="mt-10 opacity-0">
-          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/40">
+          <h2 className="mb-4 text-xs font-semibold uppercase tracking-widest text-white/55">
             Because you watched {recSeedTitle}
           </h2>
           <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
@@ -202,7 +202,7 @@ export default function DiscoverPage() {
                 <p className="mt-2 truncate text-[13px] font-semibold leading-tight tracking-tight text-white/90">
                   {movie.title}
                 </p>
-                <p className="mt-0.5 text-[11px] text-white/35">
+                <p className="mt-0.5 text-[11px] text-white/45">
                   {movie.release_date
                     ? new Date(movie.release_date).getFullYear()
                     : ""}
@@ -218,9 +218,9 @@ export default function DiscoverPage() {
         <section
           key={section.title}
           data-discover-item
-          className="mt-12 opacity-0"
+          className="mt-14 opacity-0"
         >
-          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/40">
+          <h2 className="mb-4 text-xs font-semibold uppercase tracking-widest text-white/55">
             {section.title}
           </h2>
           <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
@@ -234,7 +234,7 @@ export default function DiscoverPage() {
                 <p className="mt-2 truncate text-[13px] font-semibold leading-tight tracking-tight text-white/90">
                   {movie.title}
                 </p>
-                <p className="mt-0.5 text-[11px] text-white/35">
+                <p className="mt-0.5 text-[11px] text-white/45">
                   {movie.release_date
                     ? new Date(movie.release_date).getFullYear()
                     : ""}

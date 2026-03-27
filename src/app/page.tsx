@@ -122,18 +122,18 @@ function FeedPage() {
   }
 
   return (
-    <div className="mx-auto min-h-dvh w-full max-w-4xl px-4 pb-10 sm:px-6">
+    <div className="mx-auto min-h-dvh w-full max-w-4xl px-4 pb-28 sm:px-6">
       {/* Header */}
       <header className="py-5">
         <h1 className="text-xl font-bold tracking-tight">Ketaflix</h1>
-        <p className="text-sm text-white/45">What your crew is watching</p>
+        <p className="text-sm text-white/55">What your crew is watching</p>
       </header>
 
       <div ref={contentRef} className="opacity-0">
         {/* Trending poster strip */}
         {trending.length > 0 && (
-          <section className="mb-6">
-            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-white/40">
+          <section className="mb-10">
+            <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/55">
               Trending This Week
             </h2>
             <div className="scrollbar-hide -mx-4 flex gap-3 overflow-x-auto px-4">
@@ -153,7 +153,7 @@ function FeedPage() {
                       sizes="128px"
                     />
                     {movie.vote_average > 0 && (
-                      <div className="absolute bottom-1.5 right-1.5 rounded-full border border-white/10 bg-black/40 px-1.5 py-0.5 text-[10px] font-semibold text-white/90 backdrop-blur-md">
+                      <div className="absolute bottom-2 right-2 rounded-md bg-black/60 px-1.5 py-0.5 text-[10px] font-bold tabular-nums text-white/80 backdrop-blur-xl">
                         {movie.vote_average.toFixed(1)}
                       </div>
                     )}
@@ -166,7 +166,7 @@ function FeedPage() {
 
         {/* Genre chips */}
         {genres.length > 0 && (
-          <section className="mb-6">
+          <section className="mb-10">
             <div className="scrollbar-hide -mx-4 flex gap-2 overflow-x-auto px-4">
               {genres.slice(0, 12).map((genre) => {
                 const Icon = GENRE_ICONS[genre.id] || Film;
@@ -174,9 +174,12 @@ function FeedPage() {
                   <Link
                     key={genre.id}
                     href={`/discover/genre/${genre.id}`}
-                    className="flex shrink-0 items-center gap-1.5 rounded-full border border-white/8 bg-white/5 px-3 py-1.5 text-xs font-medium transition-colors hover:bg-white/10"
+                    className="flex shrink-0 items-center gap-2 rounded-full border border-white/8 bg-white/5 px-3.5 py-2 text-xs font-medium transition-colors hover:bg-white/10"
                   >
-                    <Icon className="h-3 w-3 text-white/50" strokeWidth={1.8} />
+                    <Icon
+                      className="h-3.5 w-3.5 text-white/45"
+                      strokeWidth={1.6}
+                    />
                     <span>{genre.name}</span>
                   </Link>
                 );
@@ -187,9 +190,9 @@ function FeedPage() {
 
         {/* My Ketacrews */}
         {crews.length > 0 ? (
-          <section className="mb-6">
+          <section className="mb-10">
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-sm font-semibold uppercase tracking-wider text-white/40">
+              <h2 className="text-xs font-semibold uppercase tracking-widest text-white/55">
                 My Ketacrews
               </h2>
               <Link
@@ -206,13 +209,13 @@ function FeedPage() {
             </div>
           </section>
         ) : (
-          <section className="mb-6">
+          <section className="mb-10">
             <Link
               href="/rooms"
               className="group relative flex items-center gap-4 overflow-hidden rounded-2xl border border-white/8 p-5 transition-all hover:border-white/12"
               style={{
                 background:
-                  "radial-gradient(circle at right, rgba(0,192,48,0.1), transparent 60%), linear-gradient(135deg, rgba(14,17,22,0.96), rgba(20,24,28,0.92))",
+                  "radial-gradient(circle at right, rgba(52,211,153,0.08), transparent 60%), linear-gradient(135deg, rgba(14,17,22,0.96), rgba(20,24,28,0.92))",
               }}
             >
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[var(--accent-soft)] transition-transform group-hover:scale-105">
@@ -236,8 +239,8 @@ function FeedPage() {
 
         {/* Popular with friends (from feed) */}
         {trendingMovies.length > 0 && (
-          <section className="mb-6">
-            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-white/40">
+          <section className="mb-10">
+            <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/55">
               Popular with Friends
             </h2>
             <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
@@ -255,8 +258,8 @@ function FeedPage() {
 
         {/* People to follow — visible on all screens */}
         {suggestedUsers.length > 0 && (
-          <section className="mb-6">
-            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-white/40">
+          <section className="mb-10">
+            <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/55">
               People to Follow
             </h2>
             <div className="scrollbar-hide -mx-4 flex gap-2 overflow-x-auto px-4 lg:mx-0 lg:flex-col lg:px-0">
@@ -271,9 +274,9 @@ function FeedPage() {
 
         {/* Popular right now */}
         {popular.length > 0 && (
-          <section className="mb-6">
+          <section className="mb-10">
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-sm font-semibold uppercase tracking-wider text-white/40">
+              <h2 className="text-xs font-semibold uppercase tracking-widest text-white/55">
                 Popular Right Now
               </h2>
               <Link
@@ -315,8 +318,8 @@ function FeedPage() {
 
         {/* Recent activity */}
         {feed.length > 0 && (
-          <section className="mb-6">
-            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-white/40">
+          <section className="mb-10">
+            <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/55">
               Recent Activity
             </h2>
             <div className="flex flex-col gap-3">
@@ -364,7 +367,7 @@ function LandingPage() {
       color: string;
     }[] = [];
 
-    const colors = ["#00c030", "#72f48b", "#ff9f1c", "#ffffff"];
+    const colors = ["#34d399", "#6ee7b7", "#f59e0b", "#ffffff"];
 
     for (let index = 0; index < 40; index += 1) {
       particles.push({

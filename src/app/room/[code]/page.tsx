@@ -125,7 +125,7 @@ export default function RoomPage({
         className="relative -mx-4 mb-6 overflow-hidden border-b border-white/6 px-4 pb-4 pt-5 opacity-0 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
         style={{
           background:
-            "radial-gradient(ellipse at top right, rgba(0,192,48,0.12), transparent 50%), radial-gradient(ellipse at bottom left, rgba(255,159,28,0.06), transparent 40%), linear-gradient(180deg, rgba(14,17,22,0.95) 0%, rgba(8,9,12,0.9) 100%)",
+            "radial-gradient(ellipse at top right, rgba(52,211,153,0.08), transparent 50%), radial-gradient(ellipse at bottom left, rgba(245,158,11,0.05), transparent 40%), linear-gradient(180deg, rgba(14,17,22,0.95) 0%, rgba(8,9,12,0.9) 100%)",
         }}
       >
         <div className="mx-auto max-w-6xl">
@@ -184,10 +184,7 @@ export default function RoomPage({
                       : "text-white/40 hover:text-white/60"
                   }`}
                 >
-                  <Icon
-                    className="h-4 w-4"
-                    strokeWidth={isActive ? 2.4 : 1.8}
-                  />
+                  <Icon className="h-4 w-4" strokeWidth={isActive ? 2 : 1.6} />
                   <span className="text-[10px] sm:text-xs">{tab.label}</span>
                 </button>
               );
