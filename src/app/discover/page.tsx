@@ -16,7 +16,7 @@ import { getRecentWatchedByProfile } from "@/lib/db";
 import { useAuth } from "@/lib/auth-context";
 import { GENRE_ICONS } from "@/lib/genre-icons";
 import MoviePoster from "@/components/MoviePoster";
-import { Film } from "lucide-react";
+import { Popcorn } from "lucide-react";
 import type { TMDBSearchResult, TMDBGenre } from "@/types";
 
 interface MovieSection {
@@ -118,10 +118,10 @@ export default function DiscoverPage() {
       ref={containerRef}
       className="mx-auto min-h-dvh w-full max-w-6xl px-4 pb-28 sm:px-6 lg:px-8"
     >
-      {/* Hero Featured Movie */}
+      {/* Hero Featured Movie — Stitch-inspired cinematic backdrop */}
       {sections[0]?.movies[0] && (
         <section className="-mx-4 sm:-mx-6 lg:-mx-8" data-discover-item>
-          <div className="relative aspect-[16/10] w-full overflow-hidden sm:aspect-[16/7]">
+          <div className="relative aspect-[9/14] w-full overflow-hidden sm:aspect-[16/7]">
             {tmdbImage(
               sections[0].movies[0].backdrop_path ??
                 sections[0].movies[0].poster_path,
@@ -137,48 +137,65 @@ export default function DiscoverPage() {
                 }
                 alt={sections[0].movies[0].title}
                 fill
-                className="object-cover"
+                className="object-cover object-top"
                 sizes="100vw"
                 priority
               />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg)] via-[var(--bg)]/60 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 px-5 pb-7 sm:px-8 sm:pb-10">
-              <p className="eyebrow">Featured</p>
-              <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-4xl">
+            <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg)] via-[var(--bg)]/50 to-[var(--bg)]/20" />
+            <div className="absolute bottom-0 left-0 right-0 px-5 pb-8 sm:px-8 sm:pb-10">
+              <p className="eyebrow mb-2 text-[var(--accent)]">Featured</p>
+              <h1 className="text-3xl font-bold tracking-tight sm:text-5xl">
                 {sections[0].movies[0].title}
               </h1>
               {sections[0].movies[0].overview && (
-                <p className="mt-2.5 line-clamp-2 max-w-lg text-sm leading-relaxed text-white/70">
+                <p className="mt-3 line-clamp-2 max-w-lg text-sm leading-relaxed text-white/65">
                   {sections[0].movies[0].overview}
                 </p>
+              )}
+              {sections[0].movies[0].vote_average > 0 && (
+                <div className="mt-4 flex items-center gap-3">
+                  <span className="rounded-lg bg-[var(--accent-warm)]/20 px-2.5 py-1 text-sm font-bold text-[var(--accent-warm)]">
+                    ★ {sections[0].movies[0].vote_average.toFixed(1)}
+                  </span>
+                  <span className="text-xs uppercase tracking-wider text-white/45">
+                    {sections[0].movies[0].release_date
+                      ? new Date(
+                          sections[0].movies[0].release_date,
+                        ).getFullYear()
+                      : ""}
+                  </span>
+                </div>
               )}
             </div>
           </div>
         </section>
       )}
 
-      {/* Genre Scroller */}
+      {/* Genre Grid — Stitch-inspired card layout */}
       <section data-discover-item className="mt-8 opacity-0">
-        <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/55">
+        <h2 className="mb-4 text-xs font-semibold uppercase tracking-widest text-white/55">
           Browse by Genre
         </h2>
-        <div className="scrollbar-hide -mx-4 flex gap-2 overflow-x-auto px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
           {genres
             .filter((g) => g.id !== 10770)
+            .slice(0, 12)
             .map((genre) => {
-              const Icon = GENRE_ICONS[genre.id] || Film;
+              const Icon = GENRE_ICONS[genre.id] || Popcorn;
               return (
                 <Link
                   key={genre.id}
                   href={`/discover/genre/${genre.id}`}
-                  className="flex shrink-0 items-center gap-2 rounded-full border border-white/8 bg-white/5 px-4 py-2.5 text-sm font-medium transition-colors hover:bg-white/10"
+                  className="group flex flex-col items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] px-3 py-4 text-center transition-all hover:border-[var(--accent)]/25 hover:bg-[var(--accent)]/6"
                 >
                   <Icon
-                    className="h-3.5 w-3.5 text-white/45"
-                    strokeWidth={1.6}
+                    className="h-5 w-5 text-white/40 transition-colors group-hover:text-[var(--accent)]"
+                    strokeWidth={1.5}
                   />
-                  <span className="whitespace-nowrap">{genre.name}</span>
+                  <span className="text-xs font-medium text-white/70 group-hover:text-white/90">
+                    {genre.name}
+                  </span>
                 </Link>
               );
             })}

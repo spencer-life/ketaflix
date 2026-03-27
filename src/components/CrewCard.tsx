@@ -6,7 +6,7 @@ import { useAuth } from "@/lib/auth-context";
 import { getCrewMemberCount } from "@/lib/db";
 import { setSession } from "@/lib/supabase";
 import type { Room } from "@/types";
-import { Users, ChevronRight } from "lucide-react";
+import { UsersRound, ChevronRight } from "lucide-react";
 
 export default function CrewCard({ crew }: { crew: Room }) {
   const router = useRouter();
@@ -30,7 +30,10 @@ export default function CrewCard({ crew }: { crew: Room }) {
       className="group surface-card flex w-full items-center gap-4 p-4 text-left transition-all hover:border-white/12 hover:bg-white/[0.04]"
     >
       <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--accent-soft)] transition-transform group-hover:scale-105">
-        <Users className="h-5 w-5 text-[var(--accent)]" strokeWidth={1.8} />
+        <UsersRound
+          className="h-5 w-5 text-[var(--accent)]"
+          strokeWidth={1.8}
+        />
       </div>
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-semibold">

@@ -14,7 +14,7 @@ import {
 import { tmdbImage } from "@/lib/tmdb";
 import FollowButton from "@/components/FollowButton";
 import Link from "next/link";
-import { Settings, Film, Clapperboard } from "lucide-react";
+import { SlidersHorizontal, Popcorn, Clapperboard } from "lucide-react";
 import type { Profile, ActivityFeedItem } from "@/types";
 
 export default function ProfilePage({
@@ -108,14 +108,8 @@ export default function ProfilePage({
           }}
         >
           <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
-            {/* Avatar */}
-            <div
-              className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full text-4xl shadow-lg"
-              style={{
-                background:
-                  "linear-gradient(135deg, rgba(52,211,153,0.15), rgba(245,158,11,0.1))",
-              }}
-            >
+            {/* Avatar — Stitch-inspired glow ring */}
+            <div className="avatar-glow flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-[var(--bg)] text-4xl shadow-lg">
               {profile.avatar_emoji || "🎬"}
             </div>
 
@@ -135,7 +129,10 @@ export default function ProfilePage({
                     href="/settings"
                     className="inline-flex items-center gap-1.5 rounded-xl border border-white/8 bg-white/[0.04] px-4 py-2 text-sm text-white/55 transition-all hover:border-white/14 hover:text-white/75"
                   >
-                    <Settings className="h-3.5 w-3.5" strokeWidth={1.8} />
+                    <SlidersHorizontal
+                      className="h-3.5 w-3.5"
+                      strokeWidth={1.8}
+                    />
                     Edit Profile
                   </Link>
                 ) : (
@@ -153,23 +150,16 @@ export default function ProfilePage({
                 </p>
               )}
 
-              {/* Stats row */}
-              <div className="mt-5 flex gap-4">
+              {/* Stats row — Stitch-inspired emerald stat boxes */}
+              <div className="mt-5 flex gap-3">
                 {[
                   { value: followers, label: "followers" },
                   { value: following, label: "following" },
                   { value: filmCount, label: "films" },
                 ].map((stat) => (
-                  <div
-                    key={stat.label}
-                    className="rounded-xl border border-white/6 bg-white/[0.03] px-3 py-2 text-center"
-                  >
-                    <p className="text-lg font-bold text-[var(--accent)]">
-                      {stat.value}
-                    </p>
-                    <p className="text-[10px] uppercase tracking-wider text-white/50">
-                      {stat.label}
-                    </p>
+                  <div key={stat.label} className="stat-box flex-1">
+                    <span className="stat-value">{stat.value}</span>
+                    <span className="stat-label">{stat.label}</span>
                   </div>
                 ))}
               </div>
@@ -187,7 +177,7 @@ export default function ProfilePage({
           {activity.length === 0 ? (
             <div className="flex flex-col items-center gap-3 rounded-[22px] border border-white/6 bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-10 text-center">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/[0.04]">
-                <Film className="h-7 w-7 text-white/50" strokeWidth={1.4} />
+                <Popcorn className="h-7 w-7 text-white/50" strokeWidth={1.4} />
               </div>
               <p className="text-sm font-medium text-white/55">
                 No activity yet

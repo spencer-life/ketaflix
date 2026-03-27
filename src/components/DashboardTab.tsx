@@ -3,12 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import {
-  Film,
-  ListVideo,
+  Popcorn,
+  ListTodo,
   Star,
-  Users,
+  UsersRound,
   Clapperboard,
-  ListPlus,
+  CirclePlus,
 } from "lucide-react";
 import { getCrewMembers, getKetaqueue, getWatched } from "@/lib/db";
 import { supabase } from "@/lib/supabase";
@@ -169,7 +169,7 @@ export default function DashboardTab({
         members.length === 1
           ? "1 member in crew"
           : `${members.length} members in crew`,
-      icon: Users,
+      icon: UsersRound,
     },
     {
       label: "On Deck",
@@ -178,7 +178,7 @@ export default function DashboardTab({
         ketaqueue.length === 1
           ? "1 film waiting"
           : `${ketaqueue.length} films waiting`,
-      icon: ListVideo,
+      icon: ListTodo,
     },
     {
       label: "Ketalogs",
@@ -187,7 +187,7 @@ export default function DashboardTab({
         watched.length === 1
           ? "1 movie logged"
           : `${watched.length} movies logged`,
-      icon: Film,
+      icon: Popcorn,
     },
     {
       label: "Avg Score",
@@ -407,7 +407,10 @@ export default function DashboardTab({
           ) : (
             <div className="mt-5 flex flex-col items-center gap-3 rounded-2xl border border-white/6 bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-8 text-center">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/[0.04]">
-                <ListPlus className="h-6 w-6 text-white/55" strokeWidth={1.5} />
+                <CirclePlus
+                  className="h-6 w-6 text-white/55"
+                  strokeWidth={1.5}
+                />
               </div>
               <p className="text-sm font-medium text-white/45">
                 Ketaqueue is empty

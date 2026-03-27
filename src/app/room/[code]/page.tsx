@@ -11,23 +11,23 @@ import WatchedTab from "@/components/WatchedTab";
 import StatsTab from "@/components/StatsTab";
 import type { Room } from "@/types";
 import {
-  LayoutDashboard,
-  ListVideo,
-  BookOpen,
-  BarChart3,
+  Activity,
+  ListTodo,
+  Library,
+  TrendingUp,
   Copy,
   Check,
-  LogOut,
-  Users,
+  DoorOpen,
+  UsersRound,
 } from "lucide-react";
 
 type Tab = "dashboard" | "ketaqueue" | "watched" | "stats";
 
-const TABS: { id: Tab; label: string; icon: typeof LayoutDashboard }[] = [
-  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "ketaqueue", label: "Ketaqueue", icon: ListVideo },
-  { id: "watched", label: "Ketalogs", icon: BookOpen },
-  { id: "stats", label: "Stats", icon: BarChart3 },
+const TABS: { id: Tab; label: string; icon: typeof Activity }[] = [
+  { id: "dashboard", label: "Dashboard", icon: Activity },
+  { id: "ketaqueue", label: "Ketaqueue", icon: ListTodo },
+  { id: "watched", label: "Ketalogs", icon: Library },
+  { id: "stats", label: "Stats", icon: TrendingUp },
 ];
 
 export default function RoomPage({
@@ -133,7 +133,7 @@ export default function RoomPage({
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex items-start gap-3">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[var(--accent-soft)]">
-                <Users
+                <UsersRound
                   className="h-6 w-6 text-[var(--accent)]"
                   strokeWidth={1.8}
                 />
@@ -165,12 +165,12 @@ export default function RoomPage({
               title="Leave crew"
               className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/6 bg-white/[0.03] text-white/55 transition-all hover:border-red-500/20 hover:bg-red-500/5 hover:text-red-300/60"
             >
-              <LogOut className="h-4 w-4" strokeWidth={1.6} />
+              <DoorOpen className="h-4 w-4" strokeWidth={1.6} />
             </button>
           </div>
 
-          {/* Tab bar */}
-          <div className="mt-5 flex gap-1 overflow-x-auto rounded-2xl border border-white/6 bg-black/20 p-1.5">
+          {/* Tab bar — Stitch-inspired underline tabs */}
+          <div className="mt-5 flex gap-4 overflow-x-auto border-b border-white/6">
             {TABS.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -178,14 +178,13 @@ export default function RoomPage({
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-3 py-3 text-xs font-medium transition-all sm:px-5 ${
-                    isActive
-                      ? "bg-white/8 text-white shadow-sm"
-                      : "text-white/55 hover:text-white/60"
-                  }`}
+                  className={`tab-underline flex items-center gap-1.5 whitespace-nowrap pb-3 ${isActive ? "active" : ""}`}
                 >
-                  <Icon className="h-4 w-4" strokeWidth={isActive ? 2 : 1.6} />
-                  <span className="text-[10px] sm:text-xs">{tab.label}</span>
+                  <Icon
+                    className="h-3.5 w-3.5"
+                    strokeWidth={isActive ? 2 : 1.5}
+                  />
+                  <span>{tab.label}</span>
                 </button>
               );
             })}

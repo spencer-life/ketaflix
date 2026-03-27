@@ -3,53 +3,42 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
-import { Compass, Users, User, Settings } from "lucide-react";
-import type { LucideProps } from "lucide-react";
-
-/** Tiny horse head icon matching the Ketaflix brand logo */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function HorseIcon({ className, strokeWidth, ...props }: LucideProps) {
-  return (
-    <svg
-      viewBox="0 0 64 64"
-      fill="currentColor"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      {...props}
-    >
-      <path d="M52 60 C58 45 56 25 50 12 L46 4 L40 14 L34 6 L30 18 C20 15 15 22 12 30 C8 35 8 43 14 47 C24 51 34 46 38 36 C42 48 40 55 36 60 Z" />
-    </svg>
-  );
-}
+import {
+  Clapperboard,
+  Telescope,
+  UsersRound,
+  CircleUserRound,
+  SlidersHorizontal,
+} from "lucide-react";
 
 const NAV_ITEMS = [
   {
     href: "/",
-    icon: HorseIcon,
+    icon: Clapperboard,
     label: "Feed",
     match: (p: string) => p === "/",
   },
   {
     href: "/discover",
-    icon: Compass,
+    icon: Telescope,
     label: "Discover",
     match: (p: string) => p.startsWith("/discover"),
   },
   {
     href: "/rooms",
-    icon: Users,
+    icon: UsersRound,
     label: "Ketacrew",
     match: (p: string) => p.startsWith("/room"),
   },
   {
     href: "__profile__",
-    icon: User,
+    icon: CircleUserRound,
     label: "Profile",
     match: (p: string) => p.startsWith("/profile"),
   },
   {
     href: "/settings",
-    icon: Settings,
+    icon: SlidersHorizontal,
     label: "Settings",
     match: (p: string) => p === "/settings",
   },

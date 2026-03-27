@@ -11,7 +11,7 @@ import CrewCard from "@/components/CrewCard";
 import ProfileCard from "@/components/ProfileCard";
 import Link from "next/link";
 import { GENRE_ICONS } from "@/lib/genre-icons";
-import { Film, Users, ChevronRight } from "lucide-react";
+import { Popcorn, UsersRound, ChevronRight } from "lucide-react";
 import KetaflixLogo from "@/components/KetaflixLogo";
 import type {
   ActivityFeedItem,
@@ -170,7 +170,7 @@ function FeedPage() {
           <section className="mb-10">
             <div className="scrollbar-hide -mx-4 flex gap-2 overflow-x-auto px-4">
               {genres.slice(0, 12).map((genre) => {
-                const Icon = GENRE_ICONS[genre.id] || Film;
+                const Icon = GENRE_ICONS[genre.id] || Popcorn;
                 return (
                   <Link
                     key={genre.id}
@@ -220,7 +220,7 @@ function FeedPage() {
               }}
             >
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[var(--accent-soft)] transition-transform group-hover:scale-105">
-                <Users
+                <UsersRound
                   className="h-6 w-6 text-[var(--accent)]"
                   strokeWidth={1.8}
                 />

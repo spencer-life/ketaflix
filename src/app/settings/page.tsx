@@ -6,7 +6,7 @@ import { useAuth } from "@/lib/auth-context";
 import { updateProfile } from "@/lib/db";
 import { signOut } from "@/lib/auth";
 import { clearSession } from "@/lib/supabase";
-import { LogOut } from "lucide-react";
+import { DoorOpen } from "lucide-react";
 
 const EMOJI_OPTIONS = [
   "🎬",
@@ -200,7 +200,7 @@ export default function SettingsPage() {
             onClick={handleSignOut}
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-white/[0.04] px-4 py-3 text-sm text-white/50 transition-all hover:bg-red-500/8 hover:text-red-300"
           >
-            <LogOut className="h-4 w-4" strokeWidth={1.6} />
+            <DoorOpen className="h-4 w-4" strokeWidth={1.6} />
             Sign Out
           </button>
         </div>
