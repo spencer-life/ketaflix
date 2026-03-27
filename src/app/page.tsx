@@ -295,7 +295,7 @@ function FeedPage() {
                         </div>
                       )}
                     </div>
-                    <p className="mt-1.5 truncate text-xs text-white/60">
+                    <p className="mt-2 truncate text-[13px] font-semibold leading-tight tracking-tight text-white/90">
                       {movie.title}
                     </p>
                   </div>

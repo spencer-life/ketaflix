@@ -117,19 +117,50 @@ export default function DiscoverPage() {
       ref={containerRef}
       className="mx-auto min-h-dvh w-full max-w-6xl px-4 pb-10 sm:px-6 lg:px-8"
     >
-      {/* Header */}
-      <header className="py-8" data-discover-item>
-        <p className="eyebrow">Explore</p>
-        <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
-          Find your next film
-        </h1>
-        <p className="mt-2 text-sm text-white/55">
-          Browse by genre, check what is trending, or explore all-time greats.
-        </p>
-      </header>
+      {/* Hero Featured Movie */}
+      {sections[0]?.movies[0] && (
+        <section className="-mx-4 sm:-mx-6 lg:-mx-8" data-discover-item>
+          <div className="relative aspect-[16/10] w-full overflow-hidden sm:aspect-[16/7]">
+            {tmdbImage(
+              sections[0].movies[0].backdrop_path ??
+                sections[0].movies[0].poster_path,
+              "w1280",
+            ) && (
+              <Image
+                src={
+                  tmdbImage(
+                    sections[0].movies[0].backdrop_path ??
+                      sections[0].movies[0].poster_path,
+                    "w1280",
+                  )!
+                }
+                alt={sections[0].movies[0].title}
+                fill
+                className="object-cover"
+                sizes="100vw"
+                priority
+              />
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#08090c] via-[#08090c]/40 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 px-5 pb-6 sm:px-8 sm:pb-8">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-[var(--accent)]">
+                Featured
+              </p>
+              <h1 className="mt-1.5 text-2xl font-bold tracking-tight sm:text-4xl">
+                {sections[0].movies[0].title}
+              </h1>
+              {sections[0].movies[0].overview && (
+                <p className="mt-2 line-clamp-2 max-w-lg text-sm leading-relaxed text-white/60">
+                  {sections[0].movies[0].overview}
+                </p>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Genre Grid */}
-      <section data-discover-item className="opacity-0">
+      <section data-discover-item className="mt-8 opacity-0">
         <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/40">
           Browse by Genre
         </h2>
@@ -186,10 +217,10 @@ export default function DiscoverPage() {
                     </div>
                   )}
                 </div>
-                <p className="mt-2 truncate text-xs font-medium text-white/70">
+                <p className="mt-2 truncate text-[13px] font-semibold leading-tight tracking-tight text-white/90">
                   {movie.title}
                 </p>
-                <p className="text-xs text-white/35">
+                <p className="mt-0.5 text-[11px] text-white/35">
                   {movie.release_date
                     ? new Date(movie.release_date).getFullYear()
                     : ""}
@@ -233,10 +264,10 @@ export default function DiscoverPage() {
                     </div>
                   )}
                 </div>
-                <p className="mt-2 truncate text-xs font-medium text-white/70">
+                <p className="mt-2 truncate text-[13px] font-semibold leading-tight tracking-tight text-white/90">
                   {movie.title}
                 </p>
-                <p className="text-xs text-white/35">
+                <p className="mt-0.5 text-[11px] text-white/35">
                   {movie.release_date
                     ? new Date(movie.release_date).getFullYear()
                     : ""}

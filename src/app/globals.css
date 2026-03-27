@@ -11,7 +11,7 @@
   --surface-soft: rgba(255, 255, 255, 0.04);
   --border: rgba(255, 255, 255, 0.06);
   --border-strong: rgba(255, 255, 255, 0.12);
-  --accent: #00a651;
+  --accent: #0fa958;
   --accent-soft: rgba(0, 192, 48, 0.14);
   --accent-warm: #ff9f1c;
   --text-primary: #f7f8f8;
@@ -248,13 +248,14 @@ a {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #00a651 0%, #009045 100%);
+  background: linear-gradient(135deg, #0b8a44 0%, #097a3c 100%);
   color: #ffffff;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 0.85rem 1.2rem;
   font-size: 0.9rem;
   font-weight: 600;
+  letter-spacing: 0.02em;
   cursor: pointer;
   transition:
     transform 0.15s ease,
@@ -263,8 +264,8 @@ a {
 }
 
 .btn-primary:hover {
-  filter: brightness(1.08);
-  box-shadow: 0 8px 24px rgba(0, 166, 81, 0.2);
+  filter: brightness(1.1);
+  box-shadow: 0 6px 20px rgba(11, 138, 68, 0.25);
 }
 
 .btn-primary:active {
@@ -280,7 +281,7 @@ a {
   background: rgba(255, 255, 255, 0.06);
   color: var(--text-secondary);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 0.8rem 1rem;
   font-size: 0.9rem;
   cursor: pointer;
