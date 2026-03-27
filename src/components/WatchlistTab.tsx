@@ -12,9 +12,14 @@ import LogWatchedModal from "./LogWatchedModal";
 interface WatchlistTabProps {
   roomCode: string;
   username: string;
+  profileId?: string;
 }
 
-export default function WatchlistTab({ roomCode, username }: WatchlistTabProps) {
+export default function WatchlistTab({
+  roomCode,
+  username,
+  profileId,
+}: WatchlistTabProps) {
   const [items, setItems] = useState<WatchlistItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [showSearch, setShowSearch] = useState(false);
@@ -37,8 +42,13 @@ export default function WatchlistTab({ roomCode, username }: WatchlistTabProps) 
       .channel(`watchlist:${roomCode}`)
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "watchlist", filter: `room_code=eq.${roomCode}` },
-        () => loadWatchlist()
+        {
+          event: "*",
+          schema: "public",
+          table: "watchlist",
+          filter: `room_code=eq.${roomCode}`,
+        },
+        () => loadWatchlist(),
       )
       .subscribe();
 
@@ -66,7 +76,7 @@ export default function WatchlistTab({ roomCode, username }: WatchlistTabProps) 
   async function handleMovieSelected(movie: Movie) {
     setShowSearch(false);
     try {
-      await addToWatchlist(roomCode, movie.id, username);
+      await addToWatchlist(roomCode, movie.id, username, undefined, profileId);
     } catch {
       // Already in watchlist
     }
@@ -92,12 +102,19 @@ export default function WatchlistTab({ roomCode, username }: WatchlistTabProps) 
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="eyebrow">Watchlist</p>
-          <h2 className="mt-2 text-2xl font-bold tracking-tight">Your next stack</h2>
+          <h2 className="mt-2 text-2xl font-bold tracking-tight">
+            Your next stack
+          </h2>
           <p className="mt-1 text-sm text-white/55">
-            {items.length ? `${items.length} films waiting in the room.` : "Start building the list."}
+            {items.length
+              ? `${items.length} films waiting in the room.`
+              : "Start building the list."}
           </p>
         </div>
-        <button onClick={() => setShowSearch(true)} className="btn-primary sm:w-auto">
+        <button
+          onClick={() => setShowSearch(true)}
+          className="btn-primary sm:w-auto"
+        >
           Add Film
         </button>
       </div>
@@ -106,7 +123,9 @@ export default function WatchlistTab({ roomCode, username }: WatchlistTabProps) 
         <div className="surface-card empty-state rounded-[28px] p-10 text-center">
           <p className="text-4xl">🎬</p>
           <p className="mt-4 text-lg font-semibold">Nothing queued yet</p>
-          <p className="mt-2 text-sm text-white/50">Pick the first film and the poster wall starts filling in.</p>
+          <p className="mt-2 text-sm text-white/50">
+            Pick the first film and the poster wall starts filling in.
+          </p>
         </div>
       ) : (
         <div ref={gridRef} className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -171,22 +190,30 @@ function WatchlistCard({
             sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-4xl text-white/40">🎬</div>
+          <div className="flex h-full w-full items-center justify-center text-4xl text-white/40">
+            🎬
+          </div>
         )}
       </div>
 
       <div className="flex flex-col gap-4 p-4">
         <div>
           <p className="meta">{movie?.release_year ?? "Unknown year"}</p>
-          <h3 className="mt-2 text-lg font-semibold leading-tight">{movie?.title}</h3>
+          <h3 className="mt-2 text-lg font-semibold leading-tight">
+            {movie?.title}
+          </h3>
           <p className="mt-2 text-sm text-white/50">
             Added by {item.added_by}
-            {movie?.tmdb_rating ? ` · TMDB ${movie.tmdb_rating.toFixed(1)}` : ""}
+            {movie?.tmdb_rating
+              ? ` · TMDB ${movie.tmdb_rating.toFixed(1)}`
+              : ""}
           </p>
         </div>
 
         {movie?.overview && (
-          <p className="line-clamp-3 text-sm leading-6 text-white/55">{movie.overview}</p>
+          <p className="line-clamp-3 text-sm leading-6 text-white/55">
+            {movie.overview}
+          </p>
         )}
 
         {movie?.genres && movie.genres.length > 0 && (

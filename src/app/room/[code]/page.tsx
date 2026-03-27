@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { getSession, clearSession } from "@/lib/supabase";
+import { useAuth } from "@/lib/auth-context";
 import { getRoom } from "@/lib/db";
 import DashboardTab from "@/components/DashboardTab";
 import WatchlistTab from "@/components/WatchlistTab";
@@ -12,11 +13,19 @@ import type { Room } from "@/types";
 
 type Tab = "dashboard" | "watchlist" | "watched" | "stats";
 
-export default function RoomPage({ params }: { params: Promise<{ code: string }> }) {
+export default function RoomPage({
+  params,
+}: {
+  params: Promise<{ code: string }>;
+}) {
   const { code } = use(params);
   const router = useRouter();
+  const { user } = useAuth();
   const [room, setRoom] = useState<Room | null>(null);
-  const [session, setSessionState] = useState<{ username: string; roomCode: string } | null>(null);
+  const [session, setSessionState] = useState<{
+    username: string;
+    roomCode: string;
+  } | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>("dashboard");
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
@@ -24,10 +33,16 @@ export default function RoomPage({ params }: { params: Promise<{ code: string }>
 
   useEffect(() => {
     const s = getSession();
-    if (!s || s.roomCode !== code) { router.push("/"); return; }
+    if (!s || s.roomCode !== code) {
+      router.push("/");
+      return;
+    }
     setSessionState(s);
     getRoom(code).then((r) => {
-      if (!r) { router.push("/"); return; }
+      if (!r) {
+        router.push("/");
+        return;
+      }
       setRoom(r);
       setLoading(false);
     });
@@ -47,7 +62,11 @@ export default function RoomPage({ params }: { params: Promise<{ code: string }>
     });
   }, [activeTab, loading]);
 
-  function handleLeave() { clearSession(); router.push("/"); }
+  function handleLeave() {
+    clearSession();
+    router.push("/");
+  }
+
   function copyCode() {
     navigator.clipboard.writeText(code);
     setCopied(true);
@@ -56,8 +75,10 @@ export default function RoomPage({ params }: { params: Promise<{ code: string }>
 
   if (loading) {
     return (
-      <div className="min-h-dvh flex items-center justify-center">
-        <div className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>Loading...</div>
+      <div className="flex min-h-dvh items-center justify-center">
+        <div className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>
+          Loading...
+        </div>
       </div>
     );
   }
@@ -69,20 +90,25 @@ export default function RoomPage({ params }: { params: Promise<{ code: string }>
     { id: "stats", label: "Stats" },
   ];
 
+  // Pass profileId to child components when authenticated
+  const profileId = user?.id;
+
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col px-4 pb-10 sm:px-6 lg:px-8">
       <header
-        className="sticky top-0 z-50 -mx-4 mb-6 border-b border-white/5 px-4 py-4 backdrop-blur sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
+        className="sticky top-0 z-40 -mx-4 mb-6 border-b border-white/5 px-4 py-4 backdrop-blur sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
         style={{ background: "rgba(20,24,28,0.84)" }}
       >
         <div className="mx-auto flex max-w-6xl flex-col gap-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="eyebrow">Screening Room</p>
-              <h1 className="mt-2 text-3xl font-bold tracking-tight">Ketaflix</h1>
+              <h1 className="mt-2 text-3xl font-bold tracking-tight">
+                Ketaflix
+              </h1>
               <button
                 onClick={copyCode}
-                className="mt-2 flex items-center gap-2 text-left text-sm font-mono text-white/50 transition-colors hover:text-white/75"
+                className="mt-2 flex items-center gap-2 text-left font-mono text-sm text-white/50 transition-colors hover:text-white/75"
               >
                 <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 tracking-[0.3em]">
                   {code}
@@ -93,8 +119,13 @@ export default function RoomPage({ params }: { params: Promise<{ code: string }>
 
             <div className="flex flex-wrap items-center gap-2">
               <span className="info-chip">{session?.username}</span>
-              {room?.name ? <span className="info-chip">{room.name}</span> : null}
-              <button onClick={handleLeave} className="btn-ghost px-4 py-3 text-sm">
+              {room?.name ? (
+                <span className="info-chip">{room.name}</span>
+              ) : null}
+              <button
+                onClick={handleLeave}
+                className="btn-ghost px-4 py-3 text-sm"
+              >
                 Leave Room
               </button>
             </div>
@@ -116,9 +147,19 @@ export default function RoomPage({ params }: { params: Promise<{ code: string }>
 
       <main ref={contentRef} className="flex-1 opacity-0">
         {activeTab === "dashboard" && session && room && (
-          <DashboardTab room={room} roomCode={code} username={session.username} />
+          <DashboardTab
+            room={room}
+            roomCode={code}
+            username={session.username}
+          />
         )}
-        {activeTab === "watchlist" && session && <WatchlistTab roomCode={code} username={session.username} />}
+        {activeTab === "watchlist" && session && (
+          <WatchlistTab
+            roomCode={code}
+            username={session.username}
+            profileId={profileId}
+          />
+        )}
         {activeTab === "watched" && session && <WatchedTab roomCode={code} />}
         {activeTab === "stats" && <StatsTab roomCode={code} />}
       </main>

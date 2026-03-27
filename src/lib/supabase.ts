@@ -1,19 +1,20 @@
-import { createClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
 
 const supabaseUrl =
   process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://placeholder.supabase.co";
 const supabaseAnonKey =
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "placeholder-anon-key";
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
-    detectSessionInUrl: false,
-  },
-});
+// Browser client — used in client components
+export function createClient() {
+  return createBrowserClient(supabaseUrl, supabaseAnonKey);
+}
 
-// Session helpers (localStorage-based, no Supabase Auth)
+// Default export for backward compatibility with existing db.ts calls
+export const supabase = createClient();
+
+// ─── Legacy Session Helpers (room-based, localStorage) ─────────────────────
+// Kept for room functionality — rooms still use room_code sessions
 export const SESSION_KEY = "ketamovies_session";
 
 export interface KetaSession {
