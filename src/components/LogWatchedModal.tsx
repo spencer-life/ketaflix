@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { logWatched, getRoomMembers } from "@/lib/db";
+import { logWatched, getCrewMembers } from "@/lib/db";
 import { tmdbImage } from "@/lib/tmdb";
 import { VIBE_TAGS } from "@/types";
 import type { KetaqueueItem } from "@/types";
@@ -34,7 +34,7 @@ export default function LogWatchedModal({
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    getRoomMembers(roomCode).then((m) => {
+    getCrewMembers(roomCode).then((m) => {
       const resolvedMembers = m.length ? m : [username];
       setMembers(resolvedMembers);
       const initial: Record<string, number> = {};

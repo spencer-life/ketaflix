@@ -25,7 +25,7 @@ npm start            # Production server
 - Username-only auth (no email/password) — intentionally simple for friend groups
 - Supabase Realtime for live watchlist sync
 - PWA-enabled for mobile install
-- Room-based model: users create/join rooms via shareable codes
+- Crew-based model (Ketacrew): users create/join crews via shareable codes
 
 ## Code Conventions
 - Use `clsx` + `tailwind-merge` for conditional class composition

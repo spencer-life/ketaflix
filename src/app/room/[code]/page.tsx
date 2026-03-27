@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { getSession, clearSession } from "@/lib/supabase";
 import { useAuth } from "@/lib/auth-context";
-import { getRoom } from "@/lib/db";
+import { getCrew } from "@/lib/db";
 import DashboardTab from "@/components/DashboardTab";
 import KetaqueueTab from "@/components/KetaqueueTab";
 import WatchedTab from "@/components/WatchedTab";
@@ -38,7 +38,7 @@ export default function RoomPage({
       return;
     }
     setSessionState(s);
-    getRoom(code).then((r) => {
+    getCrew(code).then((r) => {
       if (!r) {
         router.push("/");
         return;
@@ -102,7 +102,7 @@ export default function RoomPage({
         <div className="mx-auto flex max-w-6xl flex-col gap-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="eyebrow">Screening Room</p>
+              <p className="eyebrow">Ketacrew</p>
               <h1 className="mt-2 text-3xl font-bold tracking-tight">
                 Ketaflix
               </h1>
@@ -113,7 +113,7 @@ export default function RoomPage({
                 <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 tracking-[0.3em]">
                   {code}
                 </span>
-                <span>{copied ? "Copied" : "Tap to copy room code"}</span>
+                <span>{copied ? "Copied" : "Tap to copy crew code"}</span>
               </button>
             </div>
 
@@ -126,7 +126,7 @@ export default function RoomPage({
                 onClick={handleLeave}
                 className="btn-ghost px-4 py-3 text-sm"
               >
-                Leave Room
+                Leave Crew
               </button>
             </div>
           </div>

@@ -81,7 +81,7 @@ export default function WatchedTab({ roomCode }: WatchedTabProps) {
         <p className="text-4xl">📽️</p>
         <p className="mt-4 text-lg font-semibold">No ketalog entries yet</p>
         <p className="mt-2 text-sm text-white/50">
-          Mark something watched and the room history starts here.
+          Mark something watched and the crew history starts here.
         </p>
       </div>
     );

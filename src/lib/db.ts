@@ -10,9 +10,11 @@ import type {
   ActivityType,
 } from "@/types";
 
-// ─── Rooms ────────────────────────────────────────────────────────────────────
+// ─── Ketacrews ───────────────────────────────────────────────────────────────
+// NOTE: Supabase tables are still named "rooms" / "users" — no risky migration.
+// All app-level code uses "Ketacrew" terminology.
 
-export async function getOrCreateRoom(
+export async function getOrCreateCrew(
   code: string,
   createdBy: string,
 ): Promise<Room> {
@@ -26,7 +28,7 @@ export async function getOrCreateRoom(
 
   const { data, error } = await supabase
     .from("rooms")
-    .insert({ code, created_by: createdBy, name: `${createdBy}'s Room` })
+    .insert({ code, created_by: createdBy, name: `${createdBy}'s Crew` })
     .select()
     .single();
 
@@ -34,7 +36,7 @@ export async function getOrCreateRoom(
   return data;
 }
 
-export async function getRoom(code: string): Promise<Room | null> {
+export async function getCrew(code: string): Promise<Room | null> {
   const { data } = await supabase
     .from("rooms")
     .select("*")
@@ -43,7 +45,7 @@ export async function getRoom(code: string): Promise<Room | null> {
   return data;
 }
 
-export async function getRoomMembers(roomCode: string): Promise<string[]> {
+export async function getCrewMembers(roomCode: string): Promise<string[]> {
   const { data } = await supabase
     .from("users")
     .select("username")
@@ -53,7 +55,7 @@ export async function getRoomMembers(roomCode: string): Promise<string[]> {
 
 // ─── Users ────────────────────────────────────────────────────────────────────
 
-export async function joinRoom(
+export async function joinCrew(
   username: string,
   roomCode: string,
   profileId?: string,
@@ -74,6 +76,29 @@ export async function joinRoom(
       data: { room_code: roomCode },
     }).catch(() => {});
   }
+}
+
+export async function getUserCrews(profileId: string): Promise<Room[]> {
+  const { data: userRows } = await supabase
+    .from("users")
+    .select("room_code")
+    .eq("profile_id", profileId);
+  if (!userRows || userRows.length === 0) return [];
+  const codes = userRows.map((r) => r.room_code);
+  const { data: rooms } = await supabase
+    .from("rooms")
+    .select("*")
+    .in("code", codes)
+    .order("created_at", { ascending: false });
+  return (rooms ?? []) as Room[];
+}
+
+export async function getCrewMemberCount(roomCode: string): Promise<number> {
+  const { count } = await supabase
+    .from("users")
+    .select("*", { count: "exact", head: true })
+    .eq("room_code", roomCode);
+  return count ?? 0;
 }
 
 // ─── Movies ───────────────────────────────────────────────────────────────────
@@ -170,6 +195,19 @@ export async function getWatched(roomCode: string): Promise<WatchedItem[]> {
 
   if (error) throw error;
   return data ?? [];
+}
+
+export async function getRecentWatchedByProfile(
+  profileId: string,
+  limit = 10,
+): Promise<WatchedItem[]> {
+  const { data } = await supabase
+    .from("watched")
+    .select("*, movie:movies(*)")
+    .eq("profile_id", profileId)
+    .order("watched_at", { ascending: false })
+    .limit(limit);
+  return (data ?? []) as WatchedItem[];
 }
 
 export async function logWatched(params: {

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Film, ListVideo, Star, Users } from "lucide-react";
-import { getRoomMembers, getKetaqueue, getWatched } from "@/lib/db";
+import { getCrewMembers, getKetaqueue, getWatched } from "@/lib/db";
 import { supabase } from "@/lib/supabase";
 import { getAverageRating } from "@/lib/utils";
 import { tmdbImage } from "@/lib/tmdb";
@@ -33,7 +33,7 @@ export default function DashboardTab({
       const [ketaqueueData, watchedData, memberData] = await Promise.all([
         getKetaqueue(roomCode),
         getWatched(roomCode),
-        getRoomMembers(roomCode),
+        getCrewMembers(roomCode),
       ]);
 
       if (!active) return;
@@ -160,8 +160,8 @@ export default function DashboardTab({
       value: members.length.toString(),
       sub:
         members.length === 1
-          ? "1 member in room"
-          : `${members.length} members in room`,
+          ? "1 member in crew"
+          : `${members.length} members in crew`,
       icon: Users,
     },
     {
@@ -217,13 +217,13 @@ export default function DashboardTab({
               Welcome back, {username}.
             </h2>
             <p className="mt-4 max-w-xl text-base leading-7 text-white/70">
-              {room.name ?? `${room.created_by}'s room`} is live. Track what is
-              queued, what just got logged, and who is driving the room’s taste
-              tonight.
+              {room.name ?? `${room.created_by}’s Crew`} is live. Track what is
+              queued, what just got logged, and who is driving the crew&apos;s
+              taste tonight.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
-              <span className="info-chip">Room {room.code}</span>
+              <span className="info-chip">Crew {room.code}</span>
               <span className="info-chip">Created by {room.created_by}</span>
               {topPicker && (
                 <span className="info-chip">Top picker {topPicker[0]}</span>
@@ -391,7 +391,7 @@ export default function DashboardTab({
         >
           <p className="eyebrow">Crew</p>
           <h3 className="mt-2 text-2xl font-semibold tracking-tight">
-            Who is in the room
+            Who&apos;s in the crew
           </h3>
 
           <div className="mt-5 flex flex-wrap gap-2">

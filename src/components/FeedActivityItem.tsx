@@ -15,9 +15,9 @@ function activityVerb(type: ActivityType): string {
     case "watched":
       return "watched";
     case "joined_room":
-      return "joined a room";
+      return "joined a Ketacrew";
     case "created_room":
-      return "created a room";
+      return "created a Ketacrew";
     case "followed":
       return "started following someone";
     default:
@@ -84,7 +84,7 @@ export default function FeedActivityItem({ item }: { item: ActivityFeedItem }) {
             </div>
           )}
 
-        <p className="mt-1.5 text-xs text-white/25">
+        <p className="mt-1.5 text-xs text-white/40">
           {timeAgo(item.created_at)}
         </p>
       </div>
@@ -93,7 +93,7 @@ export default function FeedActivityItem({ item }: { item: ActivityFeedItem }) {
       {item.movie_poster_path && (
         <Image
           src={tmdbImage(item.movie_poster_path, "w92")!}
-          alt=""
+          alt={item.movie_title ?? "Movie poster"}
           width={56}
           height={80}
           className="shrink-0 rounded-lg object-cover"

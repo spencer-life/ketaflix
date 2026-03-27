@@ -5,8 +5,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Ketaflix",
-  description:
-    "A shared movie room with a darker, ketalog-style Letterboxd feel.",
+  description: "Movie crews with a ketalog-style Letterboxd feel.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,

@@ -178,7 +178,7 @@ export default function ProfilePage({
                   {item.movie_poster_path && (
                     <Image
                       src={tmdbImage(item.movie_poster_path, "w92")!}
-                      alt=""
+                      alt={item.movie_title ?? "Movie poster"}
                       width={44}
                       height={64}
                       className="rounded-lg object-cover"
@@ -196,9 +196,9 @@ export default function ProfilePage({
                           "added to Ketaqueue"}
                         {item.activity_type === "watched" && "watched"}
                         {item.activity_type === "joined_room" &&
-                          "joined a room"}
+                          "joined a Ketacrew"}
                         {item.activity_type === "created_room" &&
-                          "created a room"}
+                          "created a Ketacrew"}
                         {item.activity_type === "followed" &&
                           "followed someone"}
                       </span>{" "}

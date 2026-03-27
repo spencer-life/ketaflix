@@ -5,10 +5,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function generateRoomCode(): string {
+export function generateCrewCode(): string {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  return Array.from({ length: 5 }, () =>
-    chars[Math.floor(Math.random() * chars.length)]
+  return Array.from(
+    { length: 5 },
+    () => chars[Math.floor(Math.random() * chars.length)],
   ).join("");
 }
 
@@ -25,7 +26,7 @@ export function formatYear(dateStr: string | null | undefined): string {
 }
 
 export function getAverageRating(
-  ratings: { username: string; score: number }[]
+  ratings: { username: string; score: number }[],
 ): number | null {
   if (!ratings.length) return null;
   return ratings.reduce((a, b) => a + b.score, 0) / ratings.length;

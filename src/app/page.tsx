@@ -1,13 +1,21 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import { useAuth } from "@/lib/auth-context";
-import { getFeed, searchProfiles } from "@/lib/db";
+import { getFeed, getUserCrews, searchProfiles } from "@/lib/db";
+import { getTrending, tmdbImage } from "@/lib/tmdb";
 import FeedActivityItem from "@/components/FeedActivityItem";
 import FeedMovieCard from "@/components/FeedMovieCard";
+import CrewCard from "@/components/CrewCard";
 import ProfileCard from "@/components/ProfileCard";
 import Link from "next/link";
-import type { ActivityFeedItem, Profile } from "@/types";
+import type {
+  ActivityFeedItem,
+  Profile,
+  Room,
+  TMDBSearchResult,
+} from "@/types";
 
 export default function HomePage() {
   const { user, profile, loading } = useAuth();
@@ -34,17 +42,20 @@ function FeedPage() {
   const [feed, setFeed] = useState<ActivityFeedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [suggestedUsers, setSuggestedUsers] = useState<Profile[]>([]);
+  const [crews, setCrews] = useState<Room[]>([]);
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!user) return;
     async function load() {
-      const [feedData, users] = await Promise.all([
+      const [feedData, users, userCrews] = await Promise.all([
         getFeed(user!.id),
         searchProfiles("", 6),
+        getUserCrews(user!.id),
       ]);
       setFeed(feedData);
       setSuggestedUsers(users.filter((u) => u.id !== user!.id));
+      setCrews(userCrews);
       setLoading(false);
     }
     load();
@@ -103,7 +114,7 @@ function FeedPage() {
       <header className="flex items-center justify-between py-6">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Ketaflix</h1>
-          <p className="text-sm text-white/45">Your feed</p>
+          <p className="text-sm text-white/45">What your crew is watching</p>
         </div>
         <div className="flex items-center gap-3">
           <Link
@@ -119,13 +130,43 @@ function FeedPage() {
       </header>
 
       <div ref={contentRef} className="opacity-0">
-        {feed.length === 0 && suggestedUsers.length === 0 ? (
+        {/* My Ketacrews */}
+        {crews.length > 0 && (
+          <section className="mb-8">
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-sm font-semibold uppercase tracking-wider text-white/40">
+                My Ketacrews
+              </h2>
+              <Link
+                href="/rooms"
+                className="text-xs text-[var(--accent)] transition-colors hover:text-[var(--accent)]/80"
+              >
+                Join or Create
+              </Link>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {crews.map((crew) => (
+                <CrewCard key={crew.code} crew={crew} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {feed.length === 0 &&
+        suggestedUsers.length === 0 &&
+        crews.length === 0 ? (
           <div className="empty-state rounded-2xl p-10 text-center">
             <p className="text-4xl">🎬</p>
             <h2 className="mt-4 text-lg font-bold">Your feed is empty</h2>
             <p className="mt-2 text-sm text-white/45">
-              Follow some friends to see what they&apos;re watching, or join a
-              room to get started.
+              Follow some friends to see what they&apos;re watching, or{" "}
+              <Link
+                href="/rooms"
+                className="text-[var(--accent)] hover:underline"
+              >
+                start a Ketacrew
+              </Link>{" "}
+              to get started.
             </p>
           </div>
         ) : (
@@ -188,10 +229,16 @@ function FeedPage() {
               )}
 
               <div className="mt-6 surface-card p-4">
-                <h3 className="text-sm font-semibold">Quick Actions</h3>
+                <h3 className="text-sm font-semibold">Ketacrew</h3>
                 <p className="mt-2 text-xs text-white/40">
-                  Join a room by entering a room code on the room page.
+                  Watch movies together with your crew.
                 </p>
+                <Link
+                  href="/rooms"
+                  className="mt-3 inline-block text-xs text-[var(--accent)] hover:underline"
+                >
+                  Join or Create a Ketacrew →
+                </Link>
               </div>
             </aside>
           </div>
@@ -209,6 +256,11 @@ function LandingPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const cardRef = useRef<HTMLElement>(null);
+  const [trending, setTrending] = useState<TMDBSearchResult[]>([]);
+
+  useEffect(() => {
+    getTrending().then(setTrending);
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -231,7 +283,7 @@ function LandingPage() {
 
     const colors = ["#00c030", "#72f48b", "#ff9f1c", "#ffffff"];
 
-    for (let index = 0; index < 72; index += 1) {
+    for (let index = 0; index < 40; index += 1) {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
@@ -352,12 +404,11 @@ function LandingPage() {
         <section className="fade-in-up max-w-2xl">
           <p className="eyebrow mb-4">Ketalogs</p>
           <h1 ref={titleRef} className="section-title gradient-text">
-            Ketaflix feels better when it looks like a film club, not a crypto
-            landing page.
+            Track films with your crew. Rate, vibe, repeat.
           </h1>
           <p className="mt-5 max-w-xl text-base leading-7 text-white/70 sm:text-lg">
-            Spin up a room, stack a Ketaqueue, and log each movie like a proper
-            ketalog entry. Follow friends, see what they&apos;re watching.
+            Build a Ketaqueue, log your Ketalogs, and share the experience with
+            your Ketacrew.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
@@ -383,9 +434,9 @@ function LandingPage() {
             </div>
             <div className="surface-soft p-4">
               <p className="meta">Connect</p>
-              <p className="mt-2 text-2xl font-bold">Friends</p>
+              <p className="mt-2 text-2xl font-bold">Ketacrew</p>
               <p className="mt-1 text-sm text-white/55">
-                See what your crew is watching.
+                Your people, your movie nights.
               </p>
             </div>
           </div>
@@ -417,6 +468,35 @@ function LandingPage() {
           </p>
         </section>
       </div>
+
+      {/* Trending poster strip */}
+      {trending.length > 0 && (
+        <div className="relative z-10 mt-12">
+          <p className="mb-4 text-center text-sm font-semibold uppercase tracking-wider text-white/30">
+            Trending This Week
+          </p>
+          <div className="scrollbar-hide flex gap-3 overflow-x-auto pb-2">
+            {trending.slice(0, 10).map((movie) => {
+              const poster = tmdbImage(movie.poster_path, "w342");
+              if (!poster) return null;
+              return (
+                <div
+                  key={movie.id}
+                  className="poster-frame aspect-[2/3] w-28 shrink-0 sm:w-32"
+                >
+                  <Image
+                    src={poster}
+                    alt={movie.title}
+                    fill
+                    className="object-cover"
+                    sizes="128px"
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </main>
   );
 }

@@ -113,9 +113,9 @@ export default function StatsTab({ roomCode }: StatsTabProps) {
   return (
     <div ref={containerRef} className="mt-2 flex flex-col gap-5">
       <div>
-        <p className="eyebrow">Room Stats</p>
+        <p className="eyebrow">Crew Stats</p>
         <h2 className="mt-2 text-2xl font-bold tracking-tight">
-          The room profile
+          The crew profile
         </h2>
         <p className="mt-1 text-sm text-white/55">
           A quick read on taste, activity, and who is steering the picks.

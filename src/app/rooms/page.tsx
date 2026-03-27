@@ -3,9 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
-import { getOrCreateRoom, joinRoom } from "@/lib/db";
+import { getOrCreateCrew, getUserCrews, joinCrew } from "@/lib/db";
+import CrewCard from "@/components/CrewCard";
+import type { Room } from "@/types";
 import { setSession } from "@/lib/supabase";
-import { generateRoomCode } from "@/lib/utils";
+import { generateCrewCode } from "@/lib/utils";
 
 export default function RoomsPage() {
   const router = useRouter();
@@ -14,11 +16,15 @@ export default function RoomsPage() {
   const [roomCode, setRoomCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [crews, setCrews] = useState<Room[]>([]);
   const cardRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
       router.push("/login");
+    }
+    if (user) {
+      getUserCrews(user.id).then(setCrews);
     }
   }, [user, authLoading, router]);
 
@@ -45,17 +51,17 @@ export default function RoomsPage() {
 
     const username = profile.display_name || profile.username;
     const code =
-      mode === "create" ? generateRoomCode() : roomCode.trim().toUpperCase();
+      mode === "create" ? generateCrewCode() : roomCode.trim().toUpperCase();
 
     if (!code || code.length < 4) {
-      setError("Enter a valid room code");
+      setError("Enter a valid crew code");
       return;
     }
 
     setLoading(true);
     try {
-      await getOrCreateRoom(code, username);
-      await joinRoom(username, code, user?.id);
+      await getOrCreateCrew(code, username);
+      await joinCrew(username, code, user?.id);
       setSession({ username, roomCode: code });
       router.push(`/room/${code}`);
     } catch {
@@ -76,14 +82,14 @@ export default function RoomsPage() {
     <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-4 py-10">
       <section ref={cardRef} className="surface-card p-6 opacity-0 sm:p-8">
         <div className="mb-8 text-center">
-          <p className="eyebrow mb-2">Screening Room</p>
+          <p className="eyebrow mb-2">Ketacrew</p>
           <h1 className="text-3xl font-bold tracking-tight">
-            {mode === "join" ? "Join a Room" : "Create a Room"}
+            {mode === "join" ? "Join a Ketacrew" : "Create a Ketacrew"}
           </h1>
           <p className="mt-2 text-sm text-white/50">
             {mode === "join"
-              ? "Enter a room code to join your crew."
-              : "Start a fresh screening room."}
+              ? "Enter a crew code to join."
+              : "Start a new Ketacrew."}
           </p>
         </div>
 
@@ -95,7 +101,7 @@ export default function RoomsPage() {
               className={`tab-btn ${mode === m ? "active" : ""}`}
               type="button"
             >
-              {m === "join" ? "Join Room" : "Create Room"}
+              {m === "join" ? "Join Crew" : "Create Crew"}
             </button>
           ))}
         </div>
@@ -103,7 +109,7 @@ export default function RoomsPage() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {mode === "join" ? (
             <div>
-              <label className="meta mb-2 block">Room Code</label>
+              <label className="meta mb-2 block">Crew Code</label>
               <input
                 className="keta-input font-mono uppercase tracking-[0.35em]"
                 placeholder="ABCD1"
@@ -115,7 +121,7 @@ export default function RoomsPage() {
             </div>
           ) : (
             <div className="surface-soft p-4 text-sm leading-6 text-white/60">
-              A fresh room code is generated automatically, ready to copy and
+              A fresh crew code is generated automatically, ready to copy and
               share.
             </div>
           )}
@@ -130,8 +136,8 @@ export default function RoomsPage() {
             {loading
               ? "Loading..."
               : mode === "join"
-                ? "Join Room"
-                : "Create Room"}
+                ? "Join Crew"
+                : "Create Crew"}
           </button>
         </form>
 
@@ -141,6 +147,20 @@ export default function RoomsPage() {
           </p>
         )}
       </section>
+
+      {/* Existing crews */}
+      {crews.length > 0 && (
+        <section className="mt-6">
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-white/40">
+            Your Ketacrews
+          </h2>
+          <div className="flex flex-col gap-2">
+            {crews.map((crew) => (
+              <CrewCard key={crew.code} crew={crew} />
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

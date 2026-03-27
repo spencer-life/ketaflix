@@ -108,7 +108,7 @@ export default function KetaqueueTab({
           </h2>
           <p className="mt-1 text-sm text-white/55">
             {items.length
-              ? `${items.length} films waiting in the room.`
+              ? `${items.length} films waiting in the crew.`
               : "Start building the list."}
           </p>
         </div>

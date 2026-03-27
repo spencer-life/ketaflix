@@ -16,6 +16,7 @@ export default function NavBar() {
 
   return (
     <nav
+      aria-label="Main navigation"
       className="sticky top-0 z-50 border-b border-white/5 backdrop-blur"
       style={{ background: "rgba(20,24,28,0.84)" }}
     >
@@ -41,7 +42,7 @@ export default function NavBar() {
             href="/rooms"
             className={`btn-ghost px-3 py-1.5 text-xs ${pathname.startsWith("/room") ? "border-white/12 bg-white/6" : ""}`}
           >
-            Rooms
+            Ketacrew
           </Link>
           <Link
             href={`/profile/${profile?.username}`}
@@ -51,6 +52,7 @@ export default function NavBar() {
           </Link>
           <Link
             href="/settings"
+            aria-label="Settings"
             className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
               pathname === "/settings"
                 ? "bg-[var(--accent-soft)] ring-1 ring-[var(--accent)]/30"
