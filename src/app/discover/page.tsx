@@ -142,16 +142,14 @@ export default function DiscoverPage() {
                 priority
               />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#08090c] via-[#08090c]/40 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 px-5 pb-6 sm:px-8 sm:pb-8">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-[var(--accent)]">
-                Featured
-              </p>
-              <h1 className="mt-1.5 text-2xl font-bold tracking-tight sm:text-4xl">
+            <div className="absolute inset-0 bg-gradient-to-t from-[#08090c] via-[#08090c]/50 to-[#08090c]/10" />
+            <div className="absolute bottom-0 left-0 right-0 px-5 pb-7 sm:px-8 sm:pb-10">
+              <p className="eyebrow">Featured</p>
+              <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-4xl">
                 {sections[0].movies[0].title}
               </h1>
               {sections[0].movies[0].overview && (
-                <p className="mt-2 line-clamp-2 max-w-lg text-sm leading-relaxed text-white/60">
+                <p className="mt-2.5 line-clamp-2 max-w-lg text-sm leading-relaxed text-white/65">
                   {sections[0].movies[0].overview}
                 </p>
               )}

@@ -2,7 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Film, ListVideo, Star, Users } from "lucide-react";
+import {
+  Film,
+  ListVideo,
+  Star,
+  Users,
+  Clapperboard,
+  ListPlus,
+} from "lucide-react";
 import { getCrewMembers, getKetaqueue, getWatched } from "@/lib/db";
 import { supabase } from "@/lib/supabase";
 import { getAverageRating } from "@/lib/utils";
@@ -239,13 +246,23 @@ export default function DashboardTab({
               const Icon = card.icon;
 
               return (
-                <div key={card.label} className="surface-soft p-4">
+                <div
+                  key={card.label}
+                  className="rounded-2xl border border-white/6 bg-white/[0.04] p-4 backdrop-blur-sm"
+                >
                   <div className="flex items-center justify-between">
                     <p className="meta">{card.label}</p>
-                    <Icon className="h-4 w-4 text-white/45" />
+                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--accent-soft)]">
+                      <Icon
+                        className="h-3.5 w-3.5 text-[var(--accent)]"
+                        strokeWidth={2}
+                      />
+                    </div>
                   </div>
-                  <p className="mt-4 text-3xl font-bold">{card.value}</p>
-                  <p className="mt-2 text-sm text-white/50">{card.sub}</p>
+                  <p className="mt-3 text-3xl font-bold tracking-tight">
+                    {card.value}
+                  </p>
+                  <p className="mt-1 text-xs text-white/45">{card.sub}</p>
                 </div>
               );
             })}
@@ -329,9 +346,19 @@ export default function DashboardTab({
               })}
             </div>
           ) : (
-            <div className="surface-soft mt-5 p-6 text-sm text-white/50">
-              No ketalog entries yet. Mark something watched to populate the
-              dashboard.
+            <div className="mt-5 flex flex-col items-center gap-3 rounded-2xl border border-white/6 bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-8 text-center">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/[0.04]">
+                <Clapperboard
+                  className="h-6 w-6 text-white/25"
+                  strokeWidth={1.5}
+                />
+              </div>
+              <p className="text-sm font-medium text-white/45">
+                No ketalog entries yet
+              </p>
+              <p className="text-xs text-white/30">
+                Mark something watched to populate the dashboard.
+              </p>
             </div>
           )}
         </section>
@@ -378,9 +405,16 @@ export default function DashboardTab({
               })}
             </div>
           ) : (
-            <div className="surface-soft mt-5 p-6 text-sm text-white/50">
-              The Ketaqueue is empty. Add a few films and the dashboard will
-              start to breathe.
+            <div className="mt-5 flex flex-col items-center gap-3 rounded-2xl border border-white/6 bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-8 text-center">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/[0.04]">
+                <ListPlus className="h-6 w-6 text-white/25" strokeWidth={1.5} />
+              </div>
+              <p className="text-sm font-medium text-white/45">
+                Ketaqueue is empty
+              </p>
+              <p className="text-xs text-white/30">
+                Add a few films and the dashboard will start to breathe.
+              </p>
             </div>
           )}
         </section>

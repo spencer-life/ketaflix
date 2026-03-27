@@ -11,7 +11,7 @@ import CrewCard from "@/components/CrewCard";
 import ProfileCard from "@/components/ProfileCard";
 import Link from "next/link";
 import { GENRE_ICONS } from "@/lib/genre-icons";
-import { Film } from "lucide-react";
+import { Film, Users, ChevronRight } from "lucide-react";
 import type {
   ActivityFeedItem,
   Profile,
@@ -209,19 +209,27 @@ function FeedPage() {
           <section className="mb-6">
             <Link
               href="/rooms"
-              className="surface-card flex items-center gap-4 p-4 transition-colors hover:bg-white/[0.03]"
+              className="group relative flex items-center gap-4 overflow-hidden rounded-2xl border border-white/8 p-5 transition-all hover:border-white/12"
+              style={{
+                background:
+                  "radial-gradient(circle at right, rgba(0,192,48,0.1), transparent 60%), linear-gradient(135deg, rgba(14,17,22,0.96), rgba(20,24,28,0.92))",
+              }}
             >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--accent-soft)] text-lg">
-                🎬
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[var(--accent-soft)] transition-transform group-hover:scale-105">
+                <Users
+                  className="h-6 w-6 text-[var(--accent)]"
+                  strokeWidth={1.8}
+                />
               </div>
               <div>
                 <p className="text-sm font-semibold">
                   Create Your First Ketacrew
                 </p>
-                <p className="mt-0.5 text-xs text-white/45">
+                <p className="mt-0.5 text-xs text-white/50">
                   Watch movies together with friends
                 </p>
               </div>
+              <ChevronRight className="ml-auto h-4 w-4 text-white/20 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </section>
         )}

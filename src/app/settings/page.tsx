@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth-context";
 import { updateProfile } from "@/lib/db";
 import { signOut } from "@/lib/auth";
 import { clearSession } from "@/lib/supabase";
+import { LogOut } from "lucide-react";
 
 const EMOJI_OPTIONS = [
   "🎬",
@@ -100,17 +101,24 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="mx-auto min-h-dvh w-full max-w-lg px-4 py-10 sm:px-6">
-      <section ref={cardRef} className="surface-card p-6 opacity-0 sm:p-8">
+    <div className="mx-auto min-h-dvh w-full max-w-lg px-4 pb-24 pt-6 sm:px-6">
+      <section
+        ref={cardRef}
+        className="relative overflow-hidden rounded-[28px] border border-white/8 p-6 opacity-0 sm:p-8"
+        style={{
+          background:
+            "radial-gradient(ellipse at top right, rgba(0,192,48,0.08), transparent 50%), linear-gradient(135deg, rgba(14,17,22,0.96), rgba(20,24,28,0.92))",
+        }}
+      >
         <div className="mb-8">
           <p className="eyebrow mb-2">Settings</p>
           <h1 className="text-2xl font-bold tracking-tight">Your Profile</h1>
           {profile && (
-            <p className="mt-1 text-sm text-white/45">@{profile.username}</p>
+            <p className="mt-1 text-sm text-white/50">@{profile.username}</p>
           )}
         </div>
 
-        <form onSubmit={handleSave} className="flex flex-col gap-5">
+        <form onSubmit={handleSave} className="flex flex-col gap-6">
           {/* Avatar Emoji */}
           <div>
             <label className="meta mb-3 block">Avatar</label>
@@ -120,10 +128,10 @@ export default function SettingsPage() {
                   key={e}
                   type="button"
                   onClick={() => setEmoji(e)}
-                  className={`flex h-11 w-11 items-center justify-center rounded-full text-xl transition-all ${
+                  className={`flex h-12 w-12 items-center justify-center rounded-2xl text-xl transition-all ${
                     emoji === e
-                      ? "bg-[var(--accent-soft)] ring-2 ring-[var(--accent)]"
-                      : "bg-white/5 hover:bg-white/8"
+                      ? "scale-110 border-2 border-[var(--accent)] bg-[var(--accent-soft)] shadow-[0_0_12px_rgba(0,192,48,0.2)]"
+                      : "border border-white/6 bg-white/[0.04] hover:border-white/12 hover:bg-white/8"
                   }`}
                 >
                   {e}
@@ -148,22 +156,24 @@ export default function SettingsPage() {
           <div>
             <label className="meta mb-2 block">Bio</label>
             <textarea
-              className="keta-input min-h-[80px] resize-none"
+              className="keta-input min-h-[100px] resize-none leading-relaxed"
               placeholder="A little about you and your taste in films..."
               value={bio}
               onChange={(e) => setBio(e.target.value)}
               maxLength={160}
             />
-            <p className="mt-1 text-right text-xs text-white/30">
+            <p className="mt-1.5 text-right text-xs text-white/30">
               {bio.length}/160
             </p>
           </div>
 
           {/* Discoverable */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between rounded-2xl border border-white/6 bg-white/[0.03] p-4">
             <div>
               <p className="text-sm font-medium">Discoverable</p>
-              <p className="text-xs text-white/40">Show up in search results</p>
+              <p className="mt-0.5 text-xs text-white/45">
+                Show up in search results
+              </p>
             </div>
             <button
               type="button"
@@ -184,21 +194,22 @@ export default function SettingsPage() {
 
           <button
             type="submit"
-            className="btn-primary mt-2 w-full"
+            className="btn-primary mt-1 w-full"
             disabled={saving}
           >
             {saved ? "Saved!" : saving ? "Saving..." : "Save Changes"}
           </button>
         </form>
 
-        <hr className="my-6 border-white/8" />
-
-        <button
-          onClick={handleSignOut}
-          className="btn-ghost w-full text-red-300/70 hover:text-red-300"
-        >
-          Sign Out
-        </button>
+        <div className="mt-8 border-t border-white/6 pt-6">
+          <button
+            onClick={handleSignOut}
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/6 bg-white/[0.02] px-4 py-3 text-sm text-white/35 transition-all hover:border-red-500/15 hover:text-red-300/60"
+          >
+            <LogOut className="h-4 w-4" strokeWidth={1.6} />
+            Sign Out
+          </button>
+        </div>
       </section>
     </div>
   );

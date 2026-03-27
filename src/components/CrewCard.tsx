@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth-context";
 import { getCrewMemberCount } from "@/lib/db";
 import { setSession } from "@/lib/supabase";
 import type { Room } from "@/types";
+import { Users, ChevronRight } from "lucide-react";
 
 export default function CrewCard({ crew }: { crew: Room }) {
   const router = useRouter();
@@ -26,28 +27,30 @@ export default function CrewCard({ crew }: { crew: Room }) {
   return (
     <button
       onClick={handleEnter}
-      className="surface-soft flex w-full items-center gap-4 p-4 text-left transition-colors hover:bg-white/8"
+      className="group surface-card flex w-full items-center gap-4 p-4 text-left transition-all hover:border-white/12 hover:bg-white/[0.04]"
     >
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--accent-soft)] text-lg">
-        🎬
+      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--accent-soft)] transition-transform group-hover:scale-105">
+        <Users className="h-5 w-5 text-[var(--accent)]" strokeWidth={1.8} />
       </div>
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-semibold">
           {crew.name || `${crew.created_by}'s Crew`}
         </p>
-        <p className="mt-0.5 flex items-center gap-2 text-xs text-white/45">
-          <span className="font-mono tracking-wider">{crew.code}</span>
+        <div className="mt-1 flex items-center gap-2 text-xs text-white/40">
+          <span className="rounded-md border border-white/8 bg-white/[0.03] px-1.5 py-0.5 font-mono tracking-wider">
+            {crew.code}
+          </span>
           {memberCount !== null && (
             <>
-              <span className="text-white/20">·</span>
+              <span className="text-white/15">·</span>
               <span>
                 {memberCount} {memberCount === 1 ? "member" : "members"}
               </span>
             </>
           )}
-        </p>
+        </div>
       </div>
-      <span className="shrink-0 text-xs text-white/30">Enter →</span>
+      <ChevronRight className="h-4 w-4 shrink-0 text-white/20 transition-transform group-hover:translate-x-0.5 group-hover:text-white/40" />
     </button>
   );
 }
