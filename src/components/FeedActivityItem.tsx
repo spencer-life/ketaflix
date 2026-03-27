@@ -64,8 +64,7 @@ export default function FeedActivityItem({ item }: { item: ActivityFeedItem }) {
           item.data &&
           "score" in item.data && (
             <p className="mt-1 text-sm text-[var(--accent-warm)]">
-              {"★".repeat(item.data.score as number)}
-              {"☆".repeat(5 - (item.data.score as number))}
+              {item.data.score as number} 🐴 / 10
             </p>
           )}
 

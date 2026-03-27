@@ -135,11 +135,7 @@ export default function WatchedTab({ roomCode }: WatchedTabProps) {
                 )}
                 {avg !== null && (
                   <p className="mt-3 text-sm font-mono text-[var(--accent-warm)]">
-                    {"★".repeat(Math.round(avg))}
-                    {"☆".repeat(5 - Math.round(avg))}
-                    <span className="ml-2 text-xs text-white/40">
-                      {avg.toFixed(1)} avg
-                    </span>
+                    {avg.toFixed(1)} 🐴 / 10
                   </p>
                 )}
 
@@ -171,9 +167,8 @@ export default function WatchedTab({ roomCode }: WatchedTabProps) {
                           className="surface-soft flex items-center justify-between px-4 py-3"
                         >
                           <span className="text-sm">{r.username}</span>
-                          <span className="font-mono text-[var(--accent-warm)]">
-                            {"★".repeat(r.score)}
-                            {"☆".repeat(5 - r.score)}
+                          <span className="font-mono text-sm text-[var(--accent-warm)]">
+                            {r.score} 🐴 / 10
                           </span>
                         </div>
                       ))}

@@ -104,9 +104,9 @@ export default function DiscoverPage() {
       animate(container.querySelectorAll("[data-discover-item]"), {
         opacity: [0, 1],
         translateY: [20, 0],
-        delay: stagger(40, { start: 80 }),
-        duration: 560,
-        easing: "easeOutExpo",
+        delay: stagger(60, { start: 100 }),
+        duration: 700,
+        easing: "cubicBezier(0.33, 1, 0.68, 1)",
       });
     });
   }, [loading]);

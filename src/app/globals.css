@@ -152,6 +152,7 @@ a {
   position: relative;
   overflow: hidden;
   border-radius: 18px;
+  transition: transform 0.3s cubic-bezier(0.33, 1, 0.68, 1);
   background:
     linear-gradient(
       180deg,
@@ -169,6 +170,25 @@ a {
   border-radius: inherit;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
   pointer-events: none;
+}
+
+.poster-frame:hover {
+  transform: scale(1.03);
+}
+
+@keyframes pageIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-in {
+  animation: pageIn 0.4s cubic-bezier(0.33, 1, 0.68, 1) both;
 }
 
 .info-chip {

@@ -315,7 +315,7 @@ export default function DashboardTab({
                       </p>
                       {average !== null && (
                         <p className="mt-2 text-xs font-mono text-[var(--accent-warm)]">
-                          {average.toFixed(1)} avg
+                          {average.toFixed(1)} 🐴 / 10
                         </p>
                       )}
                     </div>

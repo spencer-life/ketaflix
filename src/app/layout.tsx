@@ -19,6 +19,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -30,8 +31,8 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AuthProvider>
+          <div className="pb-20">{children}</div>
           <NavBar />
-          {children}
         </AuthProvider>
       </body>
     </html>

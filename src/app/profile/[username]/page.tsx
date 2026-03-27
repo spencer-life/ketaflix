@@ -211,8 +211,7 @@ export default function ProfilePage({
                       typeof item.data === "object" &&
                       "score" in item.data && (
                         <p className="mt-0.5 text-xs text-[var(--accent-warm)]">
-                          {"★".repeat(item.data.score as number)}
-                          {"☆".repeat(5 - (item.data.score as number))}
+                          {item.data.score as number} 🐴 / 10
                         </p>
                       )}
                     <p className="mt-1 text-xs text-white/30">

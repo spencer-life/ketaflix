@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { useAuth } from "@/lib/auth-context";
 import { getFeed, getUserCrews, searchProfiles } from "@/lib/db";
-import { getTrending, tmdbImage } from "@/lib/tmdb";
+import { getTrending, getPopular, getGenres, tmdbImage } from "@/lib/tmdb";
 import FeedActivityItem from "@/components/FeedActivityItem";
 import FeedMovieCard from "@/components/FeedMovieCard";
 import CrewCard from "@/components/CrewCard";
@@ -15,7 +15,25 @@ import type {
   Profile,
   Room,
   TMDBSearchResult,
+  TMDBGenre,
 } from "@/types";
+
+const GENRE_EMOJI: Record<number, string> = {
+  28: "⚡",
+  12: "🗺️",
+  16: "🎨",
+  35: "😂",
+  80: "🔪",
+  99: "📹",
+  18: "🎭",
+  14: "🧙",
+  27: "💀",
+  10402: "🎵",
+  9648: "🔍",
+  10749: "💕",
+  878: "🚀",
+  53: "😰",
+};
 
 export default function HomePage() {
   const { user, profile, loading } = useAuth();
@@ -38,24 +56,34 @@ export default function HomePage() {
 // ─── Feed (Authenticated) ──────────────────────────────────────────────────
 
 function FeedPage() {
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
   const [feed, setFeed] = useState<ActivityFeedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [suggestedUsers, setSuggestedUsers] = useState<Profile[]>([]);
   const [crews, setCrews] = useState<Room[]>([]);
+  const [trending, setTrending] = useState<TMDBSearchResult[]>([]);
+  const [popular, setPopular] = useState<TMDBSearchResult[]>([]);
+  const [genres, setGenresState] = useState<TMDBGenre[]>([]);
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!user) return;
     async function load() {
-      const [feedData, users, userCrews] = await Promise.all([
-        getFeed(user!.id),
-        searchProfiles("", 6),
-        getUserCrews(user!.id),
-      ]);
+      const [feedData, users, userCrews, trendingData, popularData, genreData] =
+        await Promise.all([
+          getFeed(user!.id),
+          searchProfiles("", 6),
+          getUserCrews(user!.id),
+          getTrending(),
+          getPopular(),
+          getGenres(),
+        ]);
       setFeed(feedData);
       setSuggestedUsers(users.filter((u) => u.id !== user!.id));
       setCrews(userCrews);
+      setTrending(trendingData);
+      setPopular(popularData);
+      setGenresState(genreData);
       setLoading(false);
     }
     load();
@@ -67,9 +95,9 @@ function FeedPage() {
       if (!contentRef.current) return;
       animate(contentRef.current, {
         opacity: [0, 1],
-        translateY: [15, 0],
-        duration: 500,
-        easing: "easeOutExpo",
+        translateY: [12, 0],
+        duration: 650,
+        easing: "cubicBezier(0.33, 1, 0.68, 1)",
       });
     });
   }, [loading]);
@@ -111,28 +139,67 @@ function FeedPage() {
   return (
     <div className="mx-auto min-h-dvh w-full max-w-4xl px-4 pb-10 sm:px-6">
       {/* Header */}
-      <header className="flex items-center justify-between py-6">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Ketaflix</h1>
-          <p className="text-sm text-white/45">What your crew is watching</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Link
-            href={`/profile/${profile?.username}`}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-lg transition-colors hover:bg-white/10"
-          >
-            {profile?.avatar_emoji || "🎬"}
-          </Link>
-          <Link href="/settings" className="btn-ghost px-3 py-2 text-sm">
-            Settings
-          </Link>
-        </div>
+      <header className="py-5">
+        <h1 className="text-xl font-bold tracking-tight">Ketaflix</h1>
+        <p className="text-sm text-white/45">What your crew is watching</p>
       </header>
 
       <div ref={contentRef} className="opacity-0">
+        {/* Trending poster strip */}
+        {trending.length > 0 && (
+          <section className="mb-6">
+            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-white/40">
+              Trending This Week
+            </h2>
+            <div className="scrollbar-hide -mx-4 flex gap-3 overflow-x-auto px-4">
+              {trending.slice(0, 10).map((movie) => {
+                const poster = tmdbImage(movie.poster_path, "w342");
+                if (!poster) return null;
+                return (
+                  <div
+                    key={movie.id}
+                    className="poster-frame aspect-[2/3] w-28 shrink-0 sm:w-32"
+                  >
+                    <Image
+                      src={poster}
+                      alt={movie.title}
+                      fill
+                      className="object-cover"
+                      sizes="128px"
+                    />
+                    {movie.vote_average > 0 && (
+                      <div className="absolute bottom-1.5 right-1.5 rounded-full bg-black/70 px-1.5 py-0.5 text-[10px] font-mono text-[#d8ffe3] backdrop-blur-sm">
+                        {movie.vote_average.toFixed(1)}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {/* Genre chips */}
+        {genres.length > 0 && (
+          <section className="mb-6">
+            <div className="scrollbar-hide -mx-4 flex gap-2 overflow-x-auto px-4">
+              {genres.slice(0, 12).map((genre) => (
+                <Link
+                  key={genre.id}
+                  href={`/discover/genre/${genre.id}`}
+                  className="flex shrink-0 items-center gap-1.5 rounded-full border border-white/8 bg-white/5 px-3 py-1.5 text-xs font-medium transition-colors hover:bg-white/10"
+                >
+                  <span>{GENRE_EMOJI[genre.id] || "🎬"}</span>
+                  <span>{genre.name}</span>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* My Ketacrews */}
-        {crews.length > 0 && (
-          <section className="mb-8">
+        {crews.length > 0 ? (
+          <section className="mb-6">
             <div className="mb-3 flex items-center justify-between">
               <h2 className="text-sm font-semibold uppercase tracking-wider text-white/40">
                 My Ketacrews
@@ -150,98 +217,118 @@ function FeedPage() {
               ))}
             </div>
           </section>
+        ) : (
+          <section className="mb-6">
+            <Link
+              href="/rooms"
+              className="surface-card flex items-center gap-4 p-4 transition-colors hover:bg-white/[0.03]"
+            >
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--accent-soft)] text-lg">
+                🎬
+              </div>
+              <div>
+                <p className="text-sm font-semibold">
+                  Create Your First Ketacrew
+                </p>
+                <p className="mt-0.5 text-xs text-white/45">
+                  Watch movies together with friends
+                </p>
+              </div>
+            </Link>
+          </section>
         )}
 
-        {feed.length === 0 &&
-        suggestedUsers.length === 0 &&
-        crews.length === 0 ? (
-          <div className="empty-state rounded-2xl p-10 text-center">
-            <p className="text-4xl">🎬</p>
-            <h2 className="mt-4 text-lg font-bold">Your feed is empty</h2>
-            <p className="mt-2 text-sm text-white/45">
-              Follow some friends to see what they&apos;re watching, or{" "}
-              <Link
-                href="/rooms"
-                className="text-[var(--accent)] hover:underline"
-              >
-                start a Ketacrew
-              </Link>{" "}
-              to get started.
-            </p>
-          </div>
-        ) : (
-          <div className="grid gap-8 lg:grid-cols-[1fr_300px]">
-            {/* Main Feed Column */}
-            <div>
-              {trendingMovies.length > 0 && (
-                <section className="mb-8">
-                  <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/40">
-                    Popular with Friends
-                  </h2>
-                  <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
-                    {trendingMovies.map((movie) => (
-                      <FeedMovieCard
-                        key={movie.title}
-                        movieTitle={movie.title}
-                        posterPath={movie.poster}
-                        activities={movie.items}
-                      />
-                    ))}
-                  </div>
-                </section>
-              )}
+        {/* Popular with friends (from feed) */}
+        {trendingMovies.length > 0 && (
+          <section className="mb-6">
+            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-white/40">
+              Popular with Friends
+            </h2>
+            <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
+              {trendingMovies.map((movie) => (
+                <FeedMovieCard
+                  key={movie.title}
+                  movieTitle={movie.title}
+                  posterPath={movie.poster}
+                  activities={movie.items}
+                />
+              ))}
+            </div>
+          </section>
+        )}
 
-              <section>
-                <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/40">
-                  Recent Activity
-                </h2>
-                {feed.length > 0 ? (
-                  <div className="flex flex-col gap-3">
-                    {feed.map((item) => (
-                      <FeedActivityItem key={item.id} item={item} />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="empty-state rounded-2xl p-8 text-center">
-                    <p className="text-2xl">📡</p>
-                    <p className="mt-2 text-sm text-white/45">
-                      No activity yet. Follow some friends to see their updates
-                      here.
+        {/* People to follow — visible on all screens */}
+        {suggestedUsers.length > 0 && (
+          <section className="mb-6">
+            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-white/40">
+              People to Follow
+            </h2>
+            <div className="scrollbar-hide -mx-4 flex gap-2 overflow-x-auto px-4 lg:mx-0 lg:flex-col lg:px-0">
+              {suggestedUsers.slice(0, 5).map((u) => (
+                <div key={u.id} className="shrink-0 lg:shrink">
+                  <ProfileCard profile={u} showFollowButton />
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Popular right now */}
+        {popular.length > 0 && (
+          <section className="mb-6">
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-sm font-semibold uppercase tracking-wider text-white/40">
+                Popular Right Now
+              </h2>
+              <Link
+                href="/discover"
+                className="text-xs text-[var(--accent)] hover:underline"
+              >
+                See All →
+              </Link>
+            </div>
+            <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
+              {popular.slice(0, 6).map((movie) => {
+                const poster = tmdbImage(movie.poster_path, "w342");
+                return (
+                  <div key={movie.id} className="min-w-0">
+                    <div className="poster-frame aspect-[2/3]">
+                      {poster ? (
+                        <Image
+                          src={poster}
+                          alt={movie.title}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 640px) 33vw, 16vw"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-white/40">
+                          🎬
+                        </div>
+                      )}
+                    </div>
+                    <p className="mt-1.5 truncate text-xs text-white/60">
+                      {movie.title}
                     </p>
                   </div>
-                )}
-              </section>
+                );
+              })}
             </div>
+          </section>
+        )}
 
-            {/* Sidebar */}
-            <aside className="hidden lg:block">
-              {suggestedUsers.length > 0 && (
-                <div>
-                  <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-white/40">
-                    People to Follow
-                  </h3>
-                  <div className="flex flex-col gap-2">
-                    {suggestedUsers.slice(0, 5).map((u) => (
-                      <ProfileCard key={u.id} profile={u} showFollowButton />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <div className="mt-6 surface-card p-4">
-                <h3 className="text-sm font-semibold">Ketacrew</h3>
-                <p className="mt-2 text-xs text-white/40">
-                  Watch movies together with your crew.
-                </p>
-                <Link
-                  href="/rooms"
-                  className="mt-3 inline-block text-xs text-[var(--accent)] hover:underline"
-                >
-                  Join or Create a Ketacrew →
-                </Link>
-              </div>
-            </aside>
-          </div>
+        {/* Recent activity */}
+        {feed.length > 0 && (
+          <section className="mb-6">
+            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-white/40">
+              Recent Activity
+            </h2>
+            <div className="flex flex-col gap-3">
+              {feed.map((item) => (
+                <FeedActivityItem key={item.id} item={item} />
+              ))}
+            </div>
+          </section>
         )}
       </div>
     </div>

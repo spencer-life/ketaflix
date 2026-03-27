@@ -143,30 +143,35 @@ export default function LogWatchedModal({
             <label className="meta mb-3 block">Ratings</label>
             <div className="flex flex-col gap-3">
               {members.map((member) => (
-                <div
-                  key={member}
-                  className="surface-soft flex items-center justify-between px-4 py-3"
-                >
-                  <span className="text-sm">{member}</span>
-                  <div className="flex gap-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
+                <div key={member} className="surface-soft px-4 py-3">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="text-sm">{member}</span>
+                    {(ratings[member] ?? 0) > 0 && (
+                      <span className="text-xs font-mono text-[var(--accent-warm)]">
+                        {ratings[member]} / 10
+                      </span>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-5 gap-1">
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((score) => (
                       <button
-                        key={star}
+                        key={score}
                         onClick={() =>
                           setRatings((prev) => ({
                             ...prev,
-                            [member]: prev[member] === star ? 0 : star,
+                            [member]: prev[member] === score ? 0 : score,
                           }))
                         }
-                        className="text-xl transition-transform hover:scale-110"
+                        className="flex h-8 items-center justify-center rounded-lg text-base transition-all hover:scale-110"
                         style={{
-                          color:
-                            star <= (ratings[member] ?? 0)
-                              ? "#ff9f1c"
-                              : "rgba(255,255,255,0.2)",
+                          opacity: score <= (ratings[member] ?? 0) ? 1 : 0.2,
+                          background:
+                            score <= (ratings[member] ?? 0)
+                              ? "rgba(255,159,28,0.15)"
+                              : "transparent",
                         }}
                       >
-                        ★
+                        🐴
                       </button>
                     ))}
                   </div>

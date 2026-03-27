@@ -127,7 +127,7 @@ export default function StatsTab({ roomCode }: StatsTabProps) {
         <StatCard label="In Ketaqueue" value={ketaqueueCount.toString()} />
         <StatCard
           label="Avg Rating"
-          value={overallAvg ? `${overallAvg.toFixed(1)} / 5` : "—"}
+          value={overallAvg ? `${overallAvg.toFixed(1)} 🐴 / 10` : "—"}
         />
         <StatCard
           label="Top Picker"
@@ -174,7 +174,7 @@ export default function StatsTab({ roomCode }: StatsTabProps) {
               >
                 <span className="text-sm">{r.username}</span>
                 <span className="font-mono text-sm text-[var(--accent-warm)]">
-                  {r.avg.toFixed(1)} ★
+                  {r.avg.toFixed(1)} 🐴
                 </span>
               </div>
             ))}
