@@ -15,6 +15,7 @@ import {
 import { getRecentWatchedByProfile } from "@/lib/db";
 import { useAuth } from "@/lib/auth-context";
 import { GENRE_ICONS } from "@/lib/genre-icons";
+import MoviePoster from "@/components/MoviePoster";
 import { Film } from "lucide-react";
 import type { TMDBSearchResult, TMDBGenre } from "@/types";
 
@@ -195,28 +196,11 @@ export default function DiscoverPage() {
           <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
             {recommendations.map((movie) => (
               <div key={movie.id} className="group min-w-0">
-                <div className="poster-frame aspect-[2/3] overflow-hidden">
-                  {movie.poster_path ? (
-                    <Image
-                      src={tmdbImage(movie.poster_path, "w342")!}
-                      alt={movie.title}
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      sizes="(max-width: 640px) 33vw, (max-width: 1024px) 25vw, 16vw"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-white/[0.06] to-transparent p-3 text-center">
-                      <span className="line-clamp-3 text-xs font-semibold leading-tight text-white/40">
-                        {movie.title}
-                      </span>
-                    </div>
-                  )}
-                  {movie.vote_average > 0 && (
-                    <div className="absolute bottom-1.5 right-1.5 rounded-full border border-white/10 bg-black/40 px-1.5 py-0.5 text-[11px] font-semibold text-white/90 backdrop-blur-md">
-                      {movie.vote_average.toFixed(1)}
-                    </div>
-                  )}
-                </div>
+                <MoviePoster
+                  posterPath={movie.poster_path}
+                  title={movie.title}
+                  voteAverage={movie.vote_average}
+                />
                 <p className="mt-2 truncate text-[13px] font-semibold leading-tight tracking-tight text-white/90">
                   {movie.title}
                 </p>
@@ -244,28 +228,11 @@ export default function DiscoverPage() {
           <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
             {section.movies.map((movie) => (
               <div key={movie.id} className="group min-w-0">
-                <div className="poster-frame aspect-[2/3] overflow-hidden">
-                  {movie.poster_path ? (
-                    <Image
-                      src={tmdbImage(movie.poster_path, "w342")!}
-                      alt={movie.title}
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      sizes="(max-width: 640px) 33vw, (max-width: 1024px) 25vw, 16vw"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-white/[0.06] to-transparent p-3 text-center">
-                      <span className="line-clamp-3 text-xs font-semibold leading-tight text-white/40">
-                        {movie.title}
-                      </span>
-                    </div>
-                  )}
-                  {movie.vote_average > 0 && (
-                    <div className="absolute bottom-1.5 right-1.5 rounded-full border border-white/10 bg-black/40 px-1.5 py-0.5 text-[11px] font-semibold text-white/90 backdrop-blur-md">
-                      {movie.vote_average.toFixed(1)}
-                    </div>
-                  )}
-                </div>
+                <MoviePoster
+                  posterPath={movie.poster_path}
+                  title={movie.title}
+                  voteAverage={movie.vote_average}
+                />
                 <p className="mt-2 truncate text-[13px] font-semibold leading-tight tracking-tight text-white/90">
                   {movie.title}
                 </p>
