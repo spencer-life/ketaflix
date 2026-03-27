@@ -159,12 +159,12 @@ export default function DiscoverPage() {
         </section>
       )}
 
-      {/* Genre Grid */}
+      {/* Genre Scroller */}
       <section data-discover-item className="mt-8 opacity-0">
-        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/40">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-white/40">
           Browse by Genre
         </h2>
-        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <div className="scrollbar-hide -mx-4 flex gap-2 overflow-x-auto px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
           {genres
             .filter((g) => g.id !== 10770)
             .map((genre) => {
@@ -173,15 +173,13 @@ export default function DiscoverPage() {
                 <Link
                   key={genre.id}
                   href={`/discover/genre/${genre.id}`}
-                  className="surface-soft flex items-center gap-3 px-4 py-3.5 transition-all hover:bg-white/8 hover:border-white/12"
+                  className="flex shrink-0 items-center gap-2 rounded-full border border-white/8 bg-white/5 px-4 py-2 text-sm font-medium transition-colors hover:bg-white/10"
                 >
                   <Icon
-                    className="h-4 w-4 shrink-0 text-white/50"
+                    className="h-3.5 w-3.5 text-white/50"
                     strokeWidth={1.8}
                   />
-                  <span className="text-sm font-medium tracking-tight">
-                    {genre.name}
-                  </span>
+                  <span className="whitespace-nowrap">{genre.name}</span>
                 </Link>
               );
             })}
@@ -207,8 +205,10 @@ export default function DiscoverPage() {
                       sizes="(max-width: 640px) 33vw, (max-width: 1024px) 25vw, 16vw"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center text-2xl text-white/40">
-                      🎬
+                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-white/[0.06] to-transparent p-3 text-center">
+                      <span className="line-clamp-3 text-xs font-semibold leading-tight text-white/40">
+                        {movie.title}
+                      </span>
                     </div>
                   )}
                   {movie.vote_average > 0 && (
@@ -254,8 +254,10 @@ export default function DiscoverPage() {
                       sizes="(max-width: 640px) 33vw, (max-width: 1024px) 25vw, 16vw"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center text-2xl text-white/40">
-                      🎬
+                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-white/[0.06] to-transparent p-3 text-center">
+                      <span className="line-clamp-3 text-xs font-semibold leading-tight text-white/40">
+                        {movie.title}
+                      </span>
                     </div>
                   )}
                   {movie.vote_average > 0 && (
