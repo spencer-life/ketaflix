@@ -3,11 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Film, ListVideo, Star, Users } from "lucide-react";
-import { getRoomMembers, getWatchlist, getWatched } from "@/lib/db";
+import { getRoomMembers, getKetaqueue, getWatched } from "@/lib/db";
 import { supabase } from "@/lib/supabase";
 import { getAverageRating } from "@/lib/utils";
 import { tmdbImage } from "@/lib/tmdb";
-import type { Room, WatchlistItem, WatchedItem } from "@/types";
+import type { Room, KetaqueueItem, WatchedItem } from "@/types";
 
 interface DashboardTabProps {
   room: Room;
@@ -20,7 +20,7 @@ export default function DashboardTab({
   roomCode,
   username,
 }: DashboardTabProps) {
-  const [watchlist, setWatchlist] = useState<WatchlistItem[]>([]);
+  const [ketaqueue, setKetaqueue] = useState<KetaqueueItem[]>([]);
   const [watched, setWatched] = useState<WatchedItem[]>([]);
   const [members, setMembers] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -30,15 +30,15 @@ export default function DashboardTab({
     let active = true;
 
     async function loadDashboard() {
-      const [watchlistData, watchedData, memberData] = await Promise.all([
-        getWatchlist(roomCode),
+      const [ketaqueueData, watchedData, memberData] = await Promise.all([
+        getKetaqueue(roomCode),
         getWatched(roomCode),
         getRoomMembers(roomCode),
       ]);
 
       if (!active) return;
 
-      setWatchlist(watchlistData);
+      setKetaqueue(ketaqueueData);
       setWatched(watchedData);
       setMembers(memberData);
       setLoading(false);
@@ -46,12 +46,18 @@ export default function DashboardTab({
 
     loadDashboard();
 
-    const watchlistChannel = supabase
-      .channel(`dashboard:watchlist:${roomCode}`)
+    // NOTE: table filter stays "watchlist" — that's the Supabase table name
+    const ketaqueueChannel = supabase
+      .channel(`dashboard:ketaqueue:${roomCode}`)
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "watchlist", filter: `room_code=eq.${roomCode}` },
-        loadDashboard
+        {
+          event: "*",
+          schema: "public",
+          table: "watchlist",
+          filter: `room_code=eq.${roomCode}`,
+        },
+        loadDashboard,
       )
       .subscribe();
 
@@ -59,8 +65,13 @@ export default function DashboardTab({
       .channel(`dashboard:watched:${roomCode}`)
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "watched", filter: `room_code=eq.${roomCode}` },
-        loadDashboard
+        {
+          event: "*",
+          schema: "public",
+          table: "watched",
+          filter: `room_code=eq.${roomCode}`,
+        },
+        loadDashboard,
       )
       .subscribe();
 
@@ -68,14 +79,19 @@ export default function DashboardTab({
       .channel(`dashboard:users:${roomCode}`)
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "users", filter: `room_code=eq.${roomCode}` },
-        loadDashboard
+        {
+          event: "*",
+          schema: "public",
+          table: "users",
+          filter: `room_code=eq.${roomCode}`,
+        },
+        loadDashboard,
       )
       .subscribe();
 
     return () => {
       active = false;
-      supabase.removeChannel(watchlistChannel);
+      supabase.removeChannel(ketaqueueChannel);
       supabase.removeChannel(watchedChannel);
       supabase.removeChannel(usersChannel);
     };
@@ -94,7 +110,7 @@ export default function DashboardTab({
         easing: "easeOutExpo",
       });
     });
-  }, [loading, watchlist.length, watched.length, members.length]);
+  }, [loading, ketaqueue.length, watched.length, members.length]);
 
   if (loading) {
     return (
@@ -109,17 +125,17 @@ export default function DashboardTab({
     );
   }
 
-  const heroMovie =
-    watched[0]?.movie ??
-    watchlist[0]?.movie ??
-    null;
+  const heroMovie = watched[0]?.movie ?? ketaqueue[0]?.movie ?? null;
   const heroBackdrop = tmdbImage(heroMovie?.backdrop_path ?? null, "w780");
   const latestEntries = watched.slice(0, 3);
-  const onDeck = watchlist.slice(0, 5);
-  const totalRatings = watched.flatMap((entry) => entry.ratings.map((rating) => rating.score));
+  const onDeck = ketaqueue.slice(0, 5);
+  const totalRatings = watched.flatMap((entry) =>
+    entry.ratings.map((rating) => rating.score),
+  );
   const overallAverage =
     totalRatings.length > 0
-      ? totalRatings.reduce((sum, score) => sum + score, 0) / totalRatings.length
+      ? totalRatings.reduce((sum, score) => sum + score, 0) /
+        totalRatings.length
       : null;
 
   const pickerCounts: Record<string, number> = {};
@@ -142,19 +158,28 @@ export default function DashboardTab({
     {
       label: "Crew",
       value: members.length.toString(),
-      sub: members.length === 1 ? "1 member in room" : `${members.length} members in room`,
+      sub:
+        members.length === 1
+          ? "1 member in room"
+          : `${members.length} members in room`,
       icon: Users,
     },
     {
       label: "On Deck",
-      value: watchlist.length.toString(),
-      sub: watchlist.length === 1 ? "1 film waiting" : `${watchlist.length} films waiting`,
+      value: ketaqueue.length.toString(),
+      sub:
+        ketaqueue.length === 1
+          ? "1 film waiting"
+          : `${ketaqueue.length} films waiting`,
       icon: ListVideo,
     },
     {
-      label: "Diary",
+      label: "Ketalogs",
       value: watched.length.toString(),
-      sub: watched.length === 1 ? "1 movie logged" : `${watched.length} movies logged`,
+      sub:
+        watched.length === 1
+          ? "1 movie logged"
+          : `${watched.length} movies logged`,
       icon: Film,
     },
     {
@@ -166,7 +191,10 @@ export default function DashboardTab({
   ];
 
   return (
-    <div ref={containerRef} className="mt-2 grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
+    <div
+      ref={containerRef}
+      className="mt-2 grid gap-4 xl:grid-cols-[1.15fr_0.85fr]"
+    >
       <section
         data-dashboard-card
         className="dashboard-hero relative overflow-hidden rounded-[30px] border border-white/10 p-6 opacity-0 shadow-[0_30px_80px_rgba(0,0,0,0.35)] sm:p-8"
@@ -189,15 +217,20 @@ export default function DashboardTab({
               Welcome back, {username}.
             </h2>
             <p className="mt-4 max-w-xl text-base leading-7 text-white/70">
-              {room.name ?? `${room.created_by}'s room`} is live. Track what is queued,
-              what just got logged, and who is driving the room’s taste tonight.
+              {room.name ?? `${room.created_by}'s room`} is live. Track what is
+              queued, what just got logged, and who is driving the room’s taste
+              tonight.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
               <span className="info-chip">Room {room.code}</span>
               <span className="info-chip">Created by {room.created_by}</span>
-              {topPicker && <span className="info-chip">Top picker {topPicker[0]}</span>}
-              {topVibe && <span className="info-chip">Main vibe {topVibe[0]}</span>}
+              {topPicker && (
+                <span className="info-chip">Top picker {topPicker[0]}</span>
+              )}
+              {topVibe && (
+                <span className="info-chip">Main vibe {topVibe[0]}</span>
+              )}
             </div>
           </div>
 
@@ -221,11 +254,16 @@ export default function DashboardTab({
       </section>
 
       <div className="grid gap-4">
-        <section data-dashboard-card className="surface-card rounded-[28px] p-5 opacity-0">
+        <section
+          data-dashboard-card
+          className="surface-card rounded-[28px] p-5 opacity-0"
+        >
           <div className="flex items-end justify-between gap-4">
             <div>
               <p className="eyebrow">Recently Logged</p>
-              <h3 className="mt-2 text-2xl font-semibold tracking-tight">Latest diary entries</h3>
+              <h3 className="mt-2 text-2xl font-semibold tracking-tight">
+                Latest ketalog entries
+              </h3>
             </div>
             <p className="text-sm text-white/45">{watched.length} total</p>
           </div>
@@ -234,10 +272,16 @@ export default function DashboardTab({
             <div className="mt-5 flex flex-col gap-3">
               {latestEntries.map((entry) => {
                 const average = getAverageRating(entry.ratings);
-                const poster = tmdbImage(entry.movie?.poster_path ?? null, "w92");
+                const poster = tmdbImage(
+                  entry.movie?.poster_path ?? null,
+                  "w92",
+                );
 
                 return (
-                  <div key={entry.id} className="surface-soft flex items-center gap-3 p-3">
+                  <div
+                    key={entry.id}
+                    className="surface-soft flex items-center gap-3 p-3"
+                  >
                     <div className="poster-frame h-[72px] w-12 shrink-0">
                       {poster ? (
                         <Image
@@ -254,13 +298,20 @@ export default function DashboardTab({
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold">{entry.movie?.title}</p>
+                      <p className="truncate text-sm font-semibold">
+                        {entry.movie?.title}
+                      </p>
                       <p className="mt-1 text-xs text-white/45">
-                        {new Date(entry.watched_at).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                        })}
-                        {entry.picked_by ? ` · picked by ${entry.picked_by}` : ""}
+                        {new Date(entry.watched_at).toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "short",
+                            day: "numeric",
+                          },
+                        )}
+                        {entry.picked_by
+                          ? ` · picked by ${entry.picked_by}`
+                          : ""}
                       </p>
                       {average !== null && (
                         <p className="mt-2 text-xs font-mono text-[var(--accent-warm)]">
@@ -268,26 +319,39 @@ export default function DashboardTab({
                         </p>
                       )}
                     </div>
-                    {entry.vibe_tags[0] && <span className="vibe-tag active">{entry.vibe_tags[0]}</span>}
+                    {entry.vibe_tags[0] && (
+                      <span className="vibe-tag active">
+                        {entry.vibe_tags[0]}
+                      </span>
+                    )}
                   </div>
                 );
               })}
             </div>
           ) : (
             <div className="surface-soft mt-5 p-6 text-sm text-white/50">
-              No diary entries yet. Mark something watched to populate the dashboard.
+              No ketalog entries yet. Mark something watched to populate the
+              dashboard.
             </div>
           )}
         </section>
 
-        <section data-dashboard-card className="surface-card rounded-[28px] p-5 opacity-0">
+        <section
+          data-dashboard-card
+          className="surface-card rounded-[28px] p-5 opacity-0"
+        >
           <p className="eyebrow">On Deck</p>
-          <h3 className="mt-2 text-2xl font-semibold tracking-tight">Watchlist queue</h3>
+          <h3 className="mt-2 text-2xl font-semibold tracking-tight">
+            Ketaqueue
+          </h3>
 
           {onDeck.length ? (
             <div className="mt-5 grid grid-cols-5 gap-3">
               {onDeck.map((item) => {
-                const poster = tmdbImage(item.movie?.poster_path ?? null, "w342");
+                const poster = tmdbImage(
+                  item.movie?.poster_path ?? null,
+                  "w342",
+                );
 
                 return (
                   <div key={item.id} className="min-w-0">
@@ -306,21 +370,29 @@ export default function DashboardTab({
                         </div>
                       )}
                     </div>
-                    <p className="mt-2 truncate text-xs text-white/55">{item.movie?.title}</p>
+                    <p className="mt-2 truncate text-xs text-white/55">
+                      {item.movie?.title}
+                    </p>
                   </div>
                 );
               })}
             </div>
           ) : (
             <div className="surface-soft mt-5 p-6 text-sm text-white/50">
-              The watchlist is empty. Add a few films and the dashboard will start to breathe.
+              The Ketaqueue is empty. Add a few films and the dashboard will
+              start to breathe.
             </div>
           )}
         </section>
 
-        <section data-dashboard-card className="surface-card rounded-[28px] p-5 opacity-0">
+        <section
+          data-dashboard-card
+          className="surface-card rounded-[28px] p-5 opacity-0"
+        >
           <p className="eyebrow">Crew</p>
-          <h3 className="mt-2 text-2xl font-semibold tracking-tight">Who is in the room</h3>
+          <h3 className="mt-2 text-2xl font-semibold tracking-tight">
+            Who is in the room
+          </h3>
 
           <div className="mt-5 flex flex-wrap gap-2">
             {members.length ? (
@@ -330,7 +402,9 @@ export default function DashboardTab({
                   className={`vibe-tag ${member === username ? "active" : ""}`}
                 >
                   {member}
-                  {member === room.created_by ? <span className="text-white/45">host</span> : null}
+                  {member === room.created_by ? (
+                    <span className="text-white/45">host</span>
+                  ) : null}
                 </span>
               ))
             ) : (

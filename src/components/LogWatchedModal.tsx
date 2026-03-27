@@ -5,10 +5,10 @@ import Image from "next/image";
 import { logWatched, getRoomMembers } from "@/lib/db";
 import { tmdbImage } from "@/lib/tmdb";
 import { VIBE_TAGS } from "@/types";
-import type { WatchlistItem } from "@/types";
+import type { KetaqueueItem } from "@/types";
 
 interface LogWatchedModalProps {
-  item: WatchlistItem;
+  item: KetaqueueItem;
   roomCode: string;
   username: string;
   onClose: () => void;
@@ -25,7 +25,9 @@ export default function LogWatchedModal({
   const movie = item.movie;
   const [members, setMembers] = useState<string[]>([username]);
   const [pickedBy, setPickedBy] = useState(item.added_by);
-  const [ratings, setRatings] = useState<Record<string, number>>({ [username]: 0 });
+  const [ratings, setRatings] = useState<Record<string, number>>({
+    [username]: 0,
+  });
   const [notes, setNotes] = useState("");
   const [vibeTags, setVibeTags] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
@@ -56,7 +58,7 @@ export default function LogWatchedModal({
 
   function toggleVibe(tag: string) {
     setVibeTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
     );
   }
 
@@ -74,7 +76,7 @@ export default function LogWatchedModal({
         ratings: ratingsList,
         notes: notes.trim() || undefined,
         vibeTags,
-        watchlistId: item.id,
+        ketaqueueId: item.id,
       });
 
       onLogged();
@@ -94,7 +96,7 @@ export default function LogWatchedModal({
       >
         <div className="flex items-center justify-between border-b border-white/8 p-4 sm:p-5">
           <div>
-            <p className="meta">Diary Entry</p>
+            <p className="meta">Ketalog Entry</p>
             <h2 className="mt-2 text-xl font-semibold">Log as watched</h2>
           </div>
           <button onClick={onClose} className="btn-ghost px-4 py-3 text-sm">
@@ -116,14 +118,14 @@ export default function LogWatchedModal({
             <div>
               <p className="meta">{movie?.release_year}</p>
               <p className="mt-2 text-lg font-semibold">{movie?.title}</p>
-              <p className="mt-2 text-sm text-white/50">Turn the watchlist item into a room diary entry.</p>
+              <p className="mt-2 text-sm text-white/50">
+                Turn the Ketaqueue item into a ketalog entry.
+              </p>
             </div>
           </div>
 
           <div>
-            <label className="meta mb-2 block">
-              Who picked it?
-            </label>
+            <label className="meta mb-2 block">Who picked it?</label>
             <div className="flex flex-wrap gap-2">
               {members.map((m) => (
                 <button
@@ -138,12 +140,13 @@ export default function LogWatchedModal({
           </div>
 
           <div>
-            <label className="meta mb-3 block">
-              Ratings
-            </label>
+            <label className="meta mb-3 block">Ratings</label>
             <div className="flex flex-col gap-3">
               {members.map((member) => (
-                <div key={member} className="surface-soft flex items-center justify-between px-4 py-3">
+                <div
+                  key={member}
+                  className="surface-soft flex items-center justify-between px-4 py-3"
+                >
                   <span className="text-sm">{member}</span>
                   <div className="flex gap-1">
                     {[1, 2, 3, 4, 5].map((star) => (
@@ -157,7 +160,10 @@ export default function LogWatchedModal({
                         }
                         className="text-xl transition-transform hover:scale-110"
                         style={{
-                          color: star <= (ratings[member] ?? 0) ? "#ff9f1c" : "rgba(255,255,255,0.2)",
+                          color:
+                            star <= (ratings[member] ?? 0)
+                              ? "#ff9f1c"
+                              : "rgba(255,255,255,0.2)",
                         }}
                       >
                         ★
@@ -170,9 +176,7 @@ export default function LogWatchedModal({
           </div>
 
           <div>
-            <label className="meta mb-2 block">
-              Vibe Tags
-            </label>
+            <label className="meta mb-2 block">Vibe Tags</label>
             <div className="flex flex-wrap gap-2">
               {VIBE_TAGS.map((tag) => (
                 <button
@@ -187,9 +191,7 @@ export default function LogWatchedModal({
           </div>
 
           <div>
-            <label className="meta mb-2 block">
-              Notes (optional)
-            </label>
+            <label className="meta mb-2 block">Notes (optional)</label>
             <textarea
               className="keta-input resize-none"
               rows={2}
@@ -199,7 +201,11 @@ export default function LogWatchedModal({
             />
           </div>
 
-          <button onClick={handleSubmit} disabled={submitting} className="btn-primary w-full">
+          <button
+            onClick={handleSubmit}
+            disabled={submitting}
+            className="btn-primary w-full"
+          >
             {submitting ? "Logging..." : "Save Entry"}
           </button>
         </div>

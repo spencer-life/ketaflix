@@ -20,7 +20,8 @@ export interface Follow {
 
 export type ActivityType =
   | "rated"
-  | "watchlisted"
+  | "watchlisted" // legacy, kept for existing DB rows
+  | "queued" // new canonical name for Ketaqueue adds
   | "watched"
   | "joined_room"
   | "created_room"
@@ -74,7 +75,7 @@ export interface Movie {
   created_at: string;
 }
 
-export interface WatchlistItem {
+export interface KetaqueueItem {
   id: string;
   room_code: string;
   movie_id: string;
@@ -134,3 +135,8 @@ export const VIBE_TAGS = [
 ] as const;
 
 export type VibeTag = (typeof VIBE_TAGS)[number];
+
+export interface TMDBGenre {
+  id: number;
+  name: string;
+}

@@ -2,7 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { searchMovies, getTrending, getMovieDetails, tmdbImage } from "@/lib/tmdb";
+import {
+  searchMovies,
+  getTrending,
+  getMovieDetails,
+  tmdbImage,
+} from "@/lib/tmdb";
 import { upsertMovie } from "@/lib/db";
 import type { TMDBSearchResult, Movie } from "@/types";
 
@@ -86,11 +91,9 @@ export default function MovieSearch({ onSelect, onClose }: MovieSearchProps) {
       className="fixed inset-0 z-50 flex flex-col bg-black/70 backdrop-blur-sm"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div
-        className="search-panel surface-card mt-auto flex h-full max-h-[90dvh] flex-col overflow-hidden rounded-t-[28px] rounded-b-none"
-      >
+      <div className="search-panel surface-card mt-auto flex h-full max-h-[90dvh] flex-col overflow-hidden rounded-t-[28px] rounded-b-none">
         <div className="border-b border-white/8 p-4 sm:p-5">
-          <p className="meta mb-3">Add To Watchlist</p>
+          <p className="meta mb-3">Add to Ketaqueue</p>
           <div className="flex items-center gap-3">
             <input
               ref={inputRef}
@@ -144,11 +147,17 @@ export default function MovieSearch({ onSelect, onClose }: MovieSearchProps) {
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <p className="truncate text-sm font-semibold leading-tight">{r.title}</p>
+                    <p className="truncate text-sm font-semibold leading-tight">
+                      {r.title}
+                    </p>
                     <p className="mt-1 text-xs text-white/45">
-                      {r.release_date ? new Date(r.release_date).getFullYear() : "Unknown"}
+                      {r.release_date
+                        ? new Date(r.release_date).getFullYear()
+                        : "Unknown"}
                       {r.vote_average > 0 && (
-                        <span className="ml-2">TMDB {r.vote_average.toFixed(1)}</span>
+                        <span className="ml-2">
+                          TMDB {r.vote_average.toFixed(1)}
+                        </span>
                       )}
                     </p>
                     <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-white/35">

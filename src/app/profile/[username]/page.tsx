@@ -191,8 +191,9 @@ export default function ProfilePage({
                       </span>{" "}
                       <span className="text-white/55">
                         {item.activity_type === "rated" && "rated"}
-                        {item.activity_type === "watchlisted" &&
-                          "added to watchlist"}
+                        {(item.activity_type === "watchlisted" ||
+                          item.activity_type === "queued") &&
+                          "added to Ketaqueue"}
                         {item.activity_type === "watched" && "watched"}
                         {item.activity_type === "joined_room" &&
                           "joined a room"}

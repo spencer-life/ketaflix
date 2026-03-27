@@ -1,7 +1,7 @@
 import { supabase } from "./supabase";
 import type {
   Room,
-  WatchlistItem,
+  KetaqueueItem,
   WatchedItem,
   Movie,
   TMDBMovie,
@@ -103,9 +103,11 @@ export async function upsertMovie(tmdb: TMDBMovie): Promise<Movie> {
   return data;
 }
 
-// ─── Watchlist ────────────────────────────────────────────────────────────────
+// ─── Ketaqueue ───────────────────────────────────────────────────────────────
+// NOTE: Supabase table is still named "watchlist" — no risky migration needed.
+// All app-level code uses "Ketaqueue" terminology.
 
-export async function getWatchlist(roomCode: string): Promise<WatchlistItem[]> {
+export async function getKetaqueue(roomCode: string): Promise<KetaqueueItem[]> {
   const { data, error } = await supabase
     .from("watchlist")
     .select("*, movie:movies(*)")
@@ -116,13 +118,13 @@ export async function getWatchlist(roomCode: string): Promise<WatchlistItem[]> {
   return data ?? [];
 }
 
-export async function addToWatchlist(
+export async function addToKetaqueue(
   roomCode: string,
   movieId: string,
   addedBy: string,
   notes?: string,
   profileId?: string,
-): Promise<WatchlistItem> {
+): Promise<KetaqueueItem> {
   const { data, error } = await supabase
     .from("watchlist")
     .insert({
@@ -141,7 +143,7 @@ export async function addToWatchlist(
   if (profileId && data.movie) {
     addActivity({
       profileId,
-      activityType: "watchlisted",
+      activityType: "queued",
       movieId,
       movieTitle: data.movie.title,
       moviePosterPath: data.movie.poster_path,
@@ -152,7 +154,7 @@ export async function addToWatchlist(
   return data;
 }
 
-export async function removeFromWatchlist(id: string) {
+export async function removeFromKetaqueue(id: string) {
   const { error } = await supabase.from("watchlist").delete().eq("id", id);
   if (error) throw error;
 }
@@ -177,7 +179,7 @@ export async function logWatched(params: {
   ratings: { username: string; score: number }[];
   notes?: string;
   vibeTags?: string[];
-  watchlistId?: string;
+  ketaqueueId?: string;
   profileId?: string;
 }): Promise<WatchedItem> {
   const { data, error } = await supabase
@@ -196,9 +198,9 @@ export async function logWatched(params: {
 
   if (error) throw error;
 
-  // Remove from watchlist if present
-  if (params.watchlistId) {
-    await removeFromWatchlist(params.watchlistId);
+  // Remove from Ketaqueue if present
+  if (params.ketaqueueId) {
+    await removeFromKetaqueue(params.ketaqueueId);
   }
 
   // Log activity (fire-and-forget)

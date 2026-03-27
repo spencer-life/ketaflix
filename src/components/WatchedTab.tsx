@@ -34,8 +34,13 @@ export default function WatchedTab({ roomCode }: WatchedTabProps) {
       .channel(`watched:${roomCode}`)
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "watched", filter: `room_code=eq.${roomCode}` },
-        () => loadWatched()
+        {
+          event: "*",
+          schema: "public",
+          table: "watched",
+          filter: `room_code=eq.${roomCode}`,
+        },
+        () => loadWatched(),
       )
       .subscribe();
 
@@ -74,8 +79,10 @@ export default function WatchedTab({ roomCode }: WatchedTabProps) {
     return (
       <div className="surface-card empty-state mt-2 rounded-[28px] p-10 text-center">
         <p className="text-4xl">📽️</p>
-        <p className="mt-4 text-lg font-semibold">No diary entries yet</p>
-        <p className="mt-2 text-sm text-white/50">Mark something watched and the room history starts here.</p>
+        <p className="mt-4 text-lg font-semibold">No ketalog entries yet</p>
+        <p className="mt-2 text-sm text-white/50">
+          Mark something watched and the room history starts here.
+        </p>
       </div>
     );
   }
@@ -104,15 +111,23 @@ export default function WatchedTab({ roomCode }: WatchedTabProps) {
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center text-xl text-white/45">🎬</div>
+                  <div className="flex h-full w-full items-center justify-center text-xl text-white/45">
+                    🎬
+                  </div>
                 )}
               </div>
 
               <div className="flex-1 min-w-0">
                 <p className="meta">
-                  {new Date(item.watched_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                  {new Date(item.watched_at).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
                 </p>
-                <h3 className="mt-2 text-xl font-semibold leading-tight">{movie?.title}</h3>
+                <h3 className="mt-2 text-xl font-semibold leading-tight">
+                  {movie?.title}
+                </h3>
                 {item.picked_by && (
                   <p className="mt-2 text-sm text-white/52">
                     Picked by {item.picked_by}
@@ -120,7 +135,8 @@ export default function WatchedTab({ roomCode }: WatchedTabProps) {
                 )}
                 {avg !== null && (
                   <p className="mt-3 text-sm font-mono text-[var(--accent-warm)]">
-                    {"★".repeat(Math.round(avg))}{"☆".repeat(5 - Math.round(avg))}
+                    {"★".repeat(Math.round(avg))}
+                    {"☆".repeat(5 - Math.round(avg))}
                     <span className="ml-2 text-xs text-white/40">
                       {avg.toFixed(1)} avg
                     </span>
@@ -130,7 +146,9 @@ export default function WatchedTab({ roomCode }: WatchedTabProps) {
                 {item.vibe_tags.length > 0 && (
                   <div className="mt-3 flex flex-wrap gap-2">
                     {item.vibe_tags.slice(0, 3).map((tag) => (
-                      <span key={tag} className="vibe-tag">{tag}</span>
+                      <span key={tag} className="vibe-tag">
+                        {tag}
+                      </span>
                     ))}
                   </div>
                 )}
@@ -148,10 +166,14 @@ export default function WatchedTab({ roomCode }: WatchedTabProps) {
                     <p className="meta mb-3">Ratings</p>
                     <div className="flex flex-col gap-1.5">
                       {item.ratings.map((r) => (
-                        <div key={r.username} className="surface-soft flex items-center justify-between px-4 py-3">
+                        <div
+                          key={r.username}
+                          className="surface-soft flex items-center justify-between px-4 py-3"
+                        >
                           <span className="text-sm">{r.username}</span>
                           <span className="font-mono text-[var(--accent-warm)]">
-                            {"★".repeat(r.score)}{"☆".repeat(5 - r.score)}
+                            {"★".repeat(r.score)}
+                            {"☆".repeat(5 - r.score)}
                           </span>
                         </div>
                       ))}
@@ -162,7 +184,9 @@ export default function WatchedTab({ roomCode }: WatchedTabProps) {
                 {item.notes && (
                   <div className="mt-3">
                     <p className="meta mb-2">Notes</p>
-                    <div className="surface-soft p-4 text-sm leading-7 text-white/72">{item.notes}</div>
+                    <div className="surface-soft p-4 text-sm leading-7 text-white/72">
+                      {item.notes}
+                    </div>
                   </div>
                 )}
 
@@ -171,7 +195,9 @@ export default function WatchedTab({ roomCode }: WatchedTabProps) {
                     <p className="meta mb-2">Vibes</p>
                     <div className="flex flex-wrap gap-1.5">
                       {item.vibe_tags.map((tag) => (
-                        <span key={tag} className="vibe-tag active">{tag}</span>
+                        <span key={tag} className="vibe-tag active">
+                          {tag}
+                        </span>
                       ))}
                     </div>
                   </div>

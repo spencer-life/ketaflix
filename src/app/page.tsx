@@ -350,18 +350,18 @@ function LandingPage() {
       <canvas ref={canvasRef} id="particles" />
       <div className="grid items-center gap-8 lg:grid-cols-[1.15fr_0.85fr]">
         <section className="fade-in-up max-w-2xl">
-          <p className="eyebrow mb-4">Shared Movie Diary</p>
+          <p className="eyebrow mb-4">Ketalogs</p>
           <h1 ref={titleRef} className="section-title gradient-text">
             Ketaflix feels better when it looks like a film club, not a crypto
             landing page.
           </h1>
           <p className="mt-5 max-w-xl text-base leading-7 text-white/70 sm:text-lg">
-            Spin up a room, stack a watchlist, and log each movie like a proper
-            diary entry. Follow friends, see what they&apos;re watching.
+            Spin up a room, stack a Ketaqueue, and log each movie like a proper
+            ketalog entry. Follow friends, see what they&apos;re watching.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
-            <span className="info-chip">Poster grid watchlists</span>
+            <span className="info-chip">Poster grid queues</span>
             <span className="info-chip">Follow your friends</span>
             <span className="info-chip">Activity feed</span>
           </div>
@@ -369,14 +369,14 @@ function LandingPage() {
           <div className="mt-10 grid gap-3 sm:grid-cols-3">
             <div className="surface-soft p-4">
               <p className="meta">Track</p>
-              <p className="mt-2 text-2xl font-bold">Watchlist</p>
+              <p className="mt-2 text-2xl font-bold">Ketaqueue</p>
               <p className="mt-1 text-sm text-white/55">
                 Keep the next picks visible.
               </p>
             </div>
             <div className="surface-soft p-4">
               <p className="meta">Log</p>
-              <p className="mt-2 text-2xl font-bold">Diary</p>
+              <p className="mt-2 text-2xl font-bold">Ketalogs</p>
               <p className="mt-1 text-sm text-white/55">
                 Store ratings, notes, and vibes.
               </p>

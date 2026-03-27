@@ -10,7 +10,8 @@ function activityVerb(type: ActivityType): string {
     case "rated":
       return "rated";
     case "watchlisted":
-      return "added to watchlist";
+    case "queued":
+      return "added to Ketaqueue";
     case "watched":
       return "watched";
     case "joined_room":

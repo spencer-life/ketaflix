@@ -1,0 +1,192 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import {
+  getGenres,
+  getNowPlaying,
+  getTopRated,
+  getPopular,
+  getTrending,
+  tmdbImage,
+} from "@/lib/tmdb";
+import type { TMDBSearchResult, TMDBGenre } from "@/types";
+
+const GENRE_EMOJI: Record<number, string> = {
+  28: "⚡", // Action
+  12: "🗺️", // Adventure
+  16: "🎨", // Animation
+  35: "😂", // Comedy
+  80: "🔪", // Crime
+  99: "📹", // Documentary
+  18: "🎭", // Drama
+  10751: "👨‍👩‍👧‍👦", // Family
+  14: "🧙", // Fantasy
+  36: "📜", // History
+  27: "💀", // Horror
+  10402: "🎵", // Music
+  9648: "🔍", // Mystery
+  10749: "💕", // Romance
+  878: "🚀", // Science Fiction
+  10770: "📺", // TV Movie
+  53: "😰", // Thriller
+  10752: "⚔️", // War
+  37: "🤠", // Western
+};
+
+interface MovieSection {
+  title: string;
+  movies: TMDBSearchResult[];
+}
+
+export default function DiscoverPage() {
+  const [genres, setGenres] = useState<TMDBGenre[]>([]);
+  const [sections, setSections] = useState<MovieSection[]>([]);
+  const [loading, setLoading] = useState(true);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    async function load() {
+      const [genreList, nowPlaying, topRated, popular, trending] =
+        await Promise.all([
+          getGenres(),
+          getNowPlaying(),
+          getTopRated(),
+          getPopular(),
+          getTrending(),
+        ]);
+
+      setGenres(genreList);
+      setSections([
+        { title: "Now Playing", movies: nowPlaying },
+        { title: "Trending This Week", movies: trending },
+        { title: "Popular Right Now", movies: popular },
+        { title: "Top Rated", movies: topRated },
+      ]);
+      setLoading(false);
+    }
+
+    load();
+  }, []);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (loading || !container) return;
+
+    import("animejs").then(({ animate, stagger }) => {
+      animate(container.querySelectorAll("[data-discover-item]"), {
+        opacity: [0, 1],
+        translateY: [20, 0],
+        delay: stagger(40, { start: 80 }),
+        duration: 560,
+        easing: "easeOutExpo",
+      });
+    });
+  }, [loading]);
+
+  if (loading) {
+    return (
+      <div className="mx-auto min-h-dvh w-full max-w-6xl px-4 pb-10 sm:px-6 lg:px-8">
+        <div className="py-8">
+          <div className="shimmer mb-2 h-4 w-24 rounded" />
+          <div className="shimmer h-8 w-64 rounded" />
+        </div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {[...Array(10)].map((_, i) => (
+            <div key={i} className="shimmer h-16 rounded-2xl" />
+          ))}
+        </div>
+        <div className="mt-10 grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="shimmer aspect-[2/3] rounded-xl" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      ref={containerRef}
+      className="mx-auto min-h-dvh w-full max-w-6xl px-4 pb-10 sm:px-6 lg:px-8"
+    >
+      {/* Header */}
+      <header className="py-8" data-discover-item>
+        <p className="eyebrow">Explore</p>
+        <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
+          Find your next film
+        </h1>
+        <p className="mt-2 text-sm text-white/55">
+          Browse by genre, check what is trending, or explore all-time greats.
+        </p>
+      </header>
+
+      {/* Genre Grid */}
+      <section data-discover-item className="opacity-0">
+        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/40">
+          Browse by Genre
+        </h2>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {genres.map((genre) => (
+            <Link
+              key={genre.id}
+              href={`/discover/genre/${genre.id}`}
+              className="surface-soft flex items-center gap-3 p-4 transition-colors hover:bg-white/8"
+            >
+              <span className="text-xl">{GENRE_EMOJI[genre.id] || "🎬"}</span>
+              <span className="text-sm font-medium">{genre.name}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Curated Sections */}
+      {sections.map((section) => (
+        <section
+          key={section.title}
+          data-discover-item
+          className="mt-10 opacity-0"
+        >
+          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/40">
+            {section.title}
+          </h2>
+          <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
+            {section.movies.map((movie) => (
+              <div key={movie.id} className="group min-w-0">
+                <div className="poster-frame aspect-[2/3] overflow-hidden">
+                  {movie.poster_path ? (
+                    <Image
+                      src={tmdbImage(movie.poster_path, "w342")!}
+                      alt={movie.title}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      sizes="(max-width: 640px) 33vw, (max-width: 1024px) 25vw, 16vw"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-2xl text-white/40">
+                      🎬
+                    </div>
+                  )}
+                  {movie.vote_average > 0 && (
+                    <div className="absolute bottom-2 right-2 rounded-full bg-black/70 px-2 py-0.5 text-xs font-mono text-[#d8ffe3] backdrop-blur-sm">
+                      {movie.vote_average.toFixed(1)}
+                    </div>
+                  )}
+                </div>
+                <p className="mt-2 truncate text-xs font-medium text-white/70">
+                  {movie.title}
+                </p>
+                <p className="text-xs text-white/35">
+                  {movie.release_date
+                    ? new Date(movie.release_date).getFullYear()
+                    : ""}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  );
+}

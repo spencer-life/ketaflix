@@ -2,44 +2,45 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { getWatchlist, addToWatchlist, removeFromWatchlist } from "@/lib/db";
+import { getKetaqueue, addToKetaqueue, removeFromKetaqueue } from "@/lib/db";
 import { supabase } from "@/lib/supabase";
 import { tmdbImage } from "@/lib/tmdb";
-import type { WatchlistItem, Movie } from "@/types";
+import type { KetaqueueItem, Movie } from "@/types";
 import MovieSearch from "./MovieSearch";
 import LogWatchedModal from "./LogWatchedModal";
 
-interface WatchlistTabProps {
+interface KetaqueueTabProps {
   roomCode: string;
   username: string;
   profileId?: string;
 }
 
-export default function WatchlistTab({
+export default function KetaqueueTab({
   roomCode,
   username,
   profileId,
-}: WatchlistTabProps) {
-  const [items, setItems] = useState<WatchlistItem[]>([]);
+}: KetaqueueTabProps) {
+  const [items, setItems] = useState<KetaqueueItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [showSearch, setShowSearch] = useState(false);
-  const [logItem, setLogItem] = useState<WatchlistItem | null>(null);
+  const [logItem, setLogItem] = useState<KetaqueueItem | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let active = true;
 
-    async function loadWatchlist() {
-      const data = await getWatchlist(roomCode);
+    async function loadKetaqueue() {
+      const data = await getKetaqueue(roomCode);
       if (!active) return;
       setItems(data);
       setLoading(false);
     }
 
-    loadWatchlist();
+    loadKetaqueue();
 
+    // NOTE: table filter must stay "watchlist" — that's the actual Supabase table name
     const sub = supabase
-      .channel(`watchlist:${roomCode}`)
+      .channel(`ketaqueue:${roomCode}`)
       .on(
         "postgres_changes",
         {
@@ -48,7 +49,7 @@ export default function WatchlistTab({
           table: "watchlist",
           filter: `room_code=eq.${roomCode}`,
         },
-        () => loadWatchlist(),
+        () => loadKetaqueue(),
       )
       .subscribe();
 
@@ -63,7 +64,7 @@ export default function WatchlistTab({
     if (loading || !grid) return;
 
     import("animejs").then(({ animate, stagger }) => {
-      animate(grid.querySelectorAll(".watchlist-card"), {
+      animate(grid.querySelectorAll(".ketaqueue-card"), {
         opacity: [0, 1],
         translateY: [20, 0],
         delay: stagger(80),
@@ -76,14 +77,14 @@ export default function WatchlistTab({
   async function handleMovieSelected(movie: Movie) {
     setShowSearch(false);
     try {
-      await addToWatchlist(roomCode, movie.id, username, undefined, profileId);
+      await addToKetaqueue(roomCode, movie.id, username, undefined, profileId);
     } catch {
-      // Already in watchlist
+      // Already in Ketaqueue
     }
   }
 
   async function handleRemove(id: string) {
-    await removeFromWatchlist(id);
+    await removeFromKetaqueue(id);
     setItems((prev) => prev.filter((i) => i.id !== id));
   }
 
@@ -101,7 +102,7 @@ export default function WatchlistTab({
     <div className="mt-2">
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="eyebrow">Watchlist</p>
+          <p className="eyebrow">Ketaqueue</p>
           <h2 className="mt-2 text-2xl font-bold tracking-tight">
             Your next stack
           </h2>
@@ -130,7 +131,7 @@ export default function WatchlistTab({
       ) : (
         <div ref={gridRef} className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {items.map((item) => (
-            <WatchlistCard
+            <KetaqueueCard
               key={item.id}
               item={item}
               currentUser={username}
@@ -156,7 +157,7 @@ export default function WatchlistTab({
           onClose={() => setLogItem(null)}
           onLogged={() => {
             setLogItem(null);
-            getWatchlist(roomCode).then(setItems);
+            getKetaqueue(roomCode).then(setItems);
           }}
         />
       )}
@@ -164,13 +165,13 @@ export default function WatchlistTab({
   );
 }
 
-function WatchlistCard({
+function KetaqueueCard({
   item,
   currentUser,
   onRemove,
   onMarkWatched,
 }: {
-  item: WatchlistItem;
+  item: KetaqueueItem;
   currentUser: string;
   onRemove: () => void;
   onMarkWatched: () => void;
@@ -179,7 +180,7 @@ function WatchlistCard({
   const poster = tmdbImage(movie?.poster_path ?? null);
 
   return (
-    <article className="watchlist-card surface-card overflow-hidden rounded-[26px] opacity-0">
+    <article className="ketaqueue-card surface-card overflow-hidden rounded-[26px] opacity-0">
       <div className="poster-frame aspect-[2/3] w-full rounded-none border-x-0 border-t-0">
         {poster ? (
           <Image

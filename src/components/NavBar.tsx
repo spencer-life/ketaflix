@@ -32,6 +32,12 @@ export default function NavBar() {
             Feed
           </Link>
           <Link
+            href="/discover"
+            className={`btn-ghost px-3 py-1.5 text-xs ${pathname.startsWith("/discover") ? "border-white/12 bg-white/6" : ""}`}
+          >
+            Discover
+          </Link>
+          <Link
             href="/rooms"
             className={`btn-ghost px-3 py-1.5 text-xs ${pathname.startsWith("/room") ? "border-white/12 bg-white/6" : ""}`}
           >

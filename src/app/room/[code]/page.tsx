@@ -6,12 +6,12 @@ import { getSession, clearSession } from "@/lib/supabase";
 import { useAuth } from "@/lib/auth-context";
 import { getRoom } from "@/lib/db";
 import DashboardTab from "@/components/DashboardTab";
-import WatchlistTab from "@/components/WatchlistTab";
+import KetaqueueTab from "@/components/KetaqueueTab";
 import WatchedTab from "@/components/WatchedTab";
 import StatsTab from "@/components/StatsTab";
 import type { Room } from "@/types";
 
-type Tab = "dashboard" | "watchlist" | "watched" | "stats";
+type Tab = "dashboard" | "ketaqueue" | "watched" | "stats";
 
 export default function RoomPage({
   params,
@@ -85,8 +85,8 @@ export default function RoomPage({
 
   const tabs: { id: Tab; label: string }[] = [
     { id: "dashboard", label: "Dashboard" },
-    { id: "watchlist", label: "Watchlist" },
-    { id: "watched", label: "Diary" },
+    { id: "ketaqueue", label: "Ketaqueue" },
+    { id: "watched", label: "Ketalogs" },
     { id: "stats", label: "Stats" },
   ];
 
@@ -153,8 +153,8 @@ export default function RoomPage({
             username={session.username}
           />
         )}
-        {activeTab === "watchlist" && session && (
-          <WatchlistTab
+        {activeTab === "ketaqueue" && session && (
+          <KetaqueueTab
             roomCode={code}
             username={session.username}
             profileId={profileId}
