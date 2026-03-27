@@ -14,29 +14,9 @@ import {
 } from "@/lib/tmdb";
 import { getRecentWatchedByProfile } from "@/lib/db";
 import { useAuth } from "@/lib/auth-context";
+import { GENRE_ICONS } from "@/lib/genre-icons";
+import { Film } from "lucide-react";
 import type { TMDBSearchResult, TMDBGenre } from "@/types";
-
-const GENRE_EMOJI: Record<number, string> = {
-  28: "⚡", // Action
-  12: "🗺️", // Adventure
-  16: "🎨", // Animation
-  35: "😂", // Comedy
-  80: "🔪", // Crime
-  99: "📹", // Documentary
-  18: "🎭", // Drama
-  10751: "👨‍👩‍👧‍👦", // Family
-  14: "🧙", // Fantasy
-  36: "📜", // History
-  27: "💀", // Horror
-  10402: "🎵", // Music
-  9648: "🔍", // Mystery
-  10749: "💕", // Romance
-  878: "🚀", // Science Fiction
-  10770: "📺", // TV Movie
-  53: "😰", // Thriller
-  10752: "⚔️", // War
-  37: "🤠", // Western
-};
 
 interface MovieSection {
   title: string;
@@ -153,17 +133,27 @@ export default function DiscoverPage() {
         <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/40">
           Browse by Genre
         </h2>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {genres.map((genre) => (
-            <Link
-              key={genre.id}
-              href={`/discover/genre/${genre.id}`}
-              className="surface-soft flex items-center gap-3 p-4 transition-colors hover:bg-white/8"
-            >
-              <span className="text-xl">{GENRE_EMOJI[genre.id] || "🎬"}</span>
-              <span className="text-sm font-medium">{genre.name}</span>
-            </Link>
-          ))}
+        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {genres
+            .filter((g) => g.id !== 10770)
+            .map((genre) => {
+              const Icon = GENRE_ICONS[genre.id] || Film;
+              return (
+                <Link
+                  key={genre.id}
+                  href={`/discover/genre/${genre.id}`}
+                  className="surface-soft flex items-center gap-3 px-4 py-3.5 transition-all hover:bg-white/8 hover:border-white/12"
+                >
+                  <Icon
+                    className="h-4 w-4 shrink-0 text-white/50"
+                    strokeWidth={1.8}
+                  />
+                  <span className="text-sm font-medium tracking-tight">
+                    {genre.name}
+                  </span>
+                </Link>
+              );
+            })}
         </div>
       </section>
 

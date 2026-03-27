@@ -10,6 +10,8 @@ import FeedMovieCard from "@/components/FeedMovieCard";
 import CrewCard from "@/components/CrewCard";
 import ProfileCard from "@/components/ProfileCard";
 import Link from "next/link";
+import { GENRE_ICONS } from "@/lib/genre-icons";
+import { Film } from "lucide-react";
 import type {
   ActivityFeedItem,
   Profile,
@@ -17,23 +19,6 @@ import type {
   TMDBSearchResult,
   TMDBGenre,
 } from "@/types";
-
-const GENRE_EMOJI: Record<number, string> = {
-  28: "⚡",
-  12: "🗺️",
-  16: "🎨",
-  35: "😂",
-  80: "🔪",
-  99: "📹",
-  18: "🎭",
-  14: "🧙",
-  27: "💀",
-  10402: "🎵",
-  9648: "🔍",
-  10749: "💕",
-  878: "🚀",
-  53: "😰",
-};
 
 export default function HomePage() {
   const { user, profile, loading } = useAuth();
@@ -183,16 +168,19 @@ function FeedPage() {
         {genres.length > 0 && (
           <section className="mb-6">
             <div className="scrollbar-hide -mx-4 flex gap-2 overflow-x-auto px-4">
-              {genres.slice(0, 12).map((genre) => (
-                <Link
-                  key={genre.id}
-                  href={`/discover/genre/${genre.id}`}
-                  className="flex shrink-0 items-center gap-1.5 rounded-full border border-white/8 bg-white/5 px-3 py-1.5 text-xs font-medium transition-colors hover:bg-white/10"
-                >
-                  <span>{GENRE_EMOJI[genre.id] || "🎬"}</span>
-                  <span>{genre.name}</span>
-                </Link>
-              ))}
+              {genres.slice(0, 12).map((genre) => {
+                const Icon = GENRE_ICONS[genre.id] || Film;
+                return (
+                  <Link
+                    key={genre.id}
+                    href={`/discover/genre/${genre.id}`}
+                    className="flex shrink-0 items-center gap-1.5 rounded-full border border-white/8 bg-white/5 px-3 py-1.5 text-xs font-medium transition-colors hover:bg-white/10"
+                  >
+                    <Icon className="h-3 w-3 text-white/50" strokeWidth={1.8} />
+                    <span>{genre.name}</span>
+                  </Link>
+                );
+              })}
             </div>
           </section>
         )}
