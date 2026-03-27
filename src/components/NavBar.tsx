@@ -45,7 +45,7 @@ export default function NavBar() {
       aria-label="Main navigation"
       className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/8 backdrop-blur-xl"
       style={{
-        background: "rgba(14,17,20,0.92)",
+        background: "rgba(8,9,12,0.85)",
         paddingBottom: "env(safe-area-inset-bottom, 0px)",
       }}
     >

@@ -153,7 +153,7 @@ function FeedPage() {
                       sizes="128px"
                     />
                     {movie.vote_average > 0 && (
-                      <div className="absolute bottom-1.5 right-1.5 rounded-full bg-black/70 px-1.5 py-0.5 text-[10px] font-mono text-[#d8ffe3] backdrop-blur-sm">
+                      <div className="absolute bottom-1.5 right-1.5 rounded-full border border-white/10 bg-black/40 px-1.5 py-0.5 text-[10px] font-semibold text-white/90 backdrop-blur-md">
                         {movie.vote_average.toFixed(1)}
                       </div>
                     )}
