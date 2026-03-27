@@ -43,9 +43,9 @@ export default function NavBar() {
   return (
     <nav
       aria-label="Main navigation"
-      className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/8 backdrop-blur-xl"
+      className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/6 backdrop-blur-2xl"
       style={{
-        background: "rgba(8,9,12,0.85)",
+        background: "rgba(8,9,12,0.72)",
         paddingBottom: "env(safe-area-inset-bottom, 0px)",
       }}
     >

@@ -14,6 +14,7 @@ import {
 import { tmdbImage } from "@/lib/tmdb";
 import FollowButton from "@/components/FollowButton";
 import Link from "next/link";
+import { Settings, Film, Clapperboard } from "lucide-react";
 import type { Profile, ActivityFeedItem } from "@/types";
 
 export default function ProfilePage({
@@ -67,11 +68,12 @@ export default function ProfilePage({
 
   useEffect(() => {
     if (loading || !contentRef.current) return;
-    import("animejs").then(({ animate }) => {
+    import("animejs").then(({ animate, stagger }) => {
       if (!contentRef.current) return;
-      animate(contentRef.current, {
+      animate(contentRef.current.querySelectorAll("[data-profile-section]"), {
         opacity: [0, 1],
         translateY: [20, 0],
+        delay: stagger(80, { start: 60 }),
         duration: 600,
         easing: "easeOutExpo",
       });
@@ -89,14 +91,25 @@ export default function ProfilePage({
   if (!profile) return null;
 
   const isOwnProfile = user?.id === profile.id;
+  const filmCount = activity.filter(
+    (a) => a.activity_type === "watched" || a.activity_type === "rated",
+  ).length;
 
   return (
-    <div className="mx-auto min-h-dvh w-full max-w-3xl px-4 py-10 sm:px-6">
-      <div ref={contentRef} className="opacity-0">
-        {/* Profile Header */}
-        <div className="surface-card p-6 sm:p-8">
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
-            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-white/5 text-5xl">
+    <div className="mx-auto min-h-dvh w-full max-w-3xl px-4 pb-24 pt-6 sm:px-6">
+      <div ref={contentRef}>
+        {/* Profile Header Card */}
+        <section
+          data-profile-section
+          className="relative overflow-hidden rounded-[28px] border border-white/8 p-6 opacity-0 sm:p-8"
+          style={{
+            background:
+              "radial-gradient(ellipse at top right, rgba(0,192,48,0.12), transparent 50%), radial-gradient(ellipse at bottom left, rgba(255,159,28,0.06), transparent 40%), linear-gradient(135deg, rgba(14,17,22,0.96), rgba(20,24,28,0.92))",
+          }}
+        >
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
+            {/* Avatar */}
+            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border border-white/8 bg-white/[0.04] text-4xl shadow-lg">
               {profile.avatar_emoji || "🎬"}
             </div>
 
@@ -106,14 +119,17 @@ export default function ProfilePage({
                   <h1 className="text-2xl font-bold tracking-tight">
                     {profile.display_name || profile.username}
                   </h1>
-                  <p className="text-sm text-white/45">@{profile.username}</p>
+                  <p className="mt-0.5 text-sm text-white/50">
+                    @{profile.username}
+                  </p>
                 </div>
 
                 {isOwnProfile ? (
                   <Link
                     href="/settings"
-                    className="btn-ghost px-4 py-2 text-sm"
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-white/8 bg-white/[0.04] px-4 py-2 text-sm text-white/55 transition-all hover:border-white/14 hover:text-white/75"
                   >
+                    <Settings className="h-3.5 w-3.5" strokeWidth={1.8} />
                     Edit Profile
                   </Link>
                 ) : (
@@ -132,57 +148,72 @@ export default function ProfilePage({
               )}
 
               {/* Stats row */}
-              <div className="mt-4 flex gap-6">
-                <div>
-                  <span className="text-lg font-bold">{followers}</span>
-                  <span className="ml-1 text-sm text-white/45">followers</span>
-                </div>
-                <div>
-                  <span className="text-lg font-bold">{following}</span>
-                  <span className="ml-1 text-sm text-white/45">following</span>
-                </div>
-                <div>
-                  <span className="text-lg font-bold">
-                    {
-                      activity.filter(
-                        (a) =>
-                          a.activity_type === "watched" ||
-                          a.activity_type === "rated",
-                      ).length
-                    }
-                  </span>
-                  <span className="ml-1 text-sm text-white/45">films</span>
-                </div>
+              <div className="mt-5 flex gap-4">
+                {[
+                  { value: followers, label: "followers" },
+                  { value: following, label: "following" },
+                  { value: filmCount, label: "films" },
+                ].map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="rounded-xl border border-white/6 bg-white/[0.03] px-3 py-2 text-center"
+                  >
+                    <p className="text-lg font-bold text-[var(--accent)]">
+                      {stat.value}
+                    </p>
+                    <p className="text-[10px] uppercase tracking-wider text-white/40">
+                      {stat.label}
+                    </p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
         {/* Recent Activity */}
-        <div className="mt-6">
-          <h2 className="mb-4 text-lg font-bold">Recent Activity</h2>
+        <section data-profile-section className="mt-6 opacity-0">
+          <div className="mb-4 flex items-center gap-2">
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-white/40">
+              Recent Activity
+            </h2>
+          </div>
           {activity.length === 0 ? (
-            <div className="empty-state rounded-2xl p-8 text-center">
-              <p className="text-3xl">🎬</p>
-              <p className="mt-2 text-sm text-white/45">
-                No activity yet. Movies are waiting to be watched.
+            <div className="flex flex-col items-center gap-3 rounded-[22px] border border-white/6 bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-10 text-center">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/[0.04]">
+                <Film className="h-7 w-7 text-white/20" strokeWidth={1.4} />
+              </div>
+              <p className="text-sm font-medium text-white/45">
+                No activity yet
+              </p>
+              <p className="text-xs text-white/30">
+                Movies are waiting to be watched.
               </p>
             </div>
           ) : (
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2.5">
               {activity.map((item) => (
                 <div
                   key={item.id}
-                  className="surface-soft flex items-center gap-4 p-4"
+                  className="surface-card flex items-center gap-4 p-4 transition-colors hover:bg-white/[0.04]"
                 >
-                  {item.movie_poster_path && (
-                    <Image
-                      src={tmdbImage(item.movie_poster_path, "w92")!}
-                      alt={item.movie_title ?? "Movie poster"}
-                      width={44}
-                      height={64}
-                      className="rounded-lg object-cover"
-                    />
+                  {item.movie_poster_path ? (
+                    <div className="poster-frame h-16 w-[42px] shrink-0">
+                      <Image
+                        src={tmdbImage(item.movie_poster_path, "w92")!}
+                        alt={item.movie_title ?? "Movie poster"}
+                        width={42}
+                        height={64}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex h-16 w-[42px] shrink-0 items-center justify-center rounded-lg bg-white/[0.04]">
+                      <Clapperboard
+                        className="h-5 w-5 text-white/20"
+                        strokeWidth={1.5}
+                      />
+                    </div>
                   )}
                   <div className="min-w-0 flex-1">
                     <p className="text-sm">
@@ -211,18 +242,22 @@ export default function ProfilePage({
                       typeof item.data === "object" &&
                       "score" in item.data && (
                         <p className="mt-0.5 text-xs text-[var(--accent-warm)]">
-                          {item.data.score as number} 🐴 / 10
+                          {item.data.score as number} / 10
                         </p>
                       )}
-                    <p className="mt-1 text-xs text-white/30">
-                      {new Date(item.created_at).toLocaleDateString()}
+                    <p className="mt-1 text-[11px] uppercase tracking-wider text-white/25">
+                      {new Date(item.created_at).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
                     </p>
                   </div>
                 </div>
               ))}
             </div>
           )}
-        </div>
+        </section>
       </div>
     </div>
   );
