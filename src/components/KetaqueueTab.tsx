@@ -191,7 +191,7 @@ function KetaqueueCard({
             sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-4xl text-white/40">
+          <div className="flex h-full w-full items-center justify-center text-4xl text-white/55">
             🎬
           </div>
         )}

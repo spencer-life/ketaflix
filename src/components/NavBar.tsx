@@ -3,36 +3,42 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
-import { LayoutGrid, Compass, Users, User, Settings } from "lucide-react";
+import {
+  Clapperboard,
+  Telescope,
+  UsersRound,
+  CircleUserRound,
+  SlidersHorizontal,
+} from "lucide-react";
 
 const NAV_ITEMS = [
   {
     href: "/",
-    icon: LayoutGrid,
+    icon: Clapperboard,
     label: "Feed",
     match: (p: string) => p === "/",
   },
   {
     href: "/discover",
-    icon: Compass,
+    icon: Telescope,
     label: "Discover",
     match: (p: string) => p.startsWith("/discover"),
   },
   {
     href: "/rooms",
-    icon: Users,
+    icon: UsersRound,
     label: "Ketacrew",
     match: (p: string) => p.startsWith("/room"),
   },
   {
     href: "__profile__",
-    icon: User,
+    icon: CircleUserRound,
     label: "Profile",
     match: (p: string) => p.startsWith("/profile"),
   },
   {
     href: "/settings",
-    icon: Settings,
+    icon: SlidersHorizontal,
     label: "Settings",
     match: (p: string) => p === "/settings",
   },
@@ -55,7 +61,7 @@ export default function NavBar() {
         paddingBottom: "env(safe-area-inset-bottom, 0px)",
       }}
     >
-      <div className="mx-auto flex max-w-lg items-stretch justify-around px-4">
+      <div className="mx-auto flex max-w-lg items-stretch justify-around px-6 pb-1">
         {NAV_ITEMS.map((item) => {
           const href =
             item.href === "__profile__"
@@ -69,7 +75,9 @@ export default function NavBar() {
               key={item.label}
               href={href}
               className={`flex flex-1 flex-col items-center gap-1 py-3 text-[10px] font-medium tracking-wide transition-colors ${
-                active ? "text-white" : "text-white/35 hover:text-white/55"
+                active
+                  ? "text-[var(--accent)]"
+                  : "text-white/60 hover:text-white/60"
               }`}
             >
               <Icon className="h-5 w-5" strokeWidth={active ? 2.2 : 1.5} />

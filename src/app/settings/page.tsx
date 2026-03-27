@@ -6,7 +6,7 @@ import { useAuth } from "@/lib/auth-context";
 import { updateProfile } from "@/lib/db";
 import { signOut } from "@/lib/auth";
 import { clearSession } from "@/lib/supabase";
-import { LogOut } from "lucide-react";
+import { DoorOpen } from "lucide-react";
 
 const EMOJI_OPTIONS = [
   "🎬",
@@ -33,7 +33,7 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState("");
-  const cardRef = useRef<HTMLElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -51,8 +51,8 @@ export default function SettingsPage() {
   useEffect(() => {
     let mounted = true;
     import("animejs").then(({ animate }) => {
-      if (!mounted || !cardRef.current) return;
-      animate(cardRef.current, {
+      if (!mounted || !contentRef.current) return;
+      animate(contentRef.current, {
         opacity: [0, 1],
         translateY: [20, 0],
         duration: 600,
@@ -95,43 +95,37 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div className="flex min-h-dvh items-center justify-center">
-        <div className="text-sm text-white/40">Loading...</div>
+        <div className="text-sm text-white/55">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto min-h-dvh w-full max-w-lg px-4 pb-32 pt-6 sm:px-6">
-      <section
-        ref={cardRef}
-        className="relative overflow-hidden rounded-[28px] border border-white/6 p-6 opacity-0 sm:p-8"
-        style={{
-          background:
-            "radial-gradient(ellipse at top right, rgba(52,211,153,0.06), transparent 50%), linear-gradient(135deg, rgba(14,17,22,0.96), rgba(20,24,28,0.92))",
-        }}
-      >
+    <div className="mx-auto min-h-dvh w-full max-w-lg px-5 pb-36 pt-6 sm:px-6">
+      <div ref={contentRef} className="opacity-0">
+        {/* Header — no card wrapper, just floating */}
         <div className="mb-8">
           <p className="eyebrow mb-2">Settings</p>
           <h1 className="text-2xl font-bold tracking-tight">Your Profile</h1>
           {profile && (
-            <p className="mt-1 text-sm text-white/50">@{profile.username}</p>
+            <p className="mt-1 text-sm text-white/55">@{profile.username}</p>
           )}
         </div>
 
-        <form onSubmit={handleSave} className="flex flex-col gap-6">
-          {/* Avatar Emoji */}
+        <form onSubmit={handleSave} className="flex flex-col gap-7">
+          {/* Avatar Emoji — circular containers with emerald selected ring */}
           <div>
             <label className="meta mb-3 block">Avatar</label>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2.5">
               {EMOJI_OPTIONS.map((e) => (
                 <button
                   key={e}
                   type="button"
                   onClick={() => setEmoji(e)}
-                  className={`flex h-12 w-12 items-center justify-center rounded-2xl text-xl transition-all ${
+                  className={`flex h-12 w-12 items-center justify-center rounded-full text-xl transition-all ${
                     emoji === e
-                      ? "scale-110 border-2 border-white/30 bg-white/10 shadow-lg"
-                      : "border border-white/6 bg-white/[0.04] hover:border-white/12 hover:bg-white/8"
+                      ? "scale-110 bg-[var(--accent-soft)] ring-2 ring-[var(--accent)] ring-offset-2 ring-offset-[#050608]"
+                      : "bg-white/[0.06] hover:bg-white/10"
                   }`}
                 >
                   {e}
@@ -162,13 +156,13 @@ export default function SettingsPage() {
               onChange={(e) => setBio(e.target.value)}
               maxLength={160}
             />
-            <p className="mt-1.5 text-right text-xs text-white/40">
+            <p className="mt-1.5 text-right text-xs text-white/50">
               {bio.length}/160
             </p>
           </div>
 
           {/* Discoverable */}
-          <div className="flex items-center justify-between rounded-2xl border border-white/6 bg-white/[0.03] p-4">
+          <div className="flex items-center justify-between rounded-2xl bg-white/[0.04] p-4">
             <div>
               <p className="text-sm font-medium">Discoverable</p>
               <p className="mt-0.5 text-xs text-white/50">
@@ -194,23 +188,23 @@ export default function SettingsPage() {
 
           <button
             type="submit"
-            className="btn-primary mt-1 w-full"
+            className="btn-primary mt-2 w-full"
             disabled={saving}
           >
             {saved ? "Saved!" : saving ? "Saving..." : "Save Changes"}
           </button>
         </form>
 
-        <div className="mt-8 border-t border-white/6 pt-6">
+        <div className="mt-10 border-t border-white/6 pt-6">
           <button
             onClick={handleSignOut}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/6 bg-white/[0.02] px-4 py-3 text-sm text-white/35 transition-all hover:border-red-500/15 hover:text-red-300/60"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-white/[0.04] px-4 py-3 text-sm text-white/50 transition-all hover:bg-red-500/8 hover:text-red-300"
           >
-            <LogOut className="h-4 w-4" strokeWidth={1.6} />
+            <DoorOpen className="h-4 w-4" strokeWidth={1.6} />
             Sign Out
           </button>
         </div>
-      </section>
+      </div>
     </div>
   );
 }

@@ -23,6 +23,7 @@
     "tailwind-merge": "^2.5.4"
   },
   "devDependencies": {
+    "@google/stitch-sdk": "^0.0.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

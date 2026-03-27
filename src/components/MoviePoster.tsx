@@ -25,7 +25,7 @@ export default function MoviePoster({
     <div className="poster-frame aspect-[2/3] overflow-hidden">
       {/* Always render title fallback underneath */}
       <div className="absolute inset-0 z-0 flex items-center justify-center bg-gradient-to-br from-white/[0.06] to-transparent p-3 text-center">
-        <span className="line-clamp-3 text-sm font-semibold leading-tight text-white/30">
+        <span className="line-clamp-3 text-sm font-semibold leading-tight text-white/45">
           {title}
         </span>
       </div>

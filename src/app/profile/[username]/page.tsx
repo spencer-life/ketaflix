@@ -14,7 +14,7 @@ import {
 import { tmdbImage } from "@/lib/tmdb";
 import FollowButton from "@/components/FollowButton";
 import Link from "next/link";
-import { Settings, Film, Clapperboard } from "lucide-react";
+import { SlidersHorizontal, Popcorn, Clapperboard } from "lucide-react";
 import type { Profile, ActivityFeedItem } from "@/types";
 
 export default function ProfilePage({
@@ -83,7 +83,7 @@ export default function ProfilePage({
   if (loading) {
     return (
       <div className="flex min-h-dvh items-center justify-center">
-        <div className="text-sm text-white/40">Loading profile...</div>
+        <div className="text-sm text-white/55">Loading profile...</div>
       </div>
     );
   }
@@ -96,7 +96,7 @@ export default function ProfilePage({
   ).length;
 
   return (
-    <div className="mx-auto min-h-dvh w-full max-w-3xl px-4 pb-24 pt-6 sm:px-6">
+    <div className="mx-auto min-h-dvh w-full max-w-3xl px-4 pb-32 pt-6 sm:px-6">
       <div ref={contentRef}>
         {/* Profile Header Card */}
         <section
@@ -108,8 +108,8 @@ export default function ProfilePage({
           }}
         >
           <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
-            {/* Avatar */}
-            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border border-white/8 bg-white/[0.04] text-4xl shadow-lg">
+            {/* Avatar — Stitch-inspired glow ring */}
+            <div className="avatar-glow flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-[var(--bg)] text-4xl shadow-lg">
               {profile.avatar_emoji || "🎬"}
             </div>
 
@@ -129,7 +129,10 @@ export default function ProfilePage({
                     href="/settings"
                     className="inline-flex items-center gap-1.5 rounded-xl border border-white/8 bg-white/[0.04] px-4 py-2 text-sm text-white/55 transition-all hover:border-white/14 hover:text-white/75"
                   >
-                    <Settings className="h-3.5 w-3.5" strokeWidth={1.8} />
+                    <SlidersHorizontal
+                      className="h-3.5 w-3.5"
+                      strokeWidth={1.8}
+                    />
                     Edit Profile
                   </Link>
                 ) : (
@@ -147,23 +150,16 @@ export default function ProfilePage({
                 </p>
               )}
 
-              {/* Stats row */}
-              <div className="mt-5 flex gap-4">
+              {/* Stats row — Stitch-inspired emerald stat boxes */}
+              <div className="mt-5 flex gap-3">
                 {[
                   { value: followers, label: "followers" },
                   { value: following, label: "following" },
                   { value: filmCount, label: "films" },
                 ].map((stat) => (
-                  <div
-                    key={stat.label}
-                    className="rounded-xl border border-white/6 bg-white/[0.03] px-3 py-2 text-center"
-                  >
-                    <p className="text-lg font-bold text-[var(--accent)]">
-                      {stat.value}
-                    </p>
-                    <p className="text-[10px] uppercase tracking-wider text-white/50">
-                      {stat.label}
-                    </p>
+                  <div key={stat.label} className="stat-box flex-1">
+                    <span className="stat-value">{stat.value}</span>
+                    <span className="stat-label">{stat.label}</span>
                   </div>
                 ))}
               </div>
@@ -181,12 +177,12 @@ export default function ProfilePage({
           {activity.length === 0 ? (
             <div className="flex flex-col items-center gap-3 rounded-[22px] border border-white/6 bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-10 text-center">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/[0.04]">
-                <Film className="h-7 w-7 text-white/20" strokeWidth={1.4} />
+                <Popcorn className="h-7 w-7 text-white/50" strokeWidth={1.4} />
               </div>
-              <p className="text-sm font-medium text-white/45">
+              <p className="text-sm font-medium text-white/55">
                 No activity yet
               </p>
-              <p className="text-xs text-white/30">
+              <p className="text-xs text-white/55">
                 Movies are waiting to be watched.
               </p>
             </div>
@@ -210,7 +206,7 @@ export default function ProfilePage({
                   ) : (
                     <div className="flex h-16 w-[42px] shrink-0 items-center justify-center rounded-lg bg-white/[0.04]">
                       <Clapperboard
-                        className="h-5 w-5 text-white/20"
+                        className="h-5 w-5 text-white/50"
                         strokeWidth={1.5}
                       />
                     </div>
@@ -245,7 +241,7 @@ export default function ProfilePage({
                           {item.data.score as number} / 10
                         </p>
                       )}
-                    <p className="mt-1 text-[11px] uppercase tracking-wider text-white/35">
+                    <p className="mt-1 text-[11px] uppercase tracking-wider text-white/50">
                       {new Date(item.created_at).toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",

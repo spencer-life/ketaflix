@@ -8,7 +8,7 @@ import CrewCard from "@/components/CrewCard";
 import type { Room } from "@/types";
 import { setSession } from "@/lib/supabase";
 import { generateCrewCode } from "@/lib/utils";
-import { UserPlus, Plus, Users, Sparkles } from "lucide-react";
+import { UserRoundPlus, CirclePlus, UsersRound, Sparkles } from "lucide-react";
 
 export default function RoomsPage() {
   const router = useRouter();
@@ -86,7 +86,7 @@ export default function RoomsPage() {
   if (authLoading) {
     return (
       <div className="flex min-h-dvh items-center justify-center">
-        <div className="text-sm text-white/40">Loading...</div>
+        <div className="text-sm text-white/55">Loading...</div>
       </div>
     );
   }
@@ -105,7 +105,7 @@ export default function RoomsPage() {
         <div className="mb-6">
           <div className="mb-3 flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--accent-soft)]">
-              <Users className="h-4 w-4 text-[var(--accent)]" />
+              <UsersRound className="h-4 w-4 text-[var(--accent)]" />
             </div>
             <p className="eyebrow">Ketacrew</p>
           </div>
@@ -122,7 +122,7 @@ export default function RoomsPage() {
         {/* Mode toggle */}
         <div className="mb-5 grid grid-cols-2 gap-1.5 rounded-2xl border border-white/8 bg-black/25 p-1.5">
           {(["join", "create"] as const).map((m) => {
-            const Icon = m === "join" ? UserPlus : Plus;
+            const Icon = m === "join" ? UserRoundPlus : CirclePlus;
             const isActive = mode === m;
             return (
               <button
@@ -131,7 +131,7 @@ export default function RoomsPage() {
                 className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium transition-all ${
                   isActive
                     ? "border border-white/10 bg-white/10 text-white shadow-[0_2px_8px_rgba(0,0,0,0.2)]"
-                    : "border border-transparent text-white/40 hover:text-white/60"
+                    : "border border-transparent text-white/55 hover:text-white/60"
                 }`}
                 type="button"
               >
@@ -182,7 +182,7 @@ export default function RoomsPage() {
         </form>
 
         {profile && (
-          <p className="mt-4 text-center text-sm text-white/30">
+          <p className="mt-4 text-center text-sm text-white/45">
             Joining as{" "}
             <span className="text-white/50">
               {profile.display_name || profile.username}

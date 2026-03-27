@@ -115,7 +115,7 @@ export default function RegisterPage() {
 
         <div className="flex items-center gap-3">
           <div className="h-px flex-1 bg-white/8" />
-          <span className="text-xs text-white/30">or</span>
+          <span className="text-xs text-white/45">or</span>
           <div className="h-px flex-1 bg-white/8" />
         </div>
 
@@ -130,7 +130,7 @@ export default function RegisterPage() {
               maxLength={20}
               autoComplete="username"
             />
-            <p className="mt-1 text-xs text-white/30">
+            <p className="mt-1 text-xs text-white/45">
               Letters, numbers, hyphens, underscores only
             </p>
           </div>
