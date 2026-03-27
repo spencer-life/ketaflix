@@ -163,7 +163,7 @@ export default function RoomPage({
             <button
               onClick={handleLeave}
               title="Leave crew"
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/6 bg-white/[0.03] text-white/25 transition-all hover:border-red-500/20 hover:bg-red-500/5 hover:text-red-300/60"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/6 bg-white/[0.03] text-white/55 transition-all hover:border-red-500/20 hover:bg-red-500/5 hover:text-red-300/60"
             >
               <LogOut className="h-4 w-4" strokeWidth={1.6} />
             </button>
@@ -181,7 +181,7 @@ export default function RoomPage({
                   className={`flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-3 py-3 text-xs font-medium transition-all sm:px-5 ${
                     isActive
                       ? "bg-white/8 text-white shadow-sm"
-                      : "text-white/40 hover:text-white/60"
+                      : "text-white/55 hover:text-white/60"
                   }`}
                 >
                   <Icon className="h-4 w-4" strokeWidth={isActive ? 2 : 1.6} />

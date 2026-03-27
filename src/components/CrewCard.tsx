@@ -36,7 +36,7 @@ export default function CrewCard({ crew }: { crew: Room }) {
         <p className="truncate text-sm font-semibold">
           {crew.name || `${crew.created_by}'s Crew`}
         </p>
-        <div className="mt-1 flex items-center gap-2 text-xs text-white/40">
+        <div className="mt-1 flex items-center gap-2 text-xs text-white/55">
           <span className="rounded bg-white/[0.06] px-1.5 py-0.5 font-mono text-[10px] tracking-wider text-white/50">
             {crew.code}
           </span>
@@ -50,7 +50,7 @@ export default function CrewCard({ crew }: { crew: Room }) {
           )}
         </div>
       </div>
-      <ChevronRight className="h-4 w-4 shrink-0 text-white/20 transition-transform group-hover:translate-x-0.5 group-hover:text-white/40" />
+      <ChevronRight className="h-4 w-4 shrink-0 text-white/35 transition-transform group-hover:translate-x-0.5 group-hover:text-white/55" />
     </button>
   );
 }

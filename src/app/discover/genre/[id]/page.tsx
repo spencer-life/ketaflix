@@ -114,7 +114,7 @@ export default function GenrePage({
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center text-3xl text-white/40">
+                <div className="flex h-full w-full items-center justify-center text-3xl text-white/55">
                   🎬
                 </div>
               )}

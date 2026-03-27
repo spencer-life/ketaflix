@@ -86,7 +86,7 @@ export default function RoomsPage() {
   if (authLoading) {
     return (
       <div className="flex min-h-dvh items-center justify-center">
-        <div className="text-sm text-white/40">Loading...</div>
+        <div className="text-sm text-white/55">Loading...</div>
       </div>
     );
   }
@@ -131,7 +131,7 @@ export default function RoomsPage() {
                 className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium transition-all ${
                   isActive
                     ? "border border-white/10 bg-white/10 text-white shadow-[0_2px_8px_rgba(0,0,0,0.2)]"
-                    : "border border-transparent text-white/40 hover:text-white/60"
+                    : "border border-transparent text-white/55 hover:text-white/60"
                 }`}
                 type="button"
               >
@@ -182,7 +182,7 @@ export default function RoomsPage() {
         </form>
 
         {profile && (
-          <p className="mt-4 text-center text-sm text-white/30">
+          <p className="mt-4 text-center text-sm text-white/45">
             Joining as{" "}
             <span className="text-white/50">
               {profile.display_name || profile.username}

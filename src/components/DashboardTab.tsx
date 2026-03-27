@@ -309,7 +309,7 @@ export default function DashboardTab({
                           className="h-full w-full object-cover"
                         />
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center text-white/40">
+                        <div className="flex h-full w-full items-center justify-center text-white/55">
                           🎬
                         </div>
                       )}
@@ -349,14 +349,14 @@ export default function DashboardTab({
             <div className="mt-5 flex flex-col items-center gap-3 rounded-2xl border border-white/6 bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-8 text-center">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/[0.04]">
                 <Clapperboard
-                  className="h-6 w-6 text-white/25"
+                  className="h-6 w-6 text-white/55"
                   strokeWidth={1.5}
                 />
               </div>
               <p className="text-sm font-medium text-white/45">
                 No ketalog entries yet
               </p>
-              <p className="text-xs text-white/30">
+              <p className="text-xs text-white/45">
                 Mark something watched to populate the dashboard.
               </p>
             </div>
@@ -392,7 +392,7 @@ export default function DashboardTab({
                           sizes="20vw"
                         />
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center text-white/40">
+                        <div className="flex h-full w-full items-center justify-center text-white/55">
                           🎬
                         </div>
                       )}
@@ -407,12 +407,12 @@ export default function DashboardTab({
           ) : (
             <div className="mt-5 flex flex-col items-center gap-3 rounded-2xl border border-white/6 bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-8 text-center">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/[0.04]">
-                <ListPlus className="h-6 w-6 text-white/25" strokeWidth={1.5} />
+                <ListPlus className="h-6 w-6 text-white/55" strokeWidth={1.5} />
               </div>
               <p className="text-sm font-medium text-white/45">
                 Ketaqueue is empty
               </p>
-              <p className="text-xs text-white/30">
+              <p className="text-xs text-white/45">
                 Add a few films and the dashboard will start to breathe.
               </p>
             </div>

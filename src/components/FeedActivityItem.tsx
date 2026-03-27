@@ -83,7 +83,7 @@ export default function FeedActivityItem({ item }: { item: ActivityFeedItem }) {
             </div>
           )}
 
-        <p className="mt-1.5 text-xs text-white/40">
+        <p className="mt-1.5 text-xs text-white/55">
           {timeAgo(item.created_at)}
         </p>
       </div>

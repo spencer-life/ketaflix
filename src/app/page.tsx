@@ -12,6 +12,7 @@ import ProfileCard from "@/components/ProfileCard";
 import Link from "next/link";
 import { GENRE_ICONS } from "@/lib/genre-icons";
 import { Film, Users, ChevronRight } from "lucide-react";
+import KetaflixLogo from "@/components/KetaflixLogo";
 import type {
   ActivityFeedItem,
   Profile,
@@ -26,7 +27,7 @@ export default function HomePage() {
   if (loading) {
     return (
       <div className="flex min-h-dvh items-center justify-center">
-        <div className="text-sm text-white/40">Loading...</div>
+        <div className="text-sm text-white/55">Loading...</div>
       </div>
     );
   }
@@ -116,7 +117,7 @@ function FeedPage() {
   if (loading) {
     return (
       <div className="flex min-h-dvh items-center justify-center">
-        <div className="text-sm text-white/40">Loading feed...</div>
+        <div className="text-sm text-white/55">Loading feed...</div>
       </div>
     );
   }
@@ -125,8 +126,8 @@ function FeedPage() {
     <div className="mx-auto min-h-dvh w-full max-w-4xl px-4 pb-28 sm:px-6">
       {/* Header */}
       <header className="py-5">
-        <h1 className="text-xl font-bold tracking-tight">Ketaflix</h1>
-        <p className="text-sm text-white/55">What your crew is watching</p>
+        <KetaflixLogo size={148} />
+        <p className="mt-1 text-sm text-white/55">What your crew is watching</p>
       </header>
 
       <div ref={contentRef} className="opacity-0">
@@ -232,7 +233,7 @@ function FeedPage() {
                   Watch movies together with friends
                 </p>
               </div>
-              <ChevronRight className="ml-auto h-4 w-4 text-white/20 transition-transform group-hover:translate-x-0.5" />
+              <ChevronRight className="ml-auto h-4 w-4 text-white/35 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </section>
         )}
@@ -301,7 +302,7 @@ function FeedPage() {
                           sizes="(max-width: 640px) 33vw, 16vw"
                         />
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center text-white/40">
+                        <div className="flex h-full w-full items-center justify-center text-white/55">
                           🎬
                         </div>
                       )}
@@ -534,7 +535,7 @@ function LandingPage() {
         >
           <div className="mb-8">
             <p className="meta">Join the Film Club</p>
-            <h2 className="mt-2 text-4xl font-bold tracking-tight">Ketaflix</h2>
+            <KetaflixLogo size={200} className="mt-2" />
             <p className="mt-2 text-sm text-white/55">
               Create your account or sign in to get started.
             </p>
@@ -558,7 +559,7 @@ function LandingPage() {
       {/* Trending poster strip */}
       {trending.length > 0 && (
         <div className="relative z-10 mt-12">
-          <p className="mb-4 text-center text-sm font-semibold uppercase tracking-wider text-white/30">
+          <p className="mb-4 text-center text-sm font-semibold uppercase tracking-wider text-white/45">
             Trending This Week
           </p>
           <div className="scrollbar-hide flex gap-3 overflow-x-auto pb-2">

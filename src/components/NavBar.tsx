@@ -3,12 +3,29 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
-import { LayoutGrid, Compass, Users, User, Settings } from "lucide-react";
+import { Compass, Users, User, Settings } from "lucide-react";
+import type { LucideProps } from "lucide-react";
+
+/** Tiny horse head icon matching the Ketaflix brand logo */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function HorseIcon({ className, strokeWidth, ...props }: LucideProps) {
+  return (
+    <svg
+      viewBox="0 0 64 64"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      {...props}
+    >
+      <path d="M52 60 C58 45 56 25 50 12 L46 4 L40 14 L34 6 L30 18 C20 15 15 22 12 30 C8 35 8 43 14 47 C24 51 34 46 38 36 C42 48 40 55 36 60 Z" />
+    </svg>
+  );
+}
 
 const NAV_ITEMS = [
   {
     href: "/",
-    icon: LayoutGrid,
+    icon: HorseIcon,
     label: "Feed",
     match: (p: string) => p === "/",
   },
@@ -55,7 +72,7 @@ export default function NavBar() {
         paddingBottom: "env(safe-area-inset-bottom, 0px)",
       }}
     >
-      <div className="mx-auto flex max-w-lg items-stretch justify-around px-4">
+      <div className="mx-auto flex max-w-lg items-stretch justify-around px-6 pb-1">
         {NAV_ITEMS.map((item) => {
           const href =
             item.href === "__profile__"
@@ -69,7 +86,9 @@ export default function NavBar() {
               key={item.label}
               href={href}
               className={`flex flex-1 flex-col items-center gap-1 py-3 text-[10px] font-medium tracking-wide transition-colors ${
-                active ? "text-white" : "text-white/35 hover:text-white/55"
+                active
+                  ? "text-[var(--accent)]"
+                  : "text-white/60 hover:text-white/60"
               }`}
             >
               <Icon className="h-5 w-5" strokeWidth={active ? 2.2 : 1.5} />
