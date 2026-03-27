@@ -150,12 +150,12 @@ a {
   transition: transform 0.3s cubic-bezier(0.33, 1, 0.68, 1);
   background:
     linear-gradient(
-      180deg,
+      135deg,
       rgba(255, 255, 255, 0.04),
       rgba(255, 255, 255, 0.01)
     ),
-    #20262d;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+    #111418;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .poster-frame::after {
