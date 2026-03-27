@@ -35,7 +35,7 @@ export default function ProfileCard({
         >
           {profile.display_name || profile.username}
         </Link>
-        <p className="text-sm text-white/45">@{profile.username}</p>
+        <p className="text-sm text-white/50">@{profile.username}</p>
         {(followerCount !== undefined || followingCount !== undefined) && (
           <p className="mt-1 text-xs text-white/35">
             {followerCount !== undefined && (

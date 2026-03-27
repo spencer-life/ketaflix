@@ -48,7 +48,7 @@ export default function FollowButton({
       className={
         following
           ? "btn-ghost px-4 py-2 text-sm"
-          : "btn-primary px-4 py-2 text-sm"
+          : "rounded-xl border border-white/12 bg-white/8 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/12"
       }
     >
       {loading ? "..." : following ? "Following" : "Follow"}

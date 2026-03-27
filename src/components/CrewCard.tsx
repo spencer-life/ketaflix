@@ -37,7 +37,7 @@ export default function CrewCard({ crew }: { crew: Room }) {
           {crew.name || `${crew.created_by}'s Crew`}
         </p>
         <div className="mt-1 flex items-center gap-2 text-xs text-white/40">
-          <span className="rounded-md border border-white/8 bg-white/[0.03] px-1.5 py-0.5 font-mono tracking-wider">
+          <span className="rounded bg-white/[0.06] px-1.5 py-0.5 font-mono text-[10px] tracking-wider text-white/50">
             {crew.code}
           </span>
           {memberCount !== null && (

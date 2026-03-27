@@ -3,10 +3,15 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
-import { Home, Compass, Users, User, Settings } from "lucide-react";
+import { LayoutGrid, Compass, Users, User, Settings } from "lucide-react";
 
 const NAV_ITEMS = [
-  { href: "/", icon: Home, label: "Feed", match: (p: string) => p === "/" },
+  {
+    href: "/",
+    icon: LayoutGrid,
+    label: "Feed",
+    match: (p: string) => p === "/",
+  },
   {
     href: "/discover",
     icon: Compass,
@@ -43,13 +48,14 @@ export default function NavBar() {
   return (
     <nav
       aria-label="Main navigation"
-      className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/6 backdrop-blur-2xl"
+      className="fixed bottom-0 left-0 right-0 z-50"
       style={{
-        background: "rgba(8,9,12,0.72)",
+        background: "#050608",
+        borderTop: "1px solid rgba(255,255,255,0.06)",
         paddingBottom: "env(safe-area-inset-bottom, 0px)",
       }}
     >
-      <div className="mx-auto flex max-w-lg items-stretch justify-around px-2">
+      <div className="mx-auto flex max-w-lg items-stretch justify-around px-4">
         {NAV_ITEMS.map((item) => {
           const href =
             item.href === "__profile__"
@@ -62,13 +68,11 @@ export default function NavBar() {
             <Link
               key={item.label}
               href={href}
-              className={`flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors ${
-                active
-                  ? "text-[var(--accent)]"
-                  : "text-white/40 hover:text-white/60"
+              className={`flex flex-1 flex-col items-center gap-1 py-3 text-[10px] font-medium tracking-wide transition-colors ${
+                active ? "text-white" : "text-white/35 hover:text-white/55"
               }`}
             >
-              <Icon className="h-5 w-5" strokeWidth={active ? 2.4 : 1.8} />
+              <Icon className="h-5 w-5" strokeWidth={active ? 2.2 : 1.5} />
               <span>{item.label}</span>
             </Link>
           );

@@ -101,10 +101,10 @@ export default function ProfilePage({
         {/* Profile Header Card */}
         <section
           data-profile-section
-          className="relative overflow-hidden rounded-[28px] border border-white/8 p-6 opacity-0 sm:p-8"
+          className="relative overflow-hidden rounded-[28px] border border-white/6 p-6 opacity-0 sm:p-8"
           style={{
             background:
-              "radial-gradient(ellipse at top right, rgba(0,192,48,0.12), transparent 50%), radial-gradient(ellipse at bottom left, rgba(255,159,28,0.06), transparent 40%), linear-gradient(135deg, rgba(14,17,22,0.96), rgba(20,24,28,0.92))",
+              "radial-gradient(ellipse at top right, rgba(52,211,153,0.08), transparent 50%), radial-gradient(ellipse at bottom left, rgba(245,158,11,0.05), transparent 40%), linear-gradient(135deg, rgba(14,17,22,0.96), rgba(20,24,28,0.92))",
           }}
         >
           <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
@@ -161,7 +161,7 @@ export default function ProfilePage({
                     <p className="text-lg font-bold text-[var(--accent)]">
                       {stat.value}
                     </p>
-                    <p className="text-[10px] uppercase tracking-wider text-white/40">
+                    <p className="text-[10px] uppercase tracking-wider text-white/50">
                       {stat.label}
                     </p>
                   </div>
@@ -174,7 +174,7 @@ export default function ProfilePage({
         {/* Recent Activity */}
         <section data-profile-section className="mt-6 opacity-0">
           <div className="mb-4 flex items-center gap-2">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-white/40">
+            <h2 className="text-xs font-semibold uppercase tracking-widest text-white/55">
               Recent Activity
             </h2>
           </div>
@@ -245,7 +245,7 @@ export default function ProfilePage({
                           {item.data.score as number} / 10
                         </p>
                       )}
-                    <p className="mt-1 text-[11px] uppercase tracking-wider text-white/25">
+                    <p className="mt-1 text-[11px] uppercase tracking-wider text-white/35">
                       {new Date(item.created_at).toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",

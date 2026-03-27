@@ -153,7 +153,7 @@ export default function StatsTab({ roomCode }: StatsTabProps) {
                     className="h-full rounded-full"
                     style={{
                       width: `${(count / topGenres[0][1]) * 100}%`,
-                      background: "linear-gradient(90deg, #00c030, #7fff8b)",
+                      background: "linear-gradient(90deg, #059669, #6ee7b7)",
                     }}
                   />
                 </div>

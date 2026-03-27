@@ -11,12 +11,12 @@
   --surface-soft: rgba(255, 255, 255, 0.05);
   --border: rgba(255, 255, 255, 0.07);
   --border-strong: rgba(255, 255, 255, 0.14);
-  --accent: #0fa958;
-  --accent-soft: rgba(0, 192, 48, 0.14);
-  --accent-warm: #ff9f1c;
-  --text-primary: #f7f8f8;
-  --text-secondary: rgba(255, 255, 255, 0.72);
-  --text-muted: rgba(255, 255, 255, 0.6);
+  --accent: #34d399;
+  --accent-soft: rgba(52, 211, 153, 0.12);
+  --accent-warm: #f59e0b;
+  --text-primary: #f1f5f9;
+  --text-secondary: rgba(255, 255, 255, 0.78);
+  --text-muted: rgba(255, 255, 255, 0.56);
   --shadow-lg: 0 24px 80px rgba(0, 0, 0, 0.35);
 }
 
@@ -40,12 +40,12 @@ body {
   background-image:
     radial-gradient(
       circle at top left,
-      rgba(0, 166, 81, 0.08),
+      rgba(52, 211, 153, 0.04),
       transparent 30%
     ),
     radial-gradient(
       circle at top right,
-      rgba(255, 159, 28, 0.05),
+      rgba(245, 158, 11, 0.03),
       transparent 25%
     ),
     linear-gradient(180deg, #050608 0%, #050608 100%);
@@ -67,7 +67,7 @@ a {
 }
 
 ::selection {
-  background: rgba(0, 192, 48, 0.3);
+  background: rgba(52, 211, 153, 0.3);
   color: white;
 }
 
@@ -95,10 +95,10 @@ a {
 }
 
 .eyebrow {
-  color: var(--accent);
-  font-size: 0.74rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
@@ -112,28 +112,28 @@ a {
 .surface-card {
   background: linear-gradient(
     135deg,
-    rgba(28, 33, 40, 0.92),
-    rgba(22, 27, 34, 0.88)
+    rgba(28, 33, 40, 0.88),
+    rgba(22, 27, 34, 0.84)
   );
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 16px;
   box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    0 4px 24px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .dashboard-hero {
   background:
     radial-gradient(
       circle at top right,
-      rgba(0, 192, 48, 0.24),
+      rgba(52, 211, 153, 0.12),
       transparent 28%
     ),
     radial-gradient(
       circle at bottom left,
-      rgba(255, 159, 28, 0.2),
+      rgba(245, 158, 11, 0.1),
       transparent 24%
     ),
     linear-gradient(135deg, rgba(11, 13, 16, 0.96), rgba(20, 24, 28, 0.92));
@@ -157,14 +157,7 @@ a {
   overflow: hidden;
   border-radius: 10px;
   transition: transform 0.3s cubic-bezier(0.33, 1, 0.68, 1);
-  background:
-    linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.04),
-      rgba(255, 255, 255, 0.01)
-    ),
-    #111418;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: #111418;
 }
 
 .poster-frame::after {
@@ -172,7 +165,7 @@ a {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
   pointer-events: none;
 }
 
@@ -251,22 +244,22 @@ a {
 }
 
 .keta-input:focus {
-  border-color: rgba(0, 192, 48, 0.4);
+  border-color: rgba(52, 211, 153, 0.35);
   background: rgba(255, 255, 255, 0.05);
-  box-shadow: 0 0 0 3px rgba(0, 192, 48, 0.12);
+  box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.08);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #0fa958 0%, #0b8a44 50%, #097a3c 100%);
-  color: #ffffff;
+  background: linear-gradient(135deg, #34d399 0%, #10b981 50%, #059669 100%);
+  color: #022c22;
   border: none;
-  border-radius: 12px;
-  padding: 0.85rem 1.2rem;
-  font-size: 0.9rem;
-  font-weight: 600;
+  border-radius: 14px;
+  padding: 0.9rem 1.4rem;
+  font-size: 0.88rem;
+  font-weight: 700;
   letter-spacing: 0.02em;
   cursor: pointer;
-  box-shadow: 0 4px 16px rgba(15, 169, 88, 0.2);
+  box-shadow: 0 2px 8px rgba(52, 211, 153, 0.12);
   transition:
     transform 0.15s ease,
     filter 0.2s ease,
@@ -274,8 +267,8 @@ a {
 }
 
 .btn-primary:hover {
-  filter: brightness(1.12);
-  box-shadow: 0 8px 28px rgba(15, 169, 88, 0.35);
+  filter: brightness(1.08);
+  box-shadow: 0 4px 16px rgba(52, 211, 153, 0.2);
 }
 
 .btn-primary:active {
@@ -324,9 +317,9 @@ a {
 }
 
 .vibe-tag.active {
-  background: rgba(0, 192, 48, 0.16);
-  border-color: rgba(0, 192, 48, 0.3);
-  color: #d8ffe3;
+  background: rgba(52, 211, 153, 0.12);
+  border-color: rgba(52, 211, 153, 0.25);
+  color: #d1fae5;
 }
 
 .tab-btn {

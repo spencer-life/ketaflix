@@ -41,7 +41,7 @@ export default function MoviePoster({
         />
       )}
       {voteAverage !== undefined && voteAverage > 0 && (
-        <div className="absolute bottom-1.5 right-1.5 z-20 rounded-full border border-white/10 bg-black/40 px-1.5 py-0.5 text-[11px] font-semibold text-white/90 backdrop-blur-md">
+        <div className="absolute bottom-2 right-2 z-20 rounded-md bg-black/60 px-1.5 py-0.5 text-[10px] font-bold tabular-nums text-white/80 backdrop-blur-xl">
           {voteAverage.toFixed(1)}
         </div>
       )}

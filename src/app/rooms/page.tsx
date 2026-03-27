@@ -96,10 +96,10 @@ export default function RoomsPage() {
       {/* Hero header */}
       <div
         ref={containerRef}
-        className="relative mb-6 overflow-hidden rounded-[28px] border border-white/8 p-6 opacity-0 sm:p-8"
+        className="relative mb-8 overflow-hidden rounded-[28px] border border-white/6 p-6 opacity-0 sm:p-8"
         style={{
           background:
-            "radial-gradient(circle at top right, rgba(0,192,48,0.18), transparent 50%), radial-gradient(circle at bottom left, rgba(255,159,28,0.12), transparent 40%), linear-gradient(135deg, rgba(11,13,16,0.96), rgba(20,24,28,0.92))",
+            "radial-gradient(circle at top right, rgba(52,211,153,0.1), transparent 50%), radial-gradient(circle at bottom left, rgba(245,158,11,0.08), transparent 40%), linear-gradient(135deg, rgba(11,13,16,0.96), rgba(20,24,28,0.92))",
         }}
       >
         <div className="mb-6">
@@ -148,8 +148,8 @@ export default function RoomsPage() {
             <div>
               <label className="meta mb-2 block">Crew Code</label>
               <input
-                className="keta-input font-mono uppercase tracking-[0.2em]"
-                placeholder="ABCD1"
+                className="keta-input uppercase tracking-[0.12em]"
+                placeholder="Enter code"
                 value={roomCode}
                 onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
                 maxLength={6}
@@ -195,7 +195,7 @@ export default function RoomsPage() {
       {crews.length > 0 && (
         <section>
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-white/40">
+            <h2 className="text-xs font-semibold uppercase tracking-widest text-white/55">
               Your Ketacrews
             </h2>
             <span className="rounded-full bg-white/5 px-2.5 py-0.5 text-xs font-medium text-white/35">
