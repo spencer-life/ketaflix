@@ -1,12 +1,39 @@
 import { type SVGProps } from "react";
 
-/**
- * Font Awesome horse-head path (CC BY 4.0).
- * viewBox 0 0 640 512. Facing right.
- * @see https://fontawesome.com/icons/horse-head
- */
-const HORSE_PATH =
-  "M64 464l0-147.1c0-108.4 68.3-205.1 170.5-241.3L404.2 15.5C425.6 7.9 448 23.8 448 46.4c0 11-5.5 21.2-14.6 27.3L400 96c48.1 0 91.2 29.8 108.1 74.9l48.6 129.5c11.8 31.4 4.1 66.8-19.6 90.5c-16 16-37.8 25.1-60.5 25.1l-3.4 0c-26.1 0-50.9-11.6-67.6-31.7l-32.3-38.7c-11.7 4.1-24.2 6.4-37.3 6.4c0 0 0 0-.1 0c0 0 0 0 0 0c-6.3 0-12.5-.5-18.6-1.5c-3.6-.6-7.2-1.4-10.7-2.3c0 0 0 0 0 0c-28.9-7.8-53.1-26.8-67.8-52.2c-4.4-7.6-14.2-10.3-21.9-5.8s-10.3 14.2-5.8 21.9c24 41.5 68.3 70 119.3 71.9l47.2 70.8c4 6.1 6.2 13.2 6.2 20.4c0 20.3-16.5 36.8-36.8 36.8L112 512c-26.5 0-48-21.5-48-48zM392 224a24 24 0 1 0 0-48 24 24 0 1 0 0 48z";
+/** Concept-3 horse head paths (512x512 viewBox, facing left with flowing mane) */
+const MANE_BASE =
+  "M 338 56 C 360 38, 396 38, 424 62 C 450 86, 464 124, 464 170 C 464 216, 448 262, 428 304 C 410 340, 400 374, 404 404 C 406 420, 412 432, 420 440 C 410 446, 396 442, 384 428 C 372 414, 366 394, 366 370 C 366 346, 372 320, 384 294 C 396 266, 410 236, 416 204 C 422 172, 420 142, 410 116 C 400 92, 382 74, 360 66 C 346 60, 340 58, 338 56 Z";
+const MANE_WAVE_1 =
+  "M 350 52 C 368 42, 392 46, 412 66 C 430 86, 440 116, 442 152 C 444 188, 434 226, 418 262 C 404 294, 396 324, 396 352 C 396 376, 402 396, 412 412 C 404 408, 396 396, 392 378 C 388 360, 390 338, 398 314 C 408 288, 420 258, 428 226 C 434 194, 436 162, 430 134 C 424 108, 412 86, 396 72 C 380 58, 366 52, 356 52 L 350 52 Z";
+const MANE_WAVE_2 =
+  "M 408 58 C 426 54, 444 68, 456 96 C 466 124, 468 160, 462 200 C 456 240, 440 278, 424 312 C 410 344, 404 372, 406 398 C 408 416, 414 430, 422 438 C 416 434, 410 422, 406 406 C 402 388, 404 366, 412 340 C 422 312, 436 280, 446 246 C 454 212, 458 178, 454 146 C 450 116, 440 90, 426 74 C 416 60, 410 58, 408 58 Z";
+const HEAD_NECK =
+  "M 300 46 C 292 38, 278 32, 266 38 C 254 44, 244 56, 236 72 C 228 88, 218 104, 206 118 C 194 132, 178 142, 160 152 C 140 162, 120 176, 104 194 C 88 212, 76 234, 68 258 C 60 282, 58 306, 64 324 C 70 338, 80 348, 94 352 C 106 356, 116 350, 124 340 C 134 326, 148 314, 164 306 C 180 298, 198 294, 216 296 C 232 298, 244 306, 254 318 C 264 332, 272 350, 280 370 C 288 388, 298 404, 312 416 C 328 428, 346 434, 366 434 C 384 434, 398 428, 408 418 C 416 408, 420 394, 418 380 C 416 366, 408 352, 396 342 C 384 332, 370 324, 358 318 C 348 314, 340 308, 336 300 C 332 290, 330 278, 332 266 C 334 252, 340 238, 350 222 C 360 204, 368 184, 372 164 C 376 142, 374 120, 368 102 C 362 86, 352 72, 340 62 C 330 52, 316 46, 306 44 L 300 46 Z";
+const EAR =
+  "M 300 46 C 296 32, 290 14, 282 4 C 278 -2, 274 2, 272 10 C 270 22, 272 34, 278 42 C 284 46, 292 46, 300 46 Z";
+
+function HorseHead() {
+  return (
+    <>
+      <path d={MANE_BASE} fill="#239b6e" />
+      <path d={MANE_WAVE_1} fill="#2ab383" />
+      <path d={MANE_WAVE_2} fill="#2ab383" />
+      <path d={HEAD_NECK} fill="#34d399" />
+      <path d={EAR} fill="#34d399" />
+      <circle cx={192} cy={192} r={13} fill="#1a7a56" />
+      <circle cx={192} cy={192} r={7} fill="#0d4f38" />
+      <circle cx={189} cy={189} r={3} fill="#5ceaad" />
+      <ellipse
+        cx={76}
+        cy={318}
+        rx={8}
+        ry={5.5}
+        fill="#2ab383"
+        transform="rotate(-20, 76, 318)"
+      />
+    </>
+  );
+}
 
 interface KetaflixLogoProps extends SVGProps<SVGSVGElement> {
   /** Width in pixels — height auto-scales */
@@ -22,41 +49,26 @@ export default function KetaflixLogo({
   ...props
 }: KetaflixLogoProps) {
   if (iconOnly) {
-    const iconH = size * (512 / 640);
     return (
       <svg
-        viewBox="0 0 640 512"
+        viewBox="0 0 512 512"
         width={size}
-        height={iconH}
+        height={size}
         xmlns="http://www.w3.org/2000/svg"
         className={className}
         {...props}
       >
-        <defs>
-          <linearGradient
-            id="kf-icon-g"
-            x1="64"
-            y1="0"
-            x2="560"
-            y2="512"
-            gradientUnits="userSpaceOnUse"
-          >
-            <stop offset="0%" stopColor="#6ee7b7" />
-            <stop offset="55%" stopColor="#34d399" />
-            <stop offset="100%" stopColor="#059669" />
-          </linearGradient>
-        </defs>
-        <path d={HORSE_PATH} fill="url(#kf-icon-g)" />
+        <HorseHead />
       </svg>
     );
   }
 
-  const aspectRatio = 3.6;
+  const aspectRatio = 4;
   const height = size / aspectRatio;
 
   return (
     <svg
-      viewBox="0 0 380 100"
+      viewBox="0 0 400 100"
       width={size}
       height={height}
       fill="none"
@@ -68,22 +80,10 @@ export default function KetaflixLogo({
     >
       <defs>
         <linearGradient
-          id="kf-logo-g"
-          x1="0"
-          y1="0"
-          x2="90"
-          y2="100"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop offset="0%" stopColor="#6ee7b7" />
-          <stop offset="55%" stopColor="#34d399" />
-          <stop offset="100%" stopColor="#059669" />
-        </linearGradient>
-        <linearGradient
           id="kf-text-g"
-          x1="100"
+          x1="110"
           y1="30"
-          x2="370"
+          x2="390"
           y2="74"
           gradientUnits="userSpaceOnUse"
         >
@@ -93,13 +93,13 @@ export default function KetaflixLogo({
       </defs>
 
       {/* Horse icon — scaled to fit left portion */}
-      <g transform="translate(-2, 5) scale(0.14)">
-        <path d={HORSE_PATH} fill="url(#kf-logo-g)" />
+      <g transform="translate(-6, -2) scale(0.21)">
+        <HorseHead />
       </g>
 
       {/* Wordmark */}
       <text
-        x="104"
+        x="112"
         y="67"
         fill="url(#kf-text-g)"
         fontFamily="'Space Grotesk', system-ui, sans-serif"
