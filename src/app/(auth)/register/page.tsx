@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { signUp, signInWithGoogle } from "@/lib/auth";
 import Link from "next/link";
+import KetaflixLogo from "@/components/KetaflixLogo";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -77,11 +78,14 @@ export default function RegisterPage() {
 
   return (
     <main className="relative mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-4 py-10">
-      <section ref={cardRef} className="surface-card p-6 opacity-0 sm:p-8">
-        <div className="mb-8 text-center">
-          <p className="eyebrow mb-2">Join the Film Club</p>
-          <h1 className="text-3xl font-bold tracking-tight">Ketaflix</h1>
-          <p className="mt-2 text-sm text-white/50">
+      <section
+        ref={cardRef}
+        className="surface-card flex flex-col gap-5 p-6 opacity-0 sm:p-8"
+      >
+        <div>
+          <p className="eyebrow mb-3">Join the Film Club</p>
+          <KetaflixLogo size={148} />
+          <p className="mt-2 text-sm text-white/55">
             Create your account to start tracking
           </p>
         </div>
@@ -121,7 +125,7 @@ export default function RegisterPage() {
 
         <div className="flex items-center gap-3">
           <div className="h-px flex-1 bg-white/8" />
-          <span className="text-xs text-white/45">or</span>
+          <span className="text-xs text-white/55">or</span>
           <div className="h-px flex-1 bg-white/8" />
         </div>
 
@@ -181,14 +185,14 @@ export default function RegisterPage() {
 
           <button
             type="submit"
-            className="btn-primary mt-2 w-full"
+            className="btn-primary w-full"
             disabled={loading}
           >
             {loading ? "Creating account..." : "Create Account"}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-white/45">
+        <p className="text-center text-sm text-white/45">
           Already have an account?{" "}
           <Link
             href={`/login${redirectTo ? `?redirect=${encodeURIComponent(redirectTo)}` : ""}`}
