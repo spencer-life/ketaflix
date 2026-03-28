@@ -209,7 +209,7 @@ export default function DashboardTab({
         {heroBackdrop && (
           <Image
             src={heroBackdrop}
-            alt={heroMovie?.title ?? room.name ?? room.code}
+            alt={heroMovie?.title ?? room.name ?? "Ketacrew"}
             fill
             className="object-cover opacity-30"
             sizes="(max-width: 1280px) 100vw, 60vw"
@@ -230,7 +230,6 @@ export default function DashboardTab({
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
-              <span className="info-chip">Crew {room.code}</span>
               <span className="info-chip">Created by {room.created_by}</span>
               {topPicker && (
                 <span className="info-chip">Top picker {topPicker[0]}</span>
