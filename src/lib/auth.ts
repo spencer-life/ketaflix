@@ -70,12 +70,15 @@ export async function signIn(username: string, password: string) {
 }
 
 /** Sign in with Google OAuth */
-export async function signInWithGoogle() {
+export async function signInWithGoogle(next?: string) {
   const supabase = createClient();
+  const callbackUrl = next
+    ? `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`
+    : `${window.location.origin}/auth/callback`;
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${window.location.origin}/auth/callback`,
+      redirectTo: callbackUrl,
     },
   });
   if (error) return { error: { message: error.message } };

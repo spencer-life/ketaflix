@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { getWatched, getKetaqueue } from "@/lib/db";
+import { BarChart3 } from "lucide-react";
+import HorseIcon from "./HorseIcon";
 import type { WatchedItem } from "@/types";
 
 interface StatsTabProps {
@@ -93,14 +95,14 @@ export default function StatsTab({ roomCode }: StatsTabProps) {
     .map(([u, { sum, count }]) => ({ username: u, avg: sum / count }))
     .sort((a, b) => b.avg - a.avg);
 
-  // Vibe tag breakdown
-  const vibeCounts: Record<string, number> = {};
+  // KetaTag breakdown
+  const tagCounts: Record<string, number> = {};
   watched.forEach((w) => {
     w.vibe_tags.forEach((t) => {
-      vibeCounts[t] = (vibeCounts[t] ?? 0) + 1;
+      tagCounts[t] = (tagCounts[t] ?? 0) + 1;
     });
   });
-  const topVibes = Object.entries(vibeCounts)
+  const topTags = Object.entries(tagCounts)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 6);
 
@@ -127,7 +129,7 @@ export default function StatsTab({ roomCode }: StatsTabProps) {
         <StatCard label="In Ketaqueue" value={ketaqueueCount.toString()} />
         <StatCard
           label="Avg Rating"
-          value={overallAvg ? `${overallAvg.toFixed(1)} 🐴 / 10` : "—"}
+          value={overallAvg ? `${overallAvg.toFixed(1)} / 10` : "—"}
         />
         <StatCard
           label="Top Picker"
@@ -173,8 +175,8 @@ export default function StatsTab({ roomCode }: StatsTabProps) {
                 className="surface-soft flex items-center justify-between px-4 py-3"
               >
                 <span className="text-sm">{r.username}</span>
-                <span className="font-mono text-sm text-[var(--accent-warm)]">
-                  {r.avg.toFixed(1)} 🐴
+                <span className="flex items-center gap-1 font-mono text-sm text-[var(--accent-warm)]">
+                  {r.avg.toFixed(1)} <HorseIcon size={14} />
                 </span>
               </div>
             ))}
@@ -182,11 +184,11 @@ export default function StatsTab({ roomCode }: StatsTabProps) {
         </div>
       )}
 
-      {topVibes.length > 0 && (
+      {topTags.length > 0 && (
         <div className="stat-card surface-card rounded-[26px] p-5 opacity-0">
-          <p className="meta mb-4">Top Vibes</p>
+          <p className="meta mb-4">Top KetaTags</p>
           <div className="flex flex-wrap gap-2">
-            {topVibes.map(([tag, count]) => (
+            {topTags.map(([tag, count]) => (
               <div
                 key={tag}
                 className="vibe-tag active flex items-center gap-1"
@@ -201,7 +203,9 @@ export default function StatsTab({ roomCode }: StatsTabProps) {
 
       {totalWatched === 0 && (
         <div className="stat-card surface-card empty-state rounded-[26px] p-8 text-center opacity-0">
-          <p className="text-4xl">📊</p>
+          <div className="flex h-14 w-14 mx-auto items-center justify-center rounded-2xl bg-white/[0.04]">
+            <BarChart3 className="h-7 w-7 text-white/50" strokeWidth={1.4} />
+          </div>
           <p className="mt-4 text-lg font-semibold">
             Stats show up after the first logs
           </p>

@@ -4,8 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { logWatched, getCrewMembers } from "@/lib/db";
 import { tmdbImage } from "@/lib/tmdb";
-import { VIBE_TAGS } from "@/types";
+import { KETA_TAGS } from "@/types";
 import type { KetaqueueItem } from "@/types";
+import HorseIcon from "./HorseIcon";
 
 interface LogWatchedModalProps {
   item: KetaqueueItem;
@@ -28,8 +29,12 @@ export default function LogWatchedModal({
   const [ratings, setRatings] = useState<Record<string, number>>({
     [username]: 0,
   });
+  const [watchedWith, setWatchedWith] = useState<Set<string>>(
+    new Set([username]),
+  );
   const [notes, setNotes] = useState("");
-  const [vibeTags, setVibeTags] = useState<string[]>([]);
+  const [ketaTags, setKetaTags] = useState<string[]>([]);
+  const [customTagInput, setCustomTagInput] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -56,10 +61,36 @@ export default function LogWatchedModal({
     });
   }, []);
 
-  function toggleVibe(tag: string) {
-    setVibeTags((prev) =>
+  function toggleWatchedWith(member: string) {
+    setWatchedWith((prev) => {
+      const next = new Set(prev);
+      if (next.has(member)) {
+        next.delete(member);
+        setRatings((r) => {
+          const copy = { ...r };
+          delete copy[member];
+          return copy;
+        });
+      } else {
+        next.add(member);
+        setRatings((r) => ({ ...r, [member]: 0 }));
+      }
+      return next;
+    });
+  }
+
+  function toggleTag(tag: string) {
+    setKetaTags((prev) =>
       prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
     );
+  }
+
+  function addCustomTag() {
+    const tag = customTagInput.trim().toLowerCase().replace(/\s+/g, "-");
+    if (tag && !ketaTags.includes(tag)) {
+      setKetaTags((prev) => [...prev, tag]);
+    }
+    setCustomTagInput("");
   }
 
   async function handleSubmit() {
@@ -74,8 +105,9 @@ export default function LogWatchedModal({
         movieId: item.movie_id,
         pickedBy,
         ratings: ratingsList,
+        watchedWith: Array.from(watchedWith),
         notes: notes.trim() || undefined,
-        vibeTags,
+        vibeTags: ketaTags,
         ketaqueueId: item.id,
       });
 
@@ -140,58 +172,114 @@ export default function LogWatchedModal({
           </div>
 
           <div>
-            <label className="meta mb-3 block">Ratings</label>
-            <div className="flex flex-col gap-3">
-              {members.map((member) => (
-                <div key={member} className="surface-soft px-4 py-3">
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="text-sm">{member}</span>
-                    {(ratings[member] ?? 0) > 0 && (
-                      <span className="text-xs font-mono text-[var(--accent-warm)]">
-                        {ratings[member]} / 10
-                      </span>
-                    )}
-                  </div>
-                  <div className="grid grid-cols-5 gap-1">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((score) => (
-                      <button
-                        key={score}
-                        onClick={() =>
-                          setRatings((prev) => ({
-                            ...prev,
-                            [member]: prev[member] === score ? 0 : score,
-                          }))
-                        }
-                        className="flex h-8 items-center justify-center rounded-lg text-base transition-all hover:scale-110"
-                        style={{
-                          opacity: score <= (ratings[member] ?? 0) ? 1 : 0.2,
-                          background:
-                            score <= (ratings[member] ?? 0)
-                              ? "rgba(255,159,28,0.15)"
-                              : "transparent",
-                        }}
-                      >
-                        🐴
-                      </button>
-                    ))}
-                  </div>
-                </div>
+            <label className="meta mb-2 block">Who watched?</label>
+            <div className="flex flex-wrap gap-2">
+              {members.map((m) => (
+                <button
+                  key={m}
+                  onClick={() => toggleWatchedWith(m)}
+                  className={`vibe-tag ${watchedWith.has(m) ? "active" : ""}`}
+                >
+                  {m}
+                </button>
               ))}
             </div>
           </div>
 
           <div>
-            <label className="meta mb-2 block">Vibe Tags</label>
+            <label className="meta mb-3 block">Ratings</label>
+            <div className="flex flex-col gap-3">
+              {members
+                .filter((m) => watchedWith.has(m))
+                .map((member) => (
+                  <div key={member} className="surface-soft px-4 py-3">
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="text-sm">{member}</span>
+                      {(ratings[member] ?? 0) > 0 && (
+                        <span className="text-xs font-mono text-[var(--accent-warm)]">
+                          {ratings[member]} / 10
+                        </span>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-5 gap-1">
+                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((score) => {
+                        const selected = score <= (ratings[member] ?? 0);
+                        return (
+                          <button
+                            key={score}
+                            onClick={() =>
+                              setRatings((prev) => ({
+                                ...prev,
+                                [member]: prev[member] === score ? 0 : score,
+                              }))
+                            }
+                            className={`flex h-8 items-center justify-center rounded-lg transition-all hover:scale-110 ${
+                              selected
+                                ? "text-[var(--accent-warm)]"
+                                : "text-white/20"
+                            }`}
+                            style={{
+                              background: selected
+                                ? "rgba(255,159,28,0.15)"
+                                : "transparent",
+                            }}
+                          >
+                            <HorseIcon filled={selected} size={18} />
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="meta mb-2 block">KetaTags</label>
             <div className="flex flex-wrap gap-2">
-              {VIBE_TAGS.map((tag) => (
+              {KETA_TAGS.map((tag) => (
                 <button
                   key={tag}
-                  onClick={() => toggleVibe(tag)}
-                  className={`vibe-tag ${vibeTags.includes(tag) ? "active" : ""}`}
+                  onClick={() => toggleTag(tag)}
+                  className={`vibe-tag ${ketaTags.includes(tag) ? "active" : ""}`}
                 >
                   {tag}
                 </button>
               ))}
+              {ketaTags
+                .filter((t) => !(KETA_TAGS as readonly string[]).includes(t))
+                .map((tag) => (
+                  <button
+                    key={tag}
+                    onClick={() => toggleTag(tag)}
+                    className="vibe-tag active"
+                  >
+                    {tag}
+                    <span className="ml-1 text-white/40">&times;</span>
+                  </button>
+                ))}
+            </div>
+            <div className="mt-2 flex gap-2">
+              <input
+                className="keta-input flex-1 text-sm"
+                placeholder="Add a custom tag..."
+                value={customTagInput}
+                onChange={(e) => setCustomTagInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    addCustomTag();
+                  }
+                }}
+              />
+              <button
+                type="button"
+                onClick={addCustomTag}
+                disabled={!customTagInput.trim()}
+                className="btn-ghost px-3 py-2 text-sm"
+              >
+                Add
+              </button>
             </div>
           </div>
 

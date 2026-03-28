@@ -7,28 +7,14 @@ import { updateProfile } from "@/lib/db";
 import { signOut } from "@/lib/auth";
 import { clearSession } from "@/lib/supabase";
 import { DoorOpen } from "lucide-react";
-
-const EMOJI_OPTIONS = [
-  "🎬",
-  "🍿",
-  "🎥",
-  "🎞️",
-  "📽️",
-  "🎭",
-  "🌙",
-  "⭐",
-  "🔥",
-  "💎",
-  "👻",
-  "🤖",
-];
+import UserAvatar, { AVATAR_OPTIONS } from "@/components/UserAvatar";
 
 export default function SettingsPage() {
   const router = useRouter();
   const { user, profile, loading, refresh } = useAuth();
   const [displayName, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
-  const [emoji, setEmoji] = useState("🎬");
+  const [emoji, setEmoji] = useState("cat");
   const [discoverable, setDiscoverable] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -43,7 +29,7 @@ export default function SettingsPage() {
     if (profile) {
       setDisplayName(profile.display_name || "");
       setBio(profile.bio || "");
-      setEmoji(profile.avatar_emoji || "🎬");
+      setEmoji(profile.avatar_emoji || "cat");
       setDiscoverable(profile.is_discoverable);
     }
   }, [user, profile, loading, router]);
@@ -113,22 +99,22 @@ export default function SettingsPage() {
         </div>
 
         <form onSubmit={handleSave} className="flex flex-col gap-7">
-          {/* Avatar Emoji — circular containers with emerald selected ring */}
+          {/* Avatar — icon-based picker */}
           <div>
             <label className="meta mb-3 block">Avatar</label>
             <div className="flex flex-wrap gap-2.5">
-              {EMOJI_OPTIONS.map((e) => (
+              {AVATAR_OPTIONS.map((opt) => (
                 <button
-                  key={e}
+                  key={opt.id}
                   type="button"
-                  onClick={() => setEmoji(e)}
-                  className={`flex h-12 w-12 items-center justify-center rounded-full text-xl transition-all ${
-                    emoji === e
-                      ? "scale-110 bg-[var(--accent-soft)] ring-2 ring-[var(--accent)] ring-offset-2 ring-offset-[#050608]"
-                      : "bg-white/[0.06] hover:bg-white/10"
+                  onClick={() => setEmoji(opt.id)}
+                  className={`rounded-full transition-all ${
+                    emoji === opt.id
+                      ? "scale-110 ring-2 ring-[var(--accent)] ring-offset-2 ring-offset-[#050608]"
+                      : "opacity-60 hover:opacity-100"
                   }`}
                 >
-                  {e}
+                  <UserAvatar value={opt.id} size="lg" />
                 </button>
               ))}
             </div>

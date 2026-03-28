@@ -7,6 +7,10 @@ import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
+  const [redirectTo] = useState(() => {
+    if (typeof window === "undefined") return null;
+    return new URLSearchParams(window.location.search).get("redirect");
+  });
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -50,7 +54,7 @@ export default function LoginPage() {
       return;
     }
 
-    router.push("/");
+    router.push(redirectTo || "/");
     router.refresh();
   }
 
@@ -68,7 +72,9 @@ export default function LoginPage() {
           type="button"
           onClick={async () => {
             setError("");
-            const { error: oauthError } = await signInWithGoogle();
+            const { error: oauthError } = await signInWithGoogle(
+              redirectTo || undefined,
+            );
             if (oauthError) setError(oauthError.message);
           }}
           className="btn-ghost flex w-full items-center justify-center gap-3 py-3"
@@ -139,7 +145,7 @@ export default function LoginPage() {
         <p className="mt-6 text-center text-sm text-white/45">
           Don&apos;t have an account?{" "}
           <Link
-            href="/register"
+            href={`/register${redirectTo ? `?redirect=${encodeURIComponent(redirectTo)}` : ""}`}
             className="text-[var(--accent)] transition-colors hover:text-[var(--accent)]/80"
           >
             Create one

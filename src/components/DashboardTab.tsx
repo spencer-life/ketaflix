@@ -6,7 +6,7 @@ import {
   Popcorn,
   ListTodo,
   Star,
-  UsersRound,
+  Sofa,
   Clapperboard,
   CirclePlus,
 } from "lucide-react";
@@ -153,13 +153,13 @@ export default function DashboardTab({
   });
   const topPicker = Object.entries(pickerCounts).sort((a, b) => b[1] - a[1])[0];
 
-  const vibeCounts: Record<string, number> = {};
+  const tagCounts: Record<string, number> = {};
   watched.forEach((entry) => {
     entry.vibe_tags.forEach((tag) => {
-      vibeCounts[tag] = (vibeCounts[tag] ?? 0) + 1;
+      tagCounts[tag] = (tagCounts[tag] ?? 0) + 1;
     });
   });
-  const topVibe = Object.entries(vibeCounts).sort((a, b) => b[1] - a[1])[0];
+  const topTag = Object.entries(tagCounts).sort((a, b) => b[1] - a[1])[0];
 
   const summaryCards = [
     {
@@ -169,7 +169,7 @@ export default function DashboardTab({
         members.length === 1
           ? "1 member in crew"
           : `${members.length} members in crew`,
-      icon: UsersRound,
+      icon: Sofa,
     },
     {
       label: "On Deck",
@@ -235,8 +235,8 @@ export default function DashboardTab({
               {topPicker && (
                 <span className="info-chip">Top picker {topPicker[0]}</span>
               )}
-              {topVibe && (
-                <span className="info-chip">Main vibe {topVibe[0]}</span>
+              {topTag && (
+                <span className="info-chip">Top KetaTag {topTag[0]}</span>
               )}
             </div>
           </div>
@@ -329,10 +329,13 @@ export default function DashboardTab({
                         {entry.picked_by
                           ? ` · picked by ${entry.picked_by}`
                           : ""}
+                        {entry.watched_with?.length
+                          ? ` · ${entry.watched_with.length} watched`
+                          : ""}
                       </p>
                       {average !== null && (
                         <p className="mt-2 text-xs font-mono text-[var(--accent-warm)]">
-                          {average.toFixed(1)} 🐴 / 10
+                          {average.toFixed(1)} / 10
                         </p>
                       )}
                     </div>

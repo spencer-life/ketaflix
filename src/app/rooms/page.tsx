@@ -8,13 +8,11 @@ import CrewCard from "@/components/CrewCard";
 import type { Room } from "@/types";
 import { setSession } from "@/lib/supabase";
 import { generateCrewCode } from "@/lib/utils";
-import { UserRoundPlus, CirclePlus, UsersRound, Sparkles } from "lucide-react";
+import { Sofa, Sparkles, Plus } from "lucide-react";
 
 export default function RoomsPage() {
   const router = useRouter();
   const { user, profile, loading: authLoading } = useAuth();
-  const [mode, setMode] = useState<"join" | "create">("join");
-  const [roomCode, setRoomCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [crews, setCrews] = useState<Room[]>([]);
@@ -57,19 +55,12 @@ export default function RoomsPage() {
     });
   }, [crews]);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleCreate() {
     setError("");
     if (!profile) return;
 
     const username = profile.display_name || profile.username;
-    const code =
-      mode === "create" ? generateCrewCode() : roomCode.trim().toUpperCase();
-
-    if (!code || code.length < 4) {
-      setError("Enter a valid crew code");
-      return;
-    }
+    const code = generateCrewCode();
 
     setLoading(true);
     try {
@@ -105,85 +96,40 @@ export default function RoomsPage() {
         <div className="mb-6">
           <div className="mb-3 flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--accent-soft)]">
-              <UsersRound className="h-4 w-4 text-[var(--accent)]" />
+              <Sofa className="h-4 w-4 text-[var(--accent)]" />
             </div>
             <p className="eyebrow">Ketacrew</p>
           </div>
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-            {mode === "join" ? "Join a Ketacrew" : "Start a Ketacrew"}
+            Start a Ketacrew
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-white/60">
-            {mode === "join"
-              ? "Got a crew code? Punch it in and you're watching together."
-              : "Create a fresh crew and share the code with your people."}
+            Create a crew and invite your people with a link — no codes needed.
           </p>
         </div>
 
-        {/* Mode toggle */}
-        <div className="mb-5 grid grid-cols-2 gap-1.5 rounded-2xl border border-white/8 bg-black/25 p-1.5">
-          {(["join", "create"] as const).map((m) => {
-            const Icon = m === "join" ? UserRoundPlus : CirclePlus;
-            const isActive = mode === m;
-            return (
-              <button
-                key={m}
-                onClick={() => setMode(m)}
-                className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium transition-all ${
-                  isActive
-                    ? "border border-white/10 bg-white/10 text-white shadow-[0_2px_8px_rgba(0,0,0,0.2)]"
-                    : "border border-transparent text-white/55 hover:text-white/60"
-                }`}
-                type="button"
-              >
-                <Icon className="h-4 w-4" strokeWidth={isActive ? 2.2 : 1.6} />
-                {m === "join" ? "Join Crew" : "Create Crew"}
-              </button>
-            );
-          })}
+        <div className="mb-4 flex items-center gap-3 rounded-2xl border border-white/6 bg-white/[0.03] p-4">
+          <Sparkles className="h-5 w-5 shrink-0 text-[var(--accent)]/60" />
+          <p className="text-sm leading-6 text-white/60">
+            Once created, share an invite link to bring your crew together
+            instantly.
+          </p>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          {mode === "join" ? (
-            <div>
-              <label className="meta mb-2 block">Crew Code</label>
-              <input
-                className="keta-input uppercase tracking-[0.12em]"
-                placeholder="Enter code"
-                value={roomCode}
-                onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
-                maxLength={6}
-                autoComplete="off"
-              />
-            </div>
-          ) : (
-            <div className="flex items-center gap-3 rounded-2xl border border-white/6 bg-white/[0.03] p-4">
-              <Sparkles className="h-5 w-5 shrink-0 text-[var(--accent)]/60" />
-              <p className="text-sm leading-6 text-white/60">
-                A fresh crew code is generated automatically, ready to copy and
-                share.
-              </p>
-            </div>
-          )}
+        {error && <p className="mb-3 text-sm text-red-300">{error}</p>}
 
-          {error && <p className="text-sm text-red-300">{error}</p>}
-
-          <button
-            type="submit"
-            className="btn-primary mt-1 w-full"
-            disabled={loading}
-          >
-            {loading
-              ? "Loading..."
-              : mode === "join"
-                ? "Join Crew"
-                : "Create Crew"}
-          </button>
-        </form>
+        <button
+          onClick={handleCreate}
+          className="btn-primary flex w-full items-center justify-center gap-2"
+          disabled={loading}
+        >
+          <Plus className="h-4 w-4" strokeWidth={2.5} />
+          {loading ? "Creating..." : "Create Crew"}
+        </button>
 
         {profile && (
           <p className="mt-4 text-center text-sm text-white/45">
-            Joining as{" "}
+            Creating as{" "}
             <span className="text-white/50">
               {profile.display_name || profile.username}
             </span>

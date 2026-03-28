@@ -92,6 +92,7 @@ export interface WatchedItem {
   watched_at: string;
   picked_by: string | null;
   ratings: { username: string; score: number }[];
+  watched_with: string[];
   notes: string | null;
   vibe_tags: string[];
   created_at: string;
@@ -120,7 +121,7 @@ export interface TMDBSearchResult {
   overview: string;
 }
 
-export const VIBE_TAGS = [
+export const KETA_TAGS = [
   "mind-bending",
   "hilarious",
   "emotional",
@@ -135,7 +136,7 @@ export const VIBE_TAGS = [
   "underrated",
 ] as const;
 
-export type VibeTag = (typeof VIBE_TAGS)[number];
+export type KetaTag = (typeof KETA_TAGS)[number];
 
 export interface TMDBGenre {
   id: number;

@@ -6,6 +6,7 @@ import { getWatched } from "@/lib/db";
 import { supabase } from "@/lib/supabase";
 import { tmdbImage } from "@/lib/tmdb";
 import { getAverageRating } from "@/lib/utils";
+import HorseIcon from "./HorseIcon";
 import type { WatchedItem } from "@/types";
 
 interface WatchedTabProps {
@@ -133,9 +134,14 @@ export default function WatchedTab({ roomCode }: WatchedTabProps) {
                     Picked by {item.picked_by}
                   </p>
                 )}
+                {item.watched_with?.length > 0 && (
+                  <p className="mt-1 text-xs text-white/40">
+                    Watched by {item.watched_with.join(", ")}
+                  </p>
+                )}
                 {avg !== null && (
-                  <p className="mt-3 text-sm font-mono text-[var(--accent-warm)]">
-                    {avg.toFixed(1)} 🐴 / 10
+                  <p className="mt-3 flex items-center gap-1 text-sm font-mono text-[var(--accent-warm)]">
+                    {avg.toFixed(1)} <HorseIcon size={14} /> / 10
                   </p>
                 )}
 
@@ -168,7 +174,9 @@ export default function WatchedTab({ roomCode }: WatchedTabProps) {
                         >
                           <span className="text-sm">{r.username}</span>
                           <span className="font-mono text-sm text-[var(--accent-warm)]">
-                            {r.score} 🐴 / 10
+                            <span className="flex items-center gap-1">
+                              {r.score} <HorseIcon size={13} /> / 10
+                            </span>
                           </span>
                         </div>
                       ))}
@@ -187,7 +195,7 @@ export default function WatchedTab({ roomCode }: WatchedTabProps) {
 
                 {item.vibe_tags.length > 0 && (
                   <div className="mt-3">
-                    <p className="meta mb-2">Vibes</p>
+                    <p className="meta mb-2">KetaTags</p>
                     <div className="flex flex-wrap gap-1.5">
                       {item.vibe_tags.map((tag) => (
                         <span key={tag} className="vibe-tag active">
