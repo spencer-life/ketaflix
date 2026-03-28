@@ -6,9 +6,9 @@ import { useAuth } from "@/lib/auth-context";
 import {
   Clapperboard,
   Telescope,
-  UsersRound,
-  CircleUserRound,
-  SlidersHorizontal,
+  Sofa,
+  UserRound,
+  Settings,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -26,19 +26,19 @@ const NAV_ITEMS = [
   },
   {
     href: "/rooms",
-    icon: UsersRound,
+    icon: Sofa,
     label: "Ketacrew",
     match: (p: string) => p.startsWith("/room"),
   },
   {
     href: "__profile__",
-    icon: CircleUserRound,
+    icon: UserRound,
     label: "Profile",
     match: (p: string) => p.startsWith("/profile"),
   },
   {
     href: "/settings",
-    icon: SlidersHorizontal,
+    icon: Settings,
     label: "Settings",
     match: (p: string) => p === "/settings",
   },

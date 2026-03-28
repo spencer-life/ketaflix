@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { Profile } from "@/types";
 import FollowButton from "./FollowButton";
+import UserAvatar from "./UserAvatar";
 
 interface ProfileCardProps {
   profile: Profile;
@@ -21,11 +22,8 @@ export default function ProfileCard({
 }: ProfileCardProps) {
   return (
     <div className="surface-card flex items-center gap-4 p-4">
-      <Link
-        href={`/profile/${profile.username}`}
-        className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/5 text-2xl"
-      >
-        {profile.avatar_emoji || "🎬"}
+      <Link href={`/profile/${profile.username}`}>
+        <UserAvatar value={profile.avatar_emoji} size="lg" />
       </Link>
 
       <div className="min-w-0 flex-1">

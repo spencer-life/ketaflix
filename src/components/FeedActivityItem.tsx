@@ -3,6 +3,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { tmdbImage } from "@/lib/tmdb";
+import HorseIcon from "./HorseIcon";
+import UserAvatar from "./UserAvatar";
 import type { ActivityFeedItem, ActivityType } from "@/types";
 
 function activityVerb(type: ActivityType): string {
@@ -32,11 +34,8 @@ export default function FeedActivityItem({ item }: { item: ActivityFeedItem }) {
   return (
     <div className="surface-soft flex gap-4 p-4">
       {/* Avatar */}
-      <Link
-        href={`/profile/${profile?.username ?? ""}`}
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/5 text-xl"
-      >
-        {profile?.avatar_emoji || "🎬"}
+      <Link href={`/profile/${profile?.username ?? ""}`}>
+        <UserAvatar value={profile?.avatar_emoji ?? null} size="md" />
       </Link>
 
       {/* Content */}
@@ -63,8 +62,8 @@ export default function FeedActivityItem({ item }: { item: ActivityFeedItem }) {
         {item.activity_type === "rated" &&
           item.data &&
           "score" in item.data && (
-            <p className="mt-1 text-sm text-[var(--accent-warm)]">
-              {item.data.score as number} 🐴 / 10
+            <p className="mt-1 flex items-center gap-1 text-sm text-[var(--accent-warm)]">
+              {item.data.score as number} <HorseIcon size={13} /> / 10
             </p>
           )}
 

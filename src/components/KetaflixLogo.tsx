@@ -1,5 +1,13 @@
 import { type SVGProps } from "react";
 
+/**
+ * Font Awesome horse-head path (CC BY 4.0).
+ * viewBox 0 0 640 512. Facing right.
+ * @see https://fontawesome.com/icons/horse-head
+ */
+const HORSE_PATH =
+  "M64 464l0-147.1c0-108.4 68.3-205.1 170.5-241.3L404.2 15.5C425.6 7.9 448 23.8 448 46.4c0 11-5.5 21.2-14.6 27.3L400 96c48.1 0 91.2 29.8 108.1 74.9l48.6 129.5c11.8 31.4 4.1 66.8-19.6 90.5c-16 16-37.8 25.1-60.5 25.1l-3.4 0c-26.1 0-50.9-11.6-67.6-31.7l-32.3-38.7c-11.7 4.1-24.2 6.4-37.3 6.4c0 0 0 0-.1 0c0 0 0 0 0 0c-6.3 0-12.5-.5-18.6-1.5c-3.6-.6-7.2-1.4-10.7-2.3c0 0 0 0 0 0c-28.9-7.8-53.1-26.8-67.8-52.2c-4.4-7.6-14.2-10.3-21.9-5.8s-10.3 14.2-5.8 21.9c24 41.5 68.3 70 119.3 71.9l47.2 70.8c4 6.1 6.2 13.2 6.2 20.4c0 20.3-16.5 36.8-36.8 36.8L112 512c-26.5 0-48-21.5-48-48zM392 224a24 24 0 1 0 0-48 24 24 0 1 0 0 48z";
+
 interface KetaflixLogoProps extends SVGProps<SVGSVGElement> {
   /** Width in pixels — height auto-scales */
   size?: number;
@@ -14,12 +22,12 @@ export default function KetaflixLogo({
   ...props
 }: KetaflixLogoProps) {
   if (iconOnly) {
+    const iconH = size * (512 / 640);
     return (
       <svg
-        viewBox="0 0 64 64"
+        viewBox="0 0 640 512"
         width={size}
-        height={size}
-        fill="none"
+        height={iconH}
         xmlns="http://www.w3.org/2000/svg"
         className={className}
         {...props}
@@ -27,10 +35,10 @@ export default function KetaflixLogo({
         <defs>
           <linearGradient
             id="kf-icon-g"
-            x1="16"
-            y1="2"
-            x2="48"
-            y2="58"
+            x1="64"
+            y1="0"
+            x2="560"
+            y2="512"
             gradientUnits="userSpaceOnUse"
           >
             <stop offset="0%" stopColor="#6ee7b7" />
@@ -38,7 +46,7 @@ export default function KetaflixLogo({
             <stop offset="100%" stopColor="#059669" />
           </linearGradient>
         </defs>
-        <HorsePath gradientId="kf-icon-g" />
+        <path d={HORSE_PATH} fill="url(#kf-icon-g)" />
       </svg>
     );
   }
@@ -61,10 +69,10 @@ export default function KetaflixLogo({
       <defs>
         <linearGradient
           id="kf-logo-g"
-          x1="8"
-          y1="2"
-          x2="64"
-          y2="90"
+          x1="0"
+          y1="0"
+          x2="90"
+          y2="100"
           gradientUnits="userSpaceOnUse"
         >
           <stop offset="0%" stopColor="#6ee7b7" />
@@ -84,9 +92,9 @@ export default function KetaflixLogo({
         </linearGradient>
       </defs>
 
-      {/* Horse icon — scaled into left portion */}
-      <g transform="translate(0, 3) scale(1.45)">
-        <HorsePath gradientId="kf-logo-g" />
+      {/* Horse icon — scaled to fit left portion */}
+      <g transform="translate(-2, 5) scale(0.14)">
+        <path d={HORSE_PATH} fill="url(#kf-logo-g)" />
       </g>
 
       {/* Wordmark */}
@@ -103,28 +111,5 @@ export default function KetaflixLogo({
         <tspan fill="#34d399">flix</tspan>
       </text>
     </svg>
-  );
-}
-
-/**
- * Horse head silhouette — chess knight style, facing left.
- * 64x64 viewBox. Uses STRAIGHT LINES for the face profile (ear, forehead,
- * nose, muzzle, jaw) for instant recognition, and CURVES for the neck.
- */
-function HorsePath({ gradientId }: { gradientId: string }) {
-  return (
-    <>
-      <path
-        d="M52 60 C58 45 56 25 50 12 L46 4 L40 14 L34 6 L30 18 C20 15 15 22 12 30 C8 35 8 43 14 47 C24 51 34 46 38 36 C42 48 40 55 36 60 Z"
-        fill={`url(#${gradientId})`}
-      />
-
-      {/* Eye */}
-      <circle cx="24" cy="22" r="2.2" fill="#050608" />
-      <circle cx="23.3" cy="21.3" r="0.65" fill="rgba(255,255,255,0.5)" />
-
-      {/* Nostril */}
-      <ellipse cx="12" cy="35" rx="1.2" ry="1.5" fill="#050608" opacity="0.3" />
-    </>
   );
 }

@@ -15,10 +15,10 @@ import {
   ListTodo,
   Library,
   TrendingUp,
-  Copy,
   Check,
   DoorOpen,
-  UsersRound,
+  Sofa,
+  UserPlus,
 } from "lucide-react";
 
 type Tab = "dashboard" | "ketaqueue" | "watched" | "stats";
@@ -98,8 +98,21 @@ export default function RoomPage({
     router.push("/");
   }
 
-  function copyCode() {
-    navigator.clipboard.writeText(code);
+  async function shareInvite() {
+    const inviteUrl = `${window.location.origin}/join/${code}`;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Join ${room?.name || "my Ketacrew"} on Ketaflix`,
+          text: "Tap to join the crew and start watching together.",
+          url: inviteUrl,
+        });
+        return;
+      } catch {
+        // User cancelled or share failed — fall through to clipboard
+      }
+    }
+    await navigator.clipboard.writeText(inviteUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   }
@@ -133,7 +146,7 @@ export default function RoomPage({
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex items-start gap-3">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[var(--accent-soft)]">
-                <UsersRound
+                <Sofa
                   className="h-6 w-6 text-[var(--accent)]"
                   strokeWidth={1.8}
                 />
@@ -145,14 +158,19 @@ export default function RoomPage({
                 </h1>
                 <div className="mt-2 flex flex-wrap items-center gap-2">
                   <button
-                    onClick={copyCode}
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-white/8 bg-white/[0.04] px-2.5 py-1 font-mono text-xs tracking-[0.2em] text-white/50 transition-all hover:border-white/14 hover:text-white/70"
+                    onClick={shareInvite}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--accent)]/15 bg-[var(--accent-soft)] px-3 py-1.5 text-xs font-medium text-[var(--accent)] transition-all hover:border-[var(--accent)]/25 hover:bg-[var(--accent-soft)]"
                   >
-                    {code}
                     {copied ? (
-                      <Check className="h-3 w-3 text-[var(--accent)]" />
+                      <>
+                        <Check className="h-3.5 w-3.5" />
+                        Link Copied
+                      </>
                     ) : (
-                      <Copy className="h-3 w-3" />
+                      <>
+                        <UserPlus className="h-3.5 w-3.5" />
+                        Invite
+                      </>
                     )}
                   </button>
                   <span className="info-chip text-xs">{session?.username}</span>

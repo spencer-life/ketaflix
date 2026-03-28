@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { tmdbImage } from "@/lib/tmdb";
+import UserAvatar from "./UserAvatar";
 import type { ActivityFeedItem } from "@/types";
 
 interface FeedMovieCardProps {
@@ -73,12 +74,8 @@ export default function FeedMovieCard({
             {Array.from(watchers.values())
               .slice(0, 4)
               .map((w, i) => (
-                <span
-                  key={i}
-                  className="flex h-6 w-6 items-center justify-center rounded-full bg-white/8 text-xs"
-                  title={w.name}
-                >
-                  {w.emoji}
+                <span key={i} title={w.name}>
+                  <UserAvatar value={w.emoji} size="sm" />
                 </span>
               ))}
             {watchers.size > 4 && (

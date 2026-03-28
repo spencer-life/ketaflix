@@ -7,6 +7,10 @@ import Link from "next/link";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const [redirectTo] = useState(() => {
+    if (typeof window === "undefined") return null;
+    return new URLSearchParams(window.location.search).get("redirect");
+  });
   const [username, setUsername] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [password, setPassword] = useState("");
@@ -67,7 +71,7 @@ export default function RegisterPage() {
       return;
     }
 
-    router.push("/");
+    router.push(redirectTo || "/");
     router.refresh();
   }
 
@@ -87,7 +91,9 @@ export default function RegisterPage() {
           type="button"
           onClick={async () => {
             setError("");
-            const { error: oauthError } = await signInWithGoogle();
+            const { error: oauthError } = await signInWithGoogle(
+              redirectTo || undefined,
+            );
             if (oauthError) setError(oauthError.message);
           }}
           className="btn-ghost flex w-full items-center justify-center gap-3 py-3"
@@ -185,7 +191,7 @@ export default function RegisterPage() {
         <p className="mt-6 text-center text-sm text-white/45">
           Already have an account?{" "}
           <Link
-            href="/login"
+            href={`/login${redirectTo ? `?redirect=${encodeURIComponent(redirectTo)}` : ""}`}
             className="text-[var(--accent)] transition-colors hover:text-[var(--accent)]/80"
           >
             Sign in

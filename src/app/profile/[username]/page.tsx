@@ -13,8 +13,9 @@ import {
 } from "@/lib/db";
 import { tmdbImage } from "@/lib/tmdb";
 import FollowButton from "@/components/FollowButton";
+import UserAvatar from "@/components/UserAvatar";
 import Link from "next/link";
-import { SlidersHorizontal, Popcorn, Clapperboard } from "lucide-react";
+import { Pencil, Popcorn, Clapperboard } from "lucide-react";
 import type { Profile, ActivityFeedItem } from "@/types";
 
 export default function ProfilePage({
@@ -109,9 +110,11 @@ export default function ProfilePage({
         >
           <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
             {/* Avatar — Stitch-inspired glow ring */}
-            <div className="avatar-glow flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-[var(--bg)] text-4xl shadow-lg">
-              {profile.avatar_emoji || "🎬"}
-            </div>
+            <UserAvatar
+              value={profile.avatar_emoji}
+              size="xl"
+              className="avatar-glow shadow-lg"
+            />
 
             <div className="min-w-0 flex-1">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -129,10 +132,7 @@ export default function ProfilePage({
                     href="/settings"
                     className="inline-flex items-center gap-1.5 rounded-xl border border-white/8 bg-white/[0.04] px-4 py-2 text-sm text-white/55 transition-all hover:border-white/14 hover:text-white/75"
                   >
-                    <SlidersHorizontal
-                      className="h-3.5 w-3.5"
-                      strokeWidth={1.8}
-                    />
+                    <Pencil className="h-3.5 w-3.5" strokeWidth={1.8} />
                     Edit Profile
                   </Link>
                 ) : (

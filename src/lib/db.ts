@@ -215,6 +215,7 @@ export async function logWatched(params: {
   movieId: string;
   pickedBy: string;
   ratings: { username: string; score: number }[];
+  watchedWith: string[];
   notes?: string;
   vibeTags?: string[];
   ketaqueueId?: string;
@@ -227,6 +228,7 @@ export async function logWatched(params: {
       movie_id: params.movieId,
       picked_by: params.pickedBy,
       ratings: params.ratings,
+      watched_with: params.watchedWith,
       notes: params.notes,
       vibe_tags: params.vibeTags ?? [],
       profile_id: params.profileId,

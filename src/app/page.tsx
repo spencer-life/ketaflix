@@ -11,7 +11,7 @@ import CrewCard from "@/components/CrewCard";
 import ProfileCard from "@/components/ProfileCard";
 import Link from "next/link";
 import { GENRE_ICONS } from "@/lib/genre-icons";
-import { Popcorn, UsersRound, ChevronRight } from "lucide-react";
+import { Popcorn, Sofa, ChevronRight } from "lucide-react";
 import KetaflixLogo from "@/components/KetaflixLogo";
 import type {
   ActivityFeedItem,
@@ -200,7 +200,7 @@ function FeedPage() {
                 href="/rooms"
                 className="text-xs text-[var(--accent)] transition-colors hover:text-[var(--accent)]/80"
               >
-                Join or Create
+                Manage
               </Link>
             </div>
             <div className="grid gap-2 sm:grid-cols-2">
@@ -220,7 +220,7 @@ function FeedPage() {
               }}
             >
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[var(--accent-soft)] transition-transform group-hover:scale-105">
-                <UsersRound
+                <Sofa
                   className="h-6 w-6 text-[var(--accent)]"
                   strokeWidth={1.8}
                 />
