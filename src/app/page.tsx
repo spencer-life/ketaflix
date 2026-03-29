@@ -198,12 +198,12 @@ function FeedPage() {
           </section>
         )}
 
-        {/* My Ketacrews */}
+        {/* My Krews */}
         {crews.length > 0 ? (
           <section className="mb-10">
             <div className="mb-3 flex items-center justify-between">
               <h2 className="text-xs font-semibold uppercase tracking-widest text-white/55">
-                My Ketacrews
+                My Krews
               </h2>
               <Link
                 href="/rooms"
@@ -235,9 +235,7 @@ function FeedPage() {
                 />
               </div>
               <div>
-                <p className="text-sm font-semibold">
-                  Create Your First Ketacrew
-                </p>
+                <p className="text-sm font-semibold">Create Your First Krew</p>
                 <p className="mt-0.5 text-xs text-white/50">
                   Watch movies together with friends
                 </p>
@@ -504,7 +502,7 @@ function LandingPage() {
           </h1>
           <p className="mt-5 max-w-xl text-base leading-7 text-white/70 sm:text-lg">
             Build a Ketaqueue, log your Ketalogs, and share the experience with
-            your Ketacrew.
+            your Krew.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
@@ -530,7 +528,7 @@ function LandingPage() {
             </div>
             <div className="surface-soft p-4">
               <p className="meta">Connect</p>
-              <p className="mt-2 text-2xl font-bold">Ketacrew</p>
+              <p className="mt-2 text-2xl font-bold">Krew</p>
               <p className="mt-1 text-sm text-white/55">
                 Your people, your movie nights.
               </p>

@@ -50,7 +50,7 @@ export default function CrewCard({ crew }: { crew: Room }) {
           const url = `${window.location.origin}/join/${crew.code}`;
           if (navigator.share) {
             navigator.share({
-              title: `Join ${crew.name || "Ketacrew"}`,
+              title: `Join ${crew.name || "Krew"}`,
               url,
             });
           } else {

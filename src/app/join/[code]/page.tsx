@@ -63,14 +63,14 @@ export default function JoinPage({
         <div className="surface-card max-w-sm p-6 text-center">
           <p className="text-lg font-semibold">Crew not found</p>
           <p className="mt-2 text-sm text-white/50">
-            This invite link doesn&apos;t match any Ketacrew. Ask for a fresh
-            link and try again.
+            This invite link doesn&apos;t match any Krew. Ask for a fresh link
+            and try again.
           </p>
           <button
             onClick={() => router.push("/rooms")}
             className="btn-primary mt-5 w-full"
           >
-            Go to Ketacrews
+            Go to Krews
           </button>
         </div>
       ) : (
@@ -84,7 +84,7 @@ export default function JoinPage({
             onClick={() => router.push("/rooms")}
             className="btn-primary mt-5 w-full"
           >
-            Go to Ketacrews
+            Go to Krews
           </button>
         </div>
       )}

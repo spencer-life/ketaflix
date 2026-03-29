@@ -103,7 +103,7 @@ export default function RoomPage({
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `Join ${room?.name || "my Ketacrew"} on Ketaflix`,
+          title: `Join ${room?.name || "my Krew"} on Ketaflix`,
           text: "Tap to join the crew and start watching together.",
           url: inviteUrl,
         });
@@ -152,7 +152,7 @@ export default function RoomPage({
                 />
               </div>
               <div className="min-w-0">
-                <p className="eyebrow">Ketacrew</p>
+                <p className="eyebrow">Krew</p>
                 <h1 className="mt-1 text-xl font-bold tracking-tight sm:text-2xl">
                   {room?.name || `${room?.created_by}'s Crew`}
                 </h1>

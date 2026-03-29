@@ -223,9 +223,9 @@ export default function ProfilePage({
                           "added to Ketaqueue"}
                         {item.activity_type === "watched" && "watched"}
                         {item.activity_type === "joined_room" &&
-                          "joined a Ketacrew"}
+                          "joined a Krew"}
                         {item.activity_type === "created_room" &&
-                          "created a Ketacrew"}
+                          "created a Krew"}
                         {item.activity_type === "followed" &&
                           "followed someone"}
                       </span>{" "}
