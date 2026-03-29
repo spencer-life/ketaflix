@@ -3,6 +3,16 @@ import type { TMDBMovie, TMDBSearchResult, TMDBGenre } from "@/types";
 const TMDB_BASE = "https://api.themoviedb.org/3";
 const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p";
 
+/** Genres excluded from curated suggestions (Horror, Thriller, War, Crime) */
+export const EXCLUDED_GENRE_IDS = [27, 53, 10752, 80];
+
+/** Filter out movies with any excluded genre */
+function filterVibes(movies: TMDBSearchResult[]): TMDBSearchResult[] {
+  return movies.filter(
+    (m) => !m.genre_ids?.some((id) => EXCLUDED_GENRE_IDS.includes(id)),
+  );
+}
+
 export const tmdbImage = (path: string | null, size = "w500") =>
   path ? `${TMDB_IMAGE_BASE}/${size}${path}` : null;
 
@@ -15,6 +25,7 @@ async function tmdbFetch<T>(endpoint: string): Promise<T> {
   return res.json();
 }
 
+/** Search is NOT filtered — users can find any movie */
 export async function searchMovies(query: string): Promise<TMDBSearchResult[]> {
   if (!query.trim()) return [];
   const data = await tmdbFetch<{ results: TMDBSearchResult[] }>(
@@ -31,7 +42,7 @@ export async function getTrending(): Promise<TMDBSearchResult[]> {
   const data = await tmdbFetch<{ results: TMDBSearchResult[] }>(
     `/trending/movie/week?language=en-US`,
   );
-  return data.results.slice(0, 12);
+  return filterVibes(data.results).slice(0, 12);
 }
 
 // ─── Discovery ─────────────────────────────────────────────────────────────
@@ -47,8 +58,9 @@ export async function discoverByGenre(
   genreId: number,
   page = 1,
 ): Promise<TMDBSearchResult[]> {
+  if (EXCLUDED_GENRE_IDS.includes(genreId)) return [];
   const data = await tmdbFetch<{ results: TMDBSearchResult[] }>(
-    `/discover/movie?with_genres=${genreId}&include_adult=false&language=en-US&sort_by=popularity.desc&page=${page}`,
+    `/discover/movie?with_genres=${genreId}&without_genres=${EXCLUDED_GENRE_IDS.join(",")}&include_adult=false&language=en-US&sort_by=popularity.desc&page=${page}`,
   );
   return data.results;
 }
@@ -57,21 +69,21 @@ export async function getNowPlaying(): Promise<TMDBSearchResult[]> {
   const data = await tmdbFetch<{ results: TMDBSearchResult[] }>(
     `/movie/now_playing?language=en-US&page=1`,
   );
-  return data.results.slice(0, 12);
+  return filterVibes(data.results).slice(0, 12);
 }
 
 export async function getTopRated(): Promise<TMDBSearchResult[]> {
   const data = await tmdbFetch<{ results: TMDBSearchResult[] }>(
     `/movie/top_rated?language=en-US&page=1`,
   );
-  return data.results.slice(0, 12);
+  return filterVibes(data.results).slice(0, 12);
 }
 
 export async function getPopular(): Promise<TMDBSearchResult[]> {
   const data = await tmdbFetch<{ results: TMDBSearchResult[] }>(
     `/movie/popular?language=en-US&page=1`,
   );
-  return data.results.slice(0, 12);
+  return filterVibes(data.results).slice(0, 12);
 }
 
 export async function getRecommendations(
@@ -80,5 +92,5 @@ export async function getRecommendations(
   const data = await tmdbFetch<{ results: TMDBSearchResult[] }>(
     `/movie/${tmdbId}/recommendations?language=en-US&page=1`,
   );
-  return data.results.slice(0, 12);
+  return filterVibes(data.results).slice(0, 12);
 }
