@@ -17,9 +17,9 @@ function activityVerb(type: ActivityType): string {
     case "watched":
       return "watched";
     case "joined_room":
-      return "joined a Ketacrew";
+      return "joined a Krew";
     case "created_room":
-      return "created a Ketacrew";
+      return "created a Krew";
     case "followed":
       return "started following someone";
     default:

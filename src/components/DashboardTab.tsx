@@ -209,7 +209,7 @@ export default function DashboardTab({
         {heroBackdrop && (
           <Image
             src={heroBackdrop}
-            alt={heroMovie?.title ?? room.name ?? "Ketacrew"}
+            alt={heroMovie?.title ?? room.name ?? "Krew"}
             fill
             className="object-cover opacity-30"
             sizes="(max-width: 1280px) 100vw, 60vw"

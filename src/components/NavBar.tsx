@@ -27,7 +27,7 @@ const NAV_ITEMS = [
   {
     href: "/rooms",
     icon: Sofa,
-    label: "Ketacrew",
+    label: "Krew",
     match: (p: string) => p.startsWith("/room"),
   },
   {

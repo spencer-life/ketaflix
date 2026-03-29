@@ -98,10 +98,10 @@ export default function RoomsPage() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--accent-soft)]">
               <Sofa className="h-4 w-4 text-[var(--accent)]" />
             </div>
-            <p className="eyebrow">Ketacrew</p>
+            <p className="eyebrow">Krew</p>
           </div>
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-            Start a Ketacrew
+            Start a Krew
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-white/60">
             Create a crew and invite your people with a link — no codes needed.
@@ -142,7 +142,7 @@ export default function RoomsPage() {
         <section>
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-xs font-semibold uppercase tracking-widest text-white/55">
-              Your Ketacrews
+              Your Krews
             </h2>
             <span className="rounded-full bg-white/5 px-2.5 py-0.5 text-xs font-medium text-white/35">
               {crews.length}

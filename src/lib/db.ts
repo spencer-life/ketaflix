@@ -10,9 +10,9 @@ import type {
   ActivityType,
 } from "@/types";
 
-// ─── Ketacrews ───────────────────────────────────────────────────────────────
+// ─── Krews ───────────────────────────────────────────────────────────────────
 // NOTE: Supabase tables are still named "rooms" / "users" — no risky migration.
-// All app-level code uses "Ketacrew" terminology.
+// All app-level code uses "Krew" terminology.
 
 export async function getOrCreateCrew(
   code: string,
