@@ -21,7 +21,7 @@ const NAV_ITEMS = [
   {
     href: "/discover",
     icon: Telescope,
-    label: "Discover",
+    label: "Fliks",
     match: (p: string) => p.startsWith("/discover"),
   },
   {
