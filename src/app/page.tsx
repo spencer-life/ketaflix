@@ -4,7 +4,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { useAuth } from "@/lib/auth-context";
 import { getFeed, getUserCrews, searchProfiles } from "@/lib/db";
-import { getTrending, getPopular, getGenres, tmdbImage } from "@/lib/tmdb";
+import {
+  getTrending,
+  getPopular,
+  getGenres,
+  tmdbImage,
+  EXCLUDED_GENRE_IDS,
+} from "@/lib/tmdb";
 import FeedActivityItem from "@/components/FeedActivityItem";
 import FeedMovieCard from "@/components/FeedMovieCard";
 import CrewCard from "@/components/CrewCard";
@@ -169,22 +175,25 @@ function FeedPage() {
         {genres.length > 0 && (
           <section className="mb-10">
             <div className="scrollbar-hide -mx-4 flex gap-2 overflow-x-auto px-4">
-              {genres.slice(0, 12).map((genre) => {
-                const Icon = GENRE_ICONS[genre.id] || Popcorn;
-                return (
-                  <Link
-                    key={genre.id}
-                    href={`/discover/genre/${genre.id}`}
-                    className="flex shrink-0 items-center gap-2 rounded-full border border-white/8 bg-white/5 px-3.5 py-2 text-xs font-medium transition-colors hover:bg-white/10"
-                  >
-                    <Icon
-                      className="h-3.5 w-3.5 text-white/45"
-                      strokeWidth={1.6}
-                    />
-                    <span>{genre.name}</span>
-                  </Link>
-                );
-              })}
+              {genres
+                .filter((g) => !EXCLUDED_GENRE_IDS.includes(g.id))
+                .slice(0, 12)
+                .map((genre) => {
+                  const Icon = GENRE_ICONS[genre.id] || Popcorn;
+                  return (
+                    <Link
+                      key={genre.id}
+                      href={`/discover/genre/${genre.id}`}
+                      className="flex shrink-0 items-center gap-2 rounded-full border border-white/8 bg-white/5 px-3.5 py-2 text-xs font-medium transition-colors hover:bg-white/10"
+                    >
+                      <Icon
+                        className="h-3.5 w-3.5 text-white/45"
+                        strokeWidth={1.6}
+                      />
+                      <span>{genre.name}</span>
+                    </Link>
+                  );
+                })}
             </div>
           </section>
         )}

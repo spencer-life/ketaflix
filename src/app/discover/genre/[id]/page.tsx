@@ -3,7 +3,12 @@
 import { useEffect, useRef, useState, use } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { getGenres, discoverByGenre, tmdbImage } from "@/lib/tmdb";
+import {
+  getGenres,
+  discoverByGenre,
+  tmdbImage,
+  EXCLUDED_GENRE_IDS,
+} from "@/lib/tmdb";
 import type { TMDBSearchResult } from "@/types";
 
 export default function GenrePage({
@@ -18,10 +23,17 @@ export default function GenrePage({
   const [movies, setMovies] = useState<TMDBSearchResult[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [blocked, setBlocked] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (EXCLUDED_GENRE_IDS.includes(genreId)) {
+      setBlocked(true);
+      setLoading(false);
+      return;
+    }
+
     async function load() {
       const [genres, results] = await Promise.all([
         getGenres(),
@@ -72,6 +84,21 @@ export default function GenrePage({
             <div key={i} className="shimmer aspect-[2/3] rounded-xl" />
           ))}
         </div>
+      </div>
+    );
+  }
+
+  if (blocked) {
+    return (
+      <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col items-center justify-center px-4 text-center">
+        <p className="text-lg font-semibold">Not available on Ketaflix</p>
+        <p className="mt-2 text-sm text-white/50">
+          This genre isn&apos;t part of the Ketaflix vibe. Browse something more
+          fun instead.
+        </p>
+        <Link href="/discover" className="btn-primary mt-6">
+          Back to Discover
+        </Link>
       </div>
     );
   }

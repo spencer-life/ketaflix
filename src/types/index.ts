@@ -119,6 +119,7 @@ export interface TMDBSearchResult {
   release_date: string;
   vote_average: number;
   overview: string;
+  genre_ids: number[];
 }
 
 export const KETA_TAGS = [

@@ -11,6 +11,7 @@ import {
   getTrending,
   getRecommendations,
   tmdbImage,
+  EXCLUDED_GENRE_IDS,
 } from "@/lib/tmdb";
 import { getRecentWatchedByProfile } from "@/lib/db";
 import { useAuth } from "@/lib/auth-context";
@@ -179,7 +180,7 @@ export default function DiscoverPage() {
         </h2>
         <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
           {genres
-            .filter((g) => g.id !== 10770)
+            .filter((g) => g.id !== 10770 && !EXCLUDED_GENRE_IDS.includes(g.id))
             .slice(0, 12)
             .map((genre) => {
               const Icon = GENRE_ICONS[genre.id] || Popcorn;
