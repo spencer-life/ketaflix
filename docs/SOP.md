@@ -10,9 +10,8 @@
 ### Component Patterns
 - Use Tailwind CSS with glassmorphism aesthetic
 - Combine `clsx` + `tailwind-merge` for dynamic classes
-- Framer Motion for enter/exit animations
-- GSAP for complex animation sequences
-- anime.js v4 for particle/background effects
+- anime.js v4 for all animations (only animation lib installed)
+- Lucide React for icons (individual named imports)
 
 ### Database (Supabase)
 - Use `@supabase/ssr` for server-side operations
@@ -38,7 +37,16 @@ Architectural decisions that inform future work:
 3. **PWA-first** — Designed for mobile install. Test on mobile viewports.
 
 ## Patterns to Follow
-- [Add patterns as they emerge during development]
+- **anime.js v4 imports:** dynamic `import("animejs")` with `useRef` guard to prevent double-init
+- **Lucide icons:** individual named imports (`import { Clapperboard } from "lucide-react"`), never import the full set
+- **Brand vs DB names:** use UI labels (Krew, Fliks) in components, keep DB table names (`rooms`, `watchlist`) unchanged
+- **Invite links:** use Web Share API + `/join/[code]` route for crew sharing, not raw codes
+- **Genre filtering:** use `EXCLUDED_GENRE_IDS` constant from `tmdb.ts` for filtering
+- **Stitch designs:** use as visual reference only — study the screenshot, apply changes to existing Tailwind components
 
 ## Anti-patterns to Avoid
-- [Add anti-patterns as they're discovered]
+- **Don't rename DB tables/columns** for UI branding — only change labels in components
+- **Don't import Framer Motion** — it's not installed despite old docs listing it
+- **Don't use anime.js v3 patterns** — v4 is a breaking change (different API)
+- **Don't hard-code genre IDs** — use `EXCLUDED_GENRE_IDS` from `tmdb.ts`
+- **Don't copy-paste Stitch HTML** — translate visual patterns into existing component architecture
