@@ -35,3 +35,11 @@ next-env.d.ts
 
 # Local Netlify folder
 .netlify
+
+# Local dev artifacts
+/screenshots/
+/logos/
+/stitch-reference/
+/.stitch/designs/
+/markdown
+/supabase/
