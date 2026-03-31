@@ -1,13 +1,29 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { getKetaqueue, addToKetaqueue, removeFromKetaqueue } from "@/lib/db";
+import {
+  getKetaqueue,
+  addToKetaqueue,
+  removeFromKetaqueue,
+  getReactions,
+  toggleReaction,
+  getCrewMembers,
+} from "@/lib/db";
 import { supabase } from "@/lib/supabase";
 import { tmdbImage } from "@/lib/tmdb";
-import type { KetaqueueItem, Movie } from "@/types";
+import type {
+  KetaqueueItem,
+  Movie,
+  Reaction,
+  ReactionSummary,
+  ReactionEmoji,
+} from "@/types";
+import { REACTION_EMOJIS as EMOJIS } from "@/types";
 import MovieSearch from "./MovieSearch";
 import LogWatchedModal from "./LogWatchedModal";
+import ReactionBar from "./ReactionBar";
+import MentionText from "./MentionText";
 
 interface KetaqueueTabProps {
   roomCode: string;
@@ -24,7 +40,23 @@ export default function KetaqueueTab({
   const [loading, setLoading] = useState(true);
   const [showSearch, setShowSearch] = useState(false);
   const [logItem, setLogItem] = useState<KetaqueueItem | null>(null);
+  const [members, setMembers] = useState<string[]>([]);
+  const [reactions, setReactions] = useState<Reaction[]>([]);
   const gridRef = useRef<HTMLDivElement>(null);
+  const itemIdsRef = useRef<string[]>([]);
+
+  const loadReactions = useCallback(
+    async (ids: string[]) => {
+      if (ids.length === 0) return;
+      const data = await getReactions("ketaqueue", ids);
+      setReactions(data);
+    },
+    [],
+  );
+
+  useEffect(() => {
+    getCrewMembers(roomCode).then(setMembers);
+  }, [roomCode]);
 
   useEffect(() => {
     let active = true;
@@ -34,6 +66,9 @@ export default function KetaqueueTab({
       if (!active) return;
       setItems(data);
       setLoading(false);
+      const ids = data.map((i) => i.id);
+      itemIdsRef.current = ids;
+      loadReactions(ids);
     }
 
     loadKetaqueue();
@@ -53,11 +88,28 @@ export default function KetaqueueTab({
       )
       .subscribe();
 
+    const reactionSub = supabase
+      .channel(`reactions-kq:${roomCode}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "reactions",
+          filter: `room_code=eq.${roomCode}`,
+        },
+        () => {
+          if (itemIdsRef.current.length > 0) loadReactions(itemIdsRef.current);
+        },
+      )
+      .subscribe();
+
     return () => {
       active = false;
       supabase.removeChannel(sub);
+      supabase.removeChannel(reactionSub);
     };
-  }, [roomCode]);
+  }, [roomCode, loadReactions]);
 
   useEffect(() => {
     const grid = gridRef.current;
@@ -74,13 +126,51 @@ export default function KetaqueueTab({
     });
   }, [items, loading]);
 
-  async function handleMovieSelected(movie: Movie) {
+  async function handleMovieSelected(
+    movie: Movie,
+    notes?: string,
+    mentionedUsers?: string[],
+  ) {
     setShowSearch(false);
     try {
-      await addToKetaqueue(roomCode, movie.id, username, undefined, profileId);
+      await addToKetaqueue(
+        roomCode,
+        movie.id,
+        username,
+        notes,
+        profileId,
+        mentionedUsers,
+      );
     } catch {
       // Already in Ketaqueue
     }
+  }
+
+  function getReactionSummaries(targetId: string): ReactionSummary[] {
+    const targetReactions = reactions.filter((r) => r.target_id === targetId);
+    const emojiKeys = Object.keys(EMOJIS) as ReactionEmoji[];
+    return emojiKeys
+      .map((emoji) => {
+        const matching = targetReactions.filter((r) => r.emoji === emoji);
+        return {
+          emoji,
+          count: matching.length,
+          usernames: matching.map((r) => r.username),
+          hasReacted: matching.some((r) => r.username === username),
+        };
+      })
+      .filter((s) => s.count > 0 || false);
+  }
+
+  async function handleReact(targetId: string, emoji: ReactionEmoji) {
+    await toggleReaction({
+      roomCode,
+      targetType: "ketaqueue",
+      targetId,
+      username,
+      emoji,
+    });
+    loadReactions(items.map((i) => i.id));
   }
 
   async function handleRemove(id: string) {
@@ -135,6 +225,8 @@ export default function KetaqueueTab({
               key={item.id}
               item={item}
               currentUser={username}
+              reactions={getReactionSummaries(item.id)}
+              onReact={(emoji) => handleReact(item.id, emoji)}
               onRemove={() => handleRemove(item.id)}
               onMarkWatched={() => setLogItem(item)}
             />
@@ -146,6 +238,7 @@ export default function KetaqueueTab({
         <MovieSearch
           onSelect={handleMovieSelected}
           onClose={() => setShowSearch(false)}
+          members={members}
         />
       )}
 
@@ -168,11 +261,15 @@ export default function KetaqueueTab({
 function KetaqueueCard({
   item,
   currentUser,
+  reactions,
+  onReact,
   onRemove,
   onMarkWatched,
 }: {
   item: KetaqueueItem;
   currentUser: string;
+  reactions: ReactionSummary[];
+  onReact: (emoji: ReactionEmoji) => void;
   onRemove: () => void;
   onMarkWatched: () => void;
 }) {
@@ -226,6 +323,14 @@ function KetaqueueCard({
             ))}
           </div>
         )}
+
+        {item.notes && (
+          <div className="surface-soft rounded-xl p-3 text-sm leading-6 text-white/60">
+            <MentionText text={item.notes} />
+          </div>
+        )}
+
+        <ReactionBar reactions={reactions} onReact={onReact} />
 
         <div className="mt-auto flex gap-2">
           <button onClick={onMarkWatched} className="btn-primary flex-1">

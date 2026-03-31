@@ -8,6 +8,8 @@ import type {
   Profile,
   ActivityFeedItem,
   ActivityType,
+  Reaction,
+  ReactionEmoji,
 } from "@/types";
 
 // ─── Krews ───────────────────────────────────────────────────────────────────
@@ -149,6 +151,7 @@ export async function addToKetaqueue(
   addedBy: string,
   notes?: string,
   profileId?: string,
+  mentionedUsers?: string[],
 ): Promise<KetaqueueItem> {
   const { data, error } = await supabase
     .from("watchlist")
@@ -158,6 +161,7 @@ export async function addToKetaqueue(
       added_by: addedBy,
       notes,
       profile_id: profileId,
+      mentioned_users: mentionedUsers ?? [],
     })
     .select("*, movie:movies(*)")
     .single();
@@ -220,6 +224,7 @@ export async function logWatched(params: {
   vibeTags?: string[];
   ketaqueueId?: string;
   profileId?: string;
+  mentionedUsers?: string[];
 }): Promise<WatchedItem> {
   const { data, error } = await supabase
     .from("watched")
@@ -232,6 +237,7 @@ export async function logWatched(params: {
       notes: params.notes,
       vibe_tags: params.vibeTags ?? [],
       profile_id: params.profileId,
+      mentioned_users: params.mentionedUsers ?? [],
     })
     .select("*, movie:movies(*)")
     .single();
@@ -460,6 +466,70 @@ export async function getFeed(
     .limit(limit);
 
   return (data ?? []) as ActivityFeedItem[];
+}
+
+// ─── Reactions ──────────────────────────────────────────────────────────────
+
+export async function getReactions(
+  targetType: "ketaqueue" | "watched",
+  targetIds: string[],
+): Promise<Reaction[]> {
+  if (targetIds.length === 0) return [];
+  const { data, error } = await supabase
+    .from("reactions")
+    .select("*")
+    .eq("target_type", targetType)
+    .in("target_id", targetIds);
+  if (error) throw error;
+  return (data ?? []) as Reaction[];
+}
+
+export async function toggleReaction(params: {
+  roomCode: string;
+  targetType: "ketaqueue" | "watched";
+  targetId: string;
+  username: string;
+  emoji: ReactionEmoji;
+}): Promise<"added" | "removed"> {
+  const { data: existing } = await supabase
+    .from("reactions")
+    .select("id")
+    .eq("target_id", params.targetId)
+    .eq("username", params.username)
+    .eq("emoji", params.emoji)
+    .single();
+
+  if (existing) {
+    await supabase.from("reactions").delete().eq("id", existing.id);
+    return "removed";
+  } else {
+    await supabase.from("reactions").insert({
+      room_code: params.roomCode,
+      target_type: params.targetType,
+      target_id: params.targetId,
+      username: params.username,
+      emoji: params.emoji,
+    });
+    return "added";
+  }
+}
+
+// ─── Mentions ───────────────────────────────────────────────────────────────
+
+export function extractMentions(
+  text: string,
+  validUsernames: string[],
+): string[] {
+  const mentionRegex = /@(\w+)/g;
+  const mentions: string[] = [];
+  let match;
+  while ((match = mentionRegex.exec(text)) !== null) {
+    const username = match[1];
+    if (validUsernames.includes(username) && !mentions.includes(username)) {
+      mentions.push(username);
+    }
+  }
+  return mentions;
 }
 
 export async function getProfileActivity(

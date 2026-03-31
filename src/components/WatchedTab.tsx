@@ -1,23 +1,38 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { getWatched } from "@/lib/db";
+import { getWatched, getReactions, toggleReaction } from "@/lib/db";
 import { supabase } from "@/lib/supabase";
 import { tmdbImage } from "@/lib/tmdb";
 import { getAverageRating } from "@/lib/utils";
 import HorseIcon from "./HorseIcon";
-import type { WatchedItem } from "@/types";
+import ReactionBar from "./ReactionBar";
+import MentionText from "./MentionText";
+import type { WatchedItem, Reaction, ReactionSummary, ReactionEmoji } from "@/types";
+import { REACTION_EMOJIS as EMOJIS } from "@/types";
 
 interface WatchedTabProps {
   roomCode: string;
+  username: string;
 }
 
-export default function WatchedTab({ roomCode }: WatchedTabProps) {
+export default function WatchedTab({ roomCode, username }: WatchedTabProps) {
   const [items, setItems] = useState<WatchedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [reactions, setReactions] = useState<Reaction[]>([]);
   const listRef = useRef<HTMLDivElement>(null);
+  const itemIdsRef = useRef<string[]>([]);
+
+  const loadReactions = useCallback(
+    async (ids: string[]) => {
+      if (ids.length === 0) return;
+      const data = await getReactions("watched", ids);
+      setReactions(data);
+    },
+    [],
+  );
 
   useEffect(() => {
     let active = true;
@@ -27,6 +42,9 @@ export default function WatchedTab({ roomCode }: WatchedTabProps) {
       if (!active) return;
       setItems(data);
       setLoading(false);
+      const ids = data.map((i) => i.id);
+      itemIdsRef.current = ids;
+      loadReactions(ids);
     }
 
     loadWatched();
@@ -45,11 +63,56 @@ export default function WatchedTab({ roomCode }: WatchedTabProps) {
       )
       .subscribe();
 
+    const reactionSub = supabase
+      .channel(`reactions-w:${roomCode}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "reactions",
+          filter: `room_code=eq.${roomCode}`,
+        },
+        () => {
+          if (itemIdsRef.current.length > 0)
+            loadReactions(itemIdsRef.current);
+        },
+      )
+      .subscribe();
+
     return () => {
       active = false;
       supabase.removeChannel(sub);
+      supabase.removeChannel(reactionSub);
     };
-  }, [roomCode]);
+  }, [roomCode, loadReactions]);
+
+  function getReactionSummaries(targetId: string): ReactionSummary[] {
+    const targetReactions = reactions.filter((r) => r.target_id === targetId);
+    const emojiKeys = Object.keys(EMOJIS) as ReactionEmoji[];
+    return emojiKeys
+      .map((emoji) => {
+        const matching = targetReactions.filter((r) => r.emoji === emoji);
+        return {
+          emoji,
+          count: matching.length,
+          usernames: matching.map((r) => r.username),
+          hasReacted: matching.some((r) => r.username === username),
+        };
+      })
+      .filter((s) => s.count > 0);
+  }
+
+  async function handleReact(targetId: string, emoji: ReactionEmoji) {
+    await toggleReaction({
+      roomCode,
+      targetType: "watched",
+      targetId,
+      username,
+      emoji,
+    });
+    loadReactions(items.map((i) => i.id));
+  }
 
   useEffect(() => {
     const list = listRef.current;
@@ -188,7 +251,7 @@ export default function WatchedTab({ roomCode }: WatchedTabProps) {
                   <div className="mt-3">
                     <p className="meta mb-2">Notes</p>
                     <div className="surface-soft p-4 text-sm leading-7 text-white/72">
-                      {item.notes}
+                      <MentionText text={item.notes} />
                     </div>
                   </div>
                 )}
@@ -205,6 +268,14 @@ export default function WatchedTab({ roomCode }: WatchedTabProps) {
                     </div>
                   </div>
                 )}
+
+                <div className="mt-3">
+                  <p className="meta mb-2">Reactions</p>
+                  <ReactionBar
+                    reactions={getReactionSummaries(item.id)}
+                    onReact={(emoji) => handleReact(item.id, emoji)}
+                  />
+                </div>
               </div>
             )}
           </article>

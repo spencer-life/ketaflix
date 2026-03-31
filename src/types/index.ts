@@ -81,6 +81,7 @@ export interface KetaqueueItem {
   movie_id: string;
   added_by: string;
   notes: string | null;
+  mentioned_users: string[];
   created_at: string;
   movie?: Movie;
 }
@@ -94,9 +95,40 @@ export interface WatchedItem {
   ratings: { username: string; score: number }[];
   watched_with: string[];
   notes: string | null;
+  mentioned_users: string[];
   vibe_tags: string[];
   created_at: string;
   movie?: Movie;
+}
+
+// ─── Reactions ──────────────────────────────────────────────────────────────
+
+export const REACTION_EMOJIS = {
+  fire: "\u{1F525}",
+  heart: "\u2764\uFE0F",
+  popcorn: "\u{1F37F}",
+  crying: "\u{1F62D}",
+  skull: "\u{1F480}",
+  horse: "\u{1F434}",
+} as const;
+
+export type ReactionEmoji = keyof typeof REACTION_EMOJIS;
+
+export interface Reaction {
+  id: string;
+  room_code: string;
+  target_type: "ketaqueue" | "watched";
+  target_id: string;
+  username: string;
+  emoji: ReactionEmoji;
+  created_at: string;
+}
+
+export interface ReactionSummary {
+  emoji: ReactionEmoji;
+  count: number;
+  usernames: string[];
+  hasReacted: boolean;
 }
 
 export interface TMDBMovie {

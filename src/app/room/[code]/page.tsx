@@ -225,7 +225,7 @@ export default function RoomPage({
             profileId={profileId}
           />
         )}
-        {activeTab === "watched" && session && <WatchedTab roomCode={code} />}
+        {activeTab === "watched" && session && <WatchedTab roomCode={code} username={session.username} />}
         {activeTab === "stats" && <StatsTab roomCode={code} />}
       </main>
     </div>

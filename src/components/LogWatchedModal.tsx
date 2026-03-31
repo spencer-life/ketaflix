@@ -2,11 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { logWatched, getCrewMembers } from "@/lib/db";
+import { logWatched, getCrewMembers, extractMentions } from "@/lib/db";
 import { tmdbImage } from "@/lib/tmdb";
 import { KETA_TAGS } from "@/types";
 import type { KetaqueueItem } from "@/types";
 import HorseIcon from "./HorseIcon";
+import MentionTextarea from "./MentionTextarea";
 
 interface LogWatchedModalProps {
   item: KetaqueueItem;
@@ -100,15 +101,21 @@ export default function LogWatchedModal({
         .filter(([, score]) => score > 0)
         .map(([u, score]) => ({ username: u, score }));
 
+      const trimmedNotes = notes.trim();
+      const mentionedUsers = trimmedNotes
+        ? extractMentions(trimmedNotes, members)
+        : [];
+
       await logWatched({
         roomCode,
         movieId: item.movie_id,
         pickedBy,
         ratings: ratingsList,
         watchedWith: Array.from(watchedWith),
-        notes: notes.trim() || undefined,
+        notes: trimmedNotes || undefined,
         vibeTags: ketaTags,
         ketaqueueId: item.id,
+        mentionedUsers,
       });
 
       onLogged();
@@ -285,12 +292,12 @@ export default function LogWatchedModal({
 
           <div>
             <label className="meta mb-2 block">Notes (optional)</label>
-            <textarea
-              className="keta-input resize-none"
-              rows={2}
-              placeholder="Any thoughts on the movie..."
+            <MentionTextarea
               value={notes}
-              onChange={(e) => setNotes(e.target.value)}
+              onChange={setNotes}
+              members={members}
+              placeholder="Any thoughts on the movie... use @ to tag crew"
+              rows={2}
             />
           </div>
 
