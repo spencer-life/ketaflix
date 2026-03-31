@@ -42,9 +42,9 @@
 - **Accessibility:** improved contrast, focus-visible outlines, alt text, ARIA labels
 - **Logo:** UXWing horse head SVG silhouette (CC0) + emerald gradient wordmark (KetaflixLogo component)
 - **Stitch-inspired redesign:** premium visual overhaul across all pages
-- **NavBar icons:** Lucide icons — Clapperboard (Feed), Telescope (Fliks), Sofa (Krew), UserRound (Profile), Settings
+- **NavBar icons:** Lucide icons — Clapperboard (Feed), Telescope (Flix), Sofa (Krew), UserRound (Profile), Settings
 - **Invite links:** replaced shareable crew codes with Web Share API invite links + `/join/[code]` auto-join page
-- **UI renames:** Discover → Fliks, Ketacrew → Krew (DB tables unchanged)
+- **UI renames:** Discover → Flix, Ketacrew → Krew (DB tables unchanged)
 - **Auth page redesign:** login/register layout with logo and improved spacing
 - **Genre filtering:** horror/thriller/war/crime excluded from discovery suggestions
 - **New components:** HorseIcon (horse-shaped ratings), UserAvatar (circular with gradient ring)
@@ -68,7 +68,7 @@
 | 2026-03-27 | DB table names preserved | Avoid risky migrations; only rename UI text and function names | Tables still `rooms`, `users`, `watchlist` |
 | 2026-03-27 | Persistent crew membership | Users should join once and always find their crews | Added `getUserCrews()`, CrewCard component |
 | 2026-03-27 | Toned down particle animation | Landing page felt too "crypto" | Particle count 72→40, opacity 0.55→0.3 |
-| 2026-03-28 | Discover → Fliks | Better brand identity, matches Keta-prefix theme | NavBar label + page header updated |
+| 2026-03-28 | Discover → Flix | Better brand identity, matches Keta-prefix theme | NavBar label + page header updated |
 | 2026-03-28 | Ketacrew → Krew (UI only) | Shorter, punchier label for the UI | ~15 files updated, DB tables unchanged |
 | 2026-03-28 | Invite links over crew codes | Easier sharing via native share sheet | New `/join/[code]` page, Web Share API |
 | 2026-03-28 | UXWing horse head logo | CC0 license, clean silhouette, works at all sizes | Replaced dragon-like FA icon |
@@ -95,7 +95,7 @@
 **Work:** KetaflixLogo component (horse head SVG), NavBar horse icon + emerald active state, Settings page redesign (emoji avatars, ring selection), Profile page avatar redesign, global text contrast boost, Stitch CLI harness built
 
 ### Session: 2026-03-28–29
-**Work:** Discover→Fliks rename, Ketacrew→Krew rename, genre filtering, auth page redesign, logo fix (UXWing concept-3), invite links replacing crew codes, Stitch-inspired premium redesign + Lucide icons, HorseIcon + UserAvatar components
+**Work:** Discover→Flix rename, Ketacrew→Krew rename, genre filtering, auth page redesign, logo fix (UXWing concept-3), invite links replacing crew codes, Stitch-inspired premium redesign + Lucide icons, HorseIcon + UserAvatar components
 
 ### Session: 2026-03-30
 **Work:** Supabase test data wipe (fresh start), all project documentation updated to reflect current state
@@ -130,7 +130,7 @@ npm start            # Start production server
 | Watch queue | `watchlist` | **Ketaqueue** | Ketaqueue |
 | Watch history | `watched` | **Ketalogs** | Ketalogs |
 | Groups | `rooms` + `users` | **Ketacrew** | **Krew** |
-| Discovery | — | — | **Fliks** |
+| Discovery | — | — | **Flix** |
 
 ### Key Files
 
@@ -141,7 +141,7 @@ npm start            # Start production server
 | `src/lib/auth.ts` | Auth functions (signup, login, Google OAuth) |
 | `src/lib/auth-context.tsx` | React auth context (user, profile, loading) |
 | `src/app/page.tsx` | Landing page (unauth) + Feed page (auth) |
-| `src/app/discover/page.tsx` | Fliks — movie discovery with recommendations |
+| `src/app/discover/page.tsx` | Flix — movie discovery with recommendations |
 | `src/app/room/[code]/page.tsx` | Krew dashboard (4 tabs) |
 | `src/app/join/[code]/page.tsx` | Invite link auto-join page |
 | `src/components/KetaflixLogo.tsx` | Horse head SVG logo + emerald wordmark |

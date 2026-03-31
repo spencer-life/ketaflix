@@ -11,7 +11,7 @@ branch: feat/invite-links-icon-upgrade
 - **CLAUDE.md updated** — fixed animation libs (removed Framer Motion/GSAP/Lottie/Lenis, kept anime.js v4 only), added branding section, Stitch reference, invite links architecture
 - **MEMORY-BANK.md updated** — added 9 completed items, 6 key decisions, 3 session log entries, updated branding map with UI labels, added 5 key files, bumped to v3.0
 - **SOP.md updated** — fixed animation references, filled patterns-to-follow (6 items) and anti-patterns (5 items)
-- **DESIGN.md updated** — updated NavBar icons (Lucide names), added logo section (UXWing CC0), updated feature names with Fliks/Krew UI labels
+- **DESIGN.md updated** — updated NavBar icons (Lucide names), added logo section (UXWing CC0), updated feature names with Flix/Krew UI labels
 - **Stale handoff deleted** — previous handoff from 2026-03-28 removed (all work complete)
 - **Memory file updated** — `project_ketaflix_stitch.md` marked Stitch integration as completed
 
@@ -36,7 +36,7 @@ branch: feat/invite-links-icon-upgrade
 - **Prettier auto-formats** on every Edit — re-read file before subsequent edits
 - **Doppler:** `-p ketaflix -c dev_personal` for Next.js secrets, `-p charm -c dev_personal` for gemini-vision
 - **Port 3088** can get stuck — use `fuser -k 3088/tcp`
-- **Brand vs DB:** UI says "Krew" and "Fliks" but DB tables are `rooms` and the discover page route. Never rename DB tables for branding.
+- **Brand vs DB:** UI says "Krew" and "Flix" but DB tables are `rooms` and the discover page route. Never rename DB tables for branding.
 - **Logo:** UXWing horse head SVG (CC0), HorseIcon for ratings (CC BY 4.0). The `iconOnly` prop on KetaflixLogo shows just the horse.
 
 ## Relevant Files
@@ -53,7 +53,7 @@ branch: feat/invite-links-icon-upgrade
 - `src/components/UserAvatar.tsx` — circular avatar with gradient ring
 - `src/app/join/[code]/page.tsx` — invite link auto-join page
 - `src/app/page.tsx` — home (landing + feed)
-- `src/app/discover/page.tsx` — Fliks discovery page
+- `src/app/discover/page.tsx` — Flix discovery page
 
 ## Next Steps
 1. **Merge `feat/invite-links-icon-upgrade` into main** — 8 commits of completed work, build is clean

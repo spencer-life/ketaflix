@@ -39,7 +39,7 @@ Architectural decisions that inform future work:
 ## Patterns to Follow
 - **anime.js v4 imports:** dynamic `import("animejs")` with `useRef` guard to prevent double-init
 - **Lucide icons:** individual named imports (`import { Clapperboard } from "lucide-react"`), never import the full set
-- **Brand vs DB names:** use UI labels (Krew, Fliks) in components, keep DB table names (`rooms`, `watchlist`) unchanged
+- **Brand vs DB names:** use UI labels (Krew, Flix) in components, keep DB table names (`rooms`, `watchlist`) unchanged
 - **Invite links:** use Web Share API + `/join/[code]` route for crew sharing, not raw codes
 - **Genre filtering:** use `EXCLUDED_GENRE_IDS` constant from `tmdb.ts` for filtering
 - **Stitch designs:** use as visual reference only — study the screenshot, apply changes to existing Tailwind components
