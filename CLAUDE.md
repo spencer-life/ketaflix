@@ -34,7 +34,7 @@ npm start            # Production server
 - **Ketaqueue** (watchlist) — UI: "Ketaqueue", DB: `watchlist`
 - **Ketalogs** (watch history) — UI: "Ketalogs", DB: `watched`
 - **Ketacrew** (groups) — UI: "Krew", DB: `rooms` + `users`
-- **Discover** — UI: "Fliks"
+- **Discover** — UI: "Flix"
 
 ## Code Conventions
 - Use `clsx` + `tailwind-merge` for conditional class composition

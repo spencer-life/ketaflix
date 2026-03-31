@@ -40,7 +40,7 @@
 - **Wordmark:** "Ketaflix" in Space Grotesk with emerald gradient
 
 ## Component Patterns
-- **Bottom Nav:** 5 tabs — Feed (Clapperboard), Fliks (Telescope), Krew (Sofa), Profile (UserRound), Settings (Settings) — all Lucide icons
+- **Bottom Nav:** 5 tabs — Feed (Clapperboard), Flix (Telescope), Krew (Sofa), Profile (UserRound), Settings (Settings) — all Lucide icons
 - **Genre Pills:** Horizontal scroll, pill-shaped, subtle border, small icon prefix
 - **Movie Poster Cards:** Glassmorphism frame, star rating badge (amber), title overlay
 - **Avatar:** Circular with gradient background ring (emerald/amber)
@@ -51,4 +51,4 @@
 - **Ketalogs** = Diary/Watched history (UI: Ketalogs)
 - **Ketaqueue** = Watchlist/Queue (UI: Ketaqueue)
 - **Ketacrew** = Rooms/Friend groups (UI: **Krew**)
-- **Fliks** = Discovery/Browse page (UI label for Discover tab)
+- **Flix** = Discovery/Browse page (UI label for Discover tab)
