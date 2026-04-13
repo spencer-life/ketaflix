@@ -13,7 +13,7 @@
 | **Tech Stack** | Next.js 15, React 19, TypeScript, Supabase, Tailwind CSS 3, anime.js v4, Lucide React |
 | **Repository Type** | Social movie-watching app (friend group tool) |
 | **Primary Use Case** | Create Ketacrews, build Ketaqueues together, log movies (Ketalogs) with ratings/vibes/notes, track group stats |
-| **Hosting** | Netlify (see netlify.toml) |
+| **Hosting** | Netlify — https://ketaflix-app.netlify.app |
 | **Database** | Supabase (project: amcxmbgkgkweuytdibqs) |
 | **External API** | TMDB (movie data + posters) |
 
@@ -183,5 +183,5 @@ ketaflix/
 
 ---
 
-**Last Updated:** 2026-03-30
-**Version:** 3.0
+**Last Updated:** 2026-04-12
+**Version:** 3.1
